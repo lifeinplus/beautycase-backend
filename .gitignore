@@ -4,3 +4,8 @@ logs
 node_modules
 uploads
 .env
+
+# Environment files
+.env
+.env.development
+.env.production
