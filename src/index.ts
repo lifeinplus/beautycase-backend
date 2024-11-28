@@ -1,19 +1,16 @@
 import cors from "cors";
-import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 
+import config from "./config";
 import Logging from "./library/Logging";
 import { requestLogger } from "./middleware";
 import { ProductRoutes } from "./routes";
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 mongoose
-    .connect(process.env.MONGO_URI || "", { dbName: "beautycaseDB" })
+    .connect(config.mongoUri || "", { dbName: "beautycaseDB" })
     .then(() => {
         Logging.info("Server connected to MongoDB");
         StartServer();
@@ -41,7 +38,7 @@ const StartServer = () => {
         res.status(404).json({ message: error.message });
     });
 
-    app.listen(PORT, async () => {
-        Logging.info(`Server is running on http://localhost:${PORT}`);
+    app.listen(config.port, async () => {
+        Logging.info(`Server is running on http://localhost:${config.port}`);
     });
 };
