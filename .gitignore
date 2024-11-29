@@ -2,5 +2,8 @@
 dist
 logs
 node_modules
-uploads
+
+# Environment files
 .env
+.env.development
+.env.production
