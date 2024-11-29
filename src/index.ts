@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import config from "./config";
 import Logging from "./library/Logging";
 import { requestLogger } from "./middleware";
-import { ProductRoutes } from "./routes";
+import { ProductRoutes, ToolRoutes } from "./routes";
 
 const app = express();
 
@@ -31,6 +31,7 @@ const StartServer = () => {
     });
 
     app.use("/api/products", ProductRoutes);
+    app.use("/api/tools", ToolRoutes);
 
     app.use((req, res, next) => {
         const error = new Error("URL not found");

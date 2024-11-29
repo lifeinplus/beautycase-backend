@@ -1,3 +1,4 @@
 import ProductModel from "./ProductModel";
+import ToolModel from "./ToolModel";
 
-export { ProductModel };
+export { ProductModel, ToolModel };

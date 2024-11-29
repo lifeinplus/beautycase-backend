@@ -1,3 +1,4 @@
 import ProductRoutes from "./ProductRoutes";
+import ToolRoutes from "./ToolRoutes";
 
-export { ProductRoutes };
+export { ProductRoutes, ToolRoutes };
