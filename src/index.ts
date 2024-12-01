@@ -4,8 +4,14 @@ import mongoose from "mongoose";
 
 import config from "./config";
 import Logging from "./library/Logging";
-import { requestLogger } from "./middleware";
-import { BrandRoutes, ProductRoutes, StageRoutes, ToolRoutes } from "./routes";
+import { jwtVerifier, requestLogger } from "./middleware";
+import {
+    AuthRoutes,
+    BrandRoutes,
+    ProductRoutes,
+    StageRoutes,
+    ToolRoutes,
+} from "./routes";
 
 const app = express();
 
@@ -30,6 +36,8 @@ const StartServer = () => {
         res.send("Beautycase API is running...");
     });
 
+    app.use("/api/auth", AuthRoutes);
+    app.use(jwtVerifier);
     app.use("/api/brands", BrandRoutes);
     app.use("/api/products", ProductRoutes);
     app.use("/api/stages", StageRoutes);
