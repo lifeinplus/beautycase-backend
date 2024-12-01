@@ -1,3 +1,6 @@
+import BrandRoutes from "./BrandRoutes";
 import ProductRoutes from "./ProductRoutes";
+import StageRoutes from "./StageRoutes";
+import ToolRoutes from "./ToolRoutes";
 
-export { ProductRoutes };
+export { BrandRoutes, ProductRoutes, StageRoutes, ToolRoutes };

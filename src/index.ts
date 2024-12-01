@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import config from "./config";
 import Logging from "./library/Logging";
 import { requestLogger } from "./middleware";
-import { ProductRoutes } from "./routes";
+import { BrandRoutes, ProductRoutes, StageRoutes, ToolRoutes } from "./routes";
 
 const app = express();
 
@@ -30,7 +30,10 @@ const StartServer = () => {
         res.send("Beautycase API is running...");
     });
 
+    app.use("/api/brands", BrandRoutes);
     app.use("/api/products", ProductRoutes);
+    app.use("/api/stages", StageRoutes);
+    app.use("/api/tools", ToolRoutes);
 
     app.use((req, res, next) => {
         const error = new Error("URL not found");
