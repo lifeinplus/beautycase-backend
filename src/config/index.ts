@@ -13,6 +13,7 @@ interface AuthOptions {
     accessToken: Token;
     refreshToken: Token;
     cookieOptions: CookieOptions;
+    passwordLengthMin: number;
 }
 
 const {
@@ -20,6 +21,7 @@ const {
     ACCESS_TOKEN_EXPIRES_IN = "5m",
     REFRESH_TOKEN_SECRET = "",
     REFRESH_TOKEN_EXPIRES_IN = "1h",
+    PASSWORD_LENGTH_MIN = "8",
 } = process.env;
 
 const auth: AuthOptions = {
@@ -41,6 +43,7 @@ const auth: AuthOptions = {
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
     },
+    passwordLengthMin: parseInt(PASSWORD_LENGTH_MIN),
 };
 
 const config = {

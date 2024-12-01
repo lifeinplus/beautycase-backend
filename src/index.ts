@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 import config from "./config";
 import Logging from "./library/Logging";
-import { jwtVerifier, requestLogger } from "./middleware";
+import { jwtVerifier, requestLogger } from "./middlewares";
 import {
     AuthRoutes,
     BrandRoutes,

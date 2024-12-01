@@ -12,9 +12,9 @@ interface UserDocument extends User, Document {}
 const UserSchema: Schema = new Schema(
     {
         creationDate: { type: Date, required: true },
-        username: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         refreshTokens: { type: [String] },
+        username: { type: String, required: true, unique: true },
     },
     { versionKey: false }
 );
