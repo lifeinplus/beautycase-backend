@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import config from "./config";
 import Logging from "./library/Logging";
 import { requestLogger } from "./middleware";
-import { ProductRoutes, ToolRoutes } from "./routes";
+import { BrandRoutes, ProductRoutes, ToolRoutes } from "./routes";
 
 const app = express();
 
@@ -30,6 +30,7 @@ const StartServer = () => {
         res.send("Beautycase API is running...");
     });
 
+    app.use("/api/brands", BrandRoutes);
     app.use("/api/products", ProductRoutes);
     app.use("/api/tools", ToolRoutes);
 
