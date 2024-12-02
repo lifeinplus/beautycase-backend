@@ -39,7 +39,7 @@ const chalkMethod = (method: string) => {
     }
 };
 
-class Logging {
+export class Logging {
     public static log = (value: any) => this.info(value);
 
     public static info = (message: any) => {
@@ -91,5 +91,3 @@ class Logging {
         fileLog(`${time} ${message}`);
     };
 }
-
-export default Logging;

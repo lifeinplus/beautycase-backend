@@ -1,27 +1,31 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
-import Logging from "../library/Logging";
 import { ProductModel } from "../models";
+import { BadRequestError, NotFoundError } from "../utils";
 
-export const getProducts = async (req: Request, res: Response) => {
+export const getProducts = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const products = await ProductModel.find();
 
-        products.length
-            ? res.status(200).json(products)
-            : res.status(404).json({ message: "Products not found" });
-    } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
+        if (!products.length) {
+            throw new NotFoundError("Products not found");
         }
 
-        res.status(500).json({ error });
+        res.status(200).json(products);
+    } catch (error) {
+        next(error);
     }
 };
 
-export const addProduct = async (req: Request, res: Response) => {
+export const addProduct = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const product = new ProductModel(req.body);
         await product.save();
@@ -30,21 +34,19 @@ export const addProduct = async (req: Request, res: Response) => {
             count: 1,
         });
     } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
-        }
-
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-export const addProductsList = async (req: Request, res: Response) => {
+export const addProductsList = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const products = req.body;
 
     if (!Array.isArray(products) || products.length === 0) {
-        res.status(400).json({ message: "Invalid product list provided" });
+        throw new BadRequestError("Invalid product list provided");
     }
 
     try {
@@ -54,12 +56,6 @@ export const addProductsList = async (req: Request, res: Response) => {
             count: createdProducts.length,
         });
     } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
-        }
-
-        res.status(500).json({ error });
+        next(error);
     }
 };

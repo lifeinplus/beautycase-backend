@@ -1,19 +1,20 @@
 import bcrypt from "bcrypt";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import config from "../../config";
-import Logging from "../../library/Logging";
+import { Logging } from "../../library";
 import { UserModel } from "../../models";
+import { UnauthorizedError } from "../../utils";
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const { username: reqUsername, password: reqPassword } = req.body;
-    const cookies = req.cookies;
 
-    if (!reqUsername || !reqPassword) {
-        res.status(400).json({ message: "Username and password required" });
-        return;
-    }
+    const cookies = req.cookies;
 
     try {
         const foundUser = await UserModel.findOne({
@@ -21,8 +22,7 @@ export const login = async (req: Request, res: Response) => {
         }).exec();
 
         if (!foundUser) {
-            res.status(401).json({ message: "User not found" });
-            return;
+            throw new UnauthorizedError("User not found");
         }
 
         const { _id: userId, password, refreshTokens, username } = foundUser;
@@ -30,8 +30,7 @@ export const login = async (req: Request, res: Response) => {
         const isMatch = await bcrypt.compare(reqPassword, password);
 
         if (!isMatch) {
-            res.status(401).json({ message: "Password is incorrect" });
-            return;
+            throw new UnauthorizedError("Password is incorrect");
         }
 
         const newAccessToken = jwt.sign(
@@ -78,13 +77,6 @@ export const login = async (req: Request, res: Response) => {
                 username,
             });
     } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
-            return;
-        }
-
-        res.status(500).json({ error });
+        next(error);
     }
 };

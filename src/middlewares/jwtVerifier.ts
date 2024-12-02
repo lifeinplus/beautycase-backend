@@ -2,8 +2,8 @@ import { NextFunction, Response } from "express";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 import config from "../config";
-import Logging from "../library/Logging";
 import { UserRequest, UserJwtPayload } from "../types";
+import { UnauthorizedError } from "../utils";
 
 export const jwtVerifier = (
     req: UserRequest,
@@ -17,8 +17,7 @@ export const jwtVerifier = (
         : undefined;
 
     if (!token || token === "undefined") {
-        res.sendStatus(401);
-        return;
+        throw new UnauthorizedError("No token provided");
     }
 
     try {
@@ -28,15 +27,14 @@ export const jwtVerifier = (
         ) as UserJwtPayload;
 
         req.userId = decoded.userId;
+        req.username = decoded.username;
 
         next();
     } catch (error) {
-        Logging.error(error);
-
         if (error instanceof TokenExpiredError) {
-            res.status(401).json({ message: "jwtVerifier: " + error.message });
+            throw new UnauthorizedError(error.message);
         }
 
-        res.status(500).json({ error });
+        next(error);
     }
 };

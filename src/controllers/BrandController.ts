@@ -1,27 +1,31 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
-import Logging from "../library/Logging";
 import { BrandModel } from "../models";
+import { NotFoundError } from "../utils";
 
-export const getBrands = async (req: Request, res: Response) => {
+export const getBrands = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const brands = await BrandModel.find().populate("toolIds");
 
-        brands.length
-            ? res.status(200).json(brands)
-            : res.status(404).json({ message: "Brands not found" });
-    } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
+        if (!brands.length) {
+            throw new NotFoundError("Brands not found");
         }
 
-        res.status(500).json({ error });
+        res.status(200).json(brands);
+    } catch (error) {
+        next(error);
     }
 };
 
-export const addBrand = async (req: Request, res: Response) => {
+export const addBrand = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const brand = new BrandModel(req.body);
         await brand.save();
@@ -30,12 +34,6 @@ export const addBrand = async (req: Request, res: Response) => {
             count: 1,
         });
     } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
-        }
-
-        res.status(500).json({ error });
+        next(error);
     }
 };

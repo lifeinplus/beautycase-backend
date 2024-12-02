@@ -1,10 +1,11 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 
 import config from "./config";
-import Logging from "./library/Logging";
-import { jwtVerifier, requestLogger } from "./middlewares";
+import { Logging } from "./library";
+import { errorHandler, jwtVerifier, requestLogger } from "./middlewares";
 import {
     AuthRoutes,
     BrandRoutes,
@@ -12,6 +13,7 @@ import {
     StageRoutes,
     ToolRoutes,
 } from "./routes";
+import { NotFoundError } from "./utils";
 
 const app = express();
 
@@ -29,6 +31,7 @@ mongoose
 const StartServer = () => {
     app.use(requestLogger);
     app.use(cors());
+    app.use(cookieParser());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
 
@@ -44,10 +47,10 @@ const StartServer = () => {
     app.use("/api/tools", ToolRoutes);
 
     app.use((req, res, next) => {
-        const error = new Error("URL not found");
-        Logging.error(error);
-        res.status(404).json({ message: error.message });
+        next(new NotFoundError("URL not found"));
     });
+
+    app.use(errorHandler);
 
     app.listen(config.port, async () => {
         Logging.info(`Server is running on http://localhost:${config.port}`);

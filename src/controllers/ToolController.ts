@@ -1,27 +1,31 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
-import Logging from "../library/Logging";
 import { ToolModel } from "../models";
+import { BadRequestError, NotFoundError } from "../utils";
 
-export const getTools = async (req: Request, res: Response) => {
+export const getTools = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
-        const tool = await ToolModel.find();
+        const tools = await ToolModel.find();
 
-        tool.length
-            ? res.status(200).json(tool)
-            : res.status(404).json({ message: "Tools not found" });
-    } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
+        if (!tools.length) {
+            throw new NotFoundError("Tools not found");
         }
 
-        res.status(500).json({ error });
+        res.status(200).json(tools);
+    } catch (error) {
+        next(error);
     }
 };
 
-export const addTool = async (req: Request, res: Response) => {
+export const addTool = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const tool = new ToolModel(req.body);
         await tool.save();
@@ -30,21 +34,19 @@ export const addTool = async (req: Request, res: Response) => {
             count: 1,
         });
     } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
-        }
-
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-export const addToolsList = async (req: Request, res: Response) => {
+export const addToolsList = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const tool = req.body;
 
     if (!Array.isArray(tool) || tool.length === 0) {
-        res.status(400).json({ message: "Invalid tool list provided" });
+        throw new BadRequestError("Invalid tool list provided");
     }
 
     try {
@@ -54,12 +56,6 @@ export const addToolsList = async (req: Request, res: Response) => {
             count: createdTools.length,
         });
     } catch (error) {
-        Logging.error(error);
-
-        if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
-        }
-
-        res.status(500).json({ error });
+        next(error);
     }
 };
