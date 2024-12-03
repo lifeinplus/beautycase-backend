@@ -2,7 +2,7 @@ export class AppError extends Error {
     public readonly status: number;
     public readonly details?: string[];
 
-    constructor(message: string, status: number, details?: string[]) {
+    constructor(status: number, message?: string, details?: string[]) {
         super(message);
         this.status = status;
         this.details = details;
@@ -11,28 +11,28 @@ export class AppError extends Error {
 
 export class BadRequestError extends AppError {
     constructor(message: string, details?: string[]) {
-        super(message, 400, details);
+        super(400, message, details);
         this.name = "BadRequestError";
     }
 }
 
 export class UnauthorizedError extends AppError {
-    constructor(message: string) {
-        super(message, 401);
+    constructor(message?: string) {
+        super(401, message);
         this.name = "UnauthorizedError";
     }
 }
 
 export class NotFoundError extends AppError {
     constructor(message: string) {
-        super(message, 404);
+        super(404, message);
         this.name = "NotFoundError";
     }
 }
 
 export class ConflictError extends AppError {
     constructor(message: string) {
-        super(message, 409);
+        super(409, message);
         this.name = "ConflictError";
     }
 }

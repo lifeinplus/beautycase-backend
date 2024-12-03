@@ -30,7 +30,7 @@ mongoose
 
 const StartServer = () => {
     app.use(requestLogger);
-    app.use(cors());
+    app.use(cors(config.cors));
     app.use(cookieParser());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
