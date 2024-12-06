@@ -21,6 +21,26 @@ export const getProducts = async (
     }
 };
 
+export const getProductById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    try {
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            throw new NotFoundError("Product not found");
+        }
+
+        res.status(200).json(product);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const addProduct = async (
     req: Request,
     res: Response,
