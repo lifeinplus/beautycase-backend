@@ -3,6 +3,7 @@ import express from "express";
 import {
     addProduct,
     addProductsList,
+    deleteProductById,
     editProduct,
     getProductById,
     getProducts,
@@ -17,5 +18,7 @@ router.post("/one", addProduct);
 router.post("/many", addProductsList);
 
 router.put("/:id", editProduct);
+
+router.delete("/:id", deleteProductById);
 
 export default router;

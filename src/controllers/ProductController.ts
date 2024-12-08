@@ -42,6 +42,25 @@ export const addProductsList = async (
     }
 };
 
+export const deleteProductById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    if (!id) {
+        throw new BadRequestError("Product ID required");
+    }
+
+    try {
+        await ProductModel.findByIdAndDelete(id);
+        res.status(200).json({ message: "Product successfully deleted" });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const editProduct = async (
     req: Request,
     res: Response,
