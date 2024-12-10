@@ -49,10 +49,6 @@ export const deleteProductById = async (
 ) => {
     const { id } = req.params;
 
-    if (!id) {
-        throw new BadRequestError("Product ID required");
-    }
-
     try {
         await ProductModel.findByIdAndDelete(id);
         res.status(200).json({ message: "Product successfully deleted" });
@@ -68,10 +64,6 @@ export const editProduct = async (
 ) => {
     const { id } = req.params;
     const { name, image, buy } = req.body;
-
-    if (!id) {
-        throw new BadRequestError("Product ID required");
-    }
 
     try {
         const product = await ProductModel.findById(id).exec();

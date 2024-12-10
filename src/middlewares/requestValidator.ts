@@ -3,15 +3,36 @@ import { ObjectSchema } from "joi";
 
 import { BadRequestError } from "../utils";
 
-export const requestValidator = (schema: ObjectSchema) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        const { error } = schema.validate(req.body, { abortEarly: false });
+interface Schemas {
+    body?: ObjectSchema;
+    params?: ObjectSchema;
+}
 
-        if (error) {
-            throw new BadRequestError(
-                "Validation failed",
-                error.details.map((detail) => detail.message)
-            );
+export const requestValidator = (schemas: Schemas) => {
+    const options = {
+        abortEarly: false,
+    };
+
+    return (req: Request, res: Response, next: NextFunction) => {
+        if (schemas.body) {
+            const { error } = schemas.body.validate(req.body, options);
+
+            if (error) {
+                throw new BadRequestError(
+                    "Validation failed for body",
+                    error.details.map((detail) => detail.message)
+                );
+            }
+        }
+
+        if (schemas.params) {
+            const { error } = schemas.params.validate(req.params, options);
+            if (error) {
+                throw new BadRequestError(
+                    "Validation failed for params",
+                    error.details.map((detail) => detail.message)
+                );
+            }
         }
 
         next();

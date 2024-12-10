@@ -13,8 +13,8 @@ const router = express.Router();
 
 router.get("/refresh", refresh);
 
-router.post("/login", requestValidator(loginSchema), login);
+router.post("/login", requestValidator({ body: loginSchema }), login);
 router.post("/logout", logout);
-router.post("/register", requestValidator(registerSchema), register);
+router.post("/register", requestValidator({ body: registerSchema }), register);
 
 export default router;
