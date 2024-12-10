@@ -9,6 +9,7 @@ import { errorHandler, jwtVerifier, requestLogger } from "./middlewares";
 import {
     AuthRoutes,
     BrandRoutes,
+    MakeupBag,
     ProductRoutes,
     StageRoutes,
     ToolRoutes,
@@ -42,6 +43,7 @@ const StartServer = () => {
     app.use("/api/auth", AuthRoutes);
     app.use(jwtVerifier);
     app.use("/api/brands", BrandRoutes);
+    app.use("/api/makeup-bag", MakeupBag);
     app.use("/api/products", ProductRoutes);
     app.use("/api/stages", StageRoutes);
     app.use("/api/tools", ToolRoutes);
