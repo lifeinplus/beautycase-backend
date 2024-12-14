@@ -11,7 +11,6 @@ const objectIdSchema = Joi.string().custom((value, helpers) => {
 export const bodySchema = Joi.object({
     title: Joi.string().min(3).max(100).required(),
     shortDescription: Joi.string().min(10).max(300).required(),
-    thumbnailUrl: Joi.string().uri().required(),
     videoUrl: Joi.string().uri().required(),
     fullDescription: Joi.string().min(20).max(2000).required(),
     materials: Joi.array().items(Joi.string().uri().allow("")).optional(),

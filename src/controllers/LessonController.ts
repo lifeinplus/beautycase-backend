@@ -63,14 +63,8 @@ export const editLesson = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const {
-        title,
-        shortDescription,
-        thumbnailUrl,
-        videoUrl,
-        fullDescription,
-        materials,
-    } = req.body;
+    const { title, shortDescription, videoUrl, fullDescription, materials } =
+        req.body;
 
     try {
         const lesson = await LessonModel.findById(id).exec();
@@ -81,7 +75,6 @@ export const editLesson = async (
 
         lesson.title = title;
         lesson.shortDescription = shortDescription;
-        lesson.thumbnailUrl = thumbnailUrl;
         lesson.videoUrl = videoUrl;
         lesson.fullDescription = fullDescription;
         lesson.materials = materials;
