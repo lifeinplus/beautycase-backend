@@ -13,7 +13,7 @@ export const bodySchema = Joi.object({
     shortDescription: Joi.string().min(10).max(300).required(),
     videoUrl: Joi.string().uri().required(),
     fullDescription: Joi.string().min(20).max(2000).required(),
-    materials: Joi.array().items(Joi.string().uri().allow("")).optional(),
+    selectedProductIds: Joi.array().items(objectIdSchema.required()).optional(),
 });
 
 export const paramsSchema = Joi.object({

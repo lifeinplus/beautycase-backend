@@ -63,8 +63,13 @@ export const editLesson = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { title, shortDescription, videoUrl, fullDescription, materials } =
-        req.body;
+    const {
+        title,
+        shortDescription,
+        videoUrl,
+        fullDescription,
+        selectedProductIds,
+    } = req.body;
 
     try {
         const lesson = await LessonModel.findById(id).exec();
@@ -77,7 +82,7 @@ export const editLesson = async (
         lesson.shortDescription = shortDescription;
         lesson.videoUrl = videoUrl;
         lesson.fullDescription = fullDescription;
-        lesson.materials = materials;
+        lesson.productIds = selectedProductIds;
 
         await lesson.save();
 
@@ -95,7 +100,7 @@ export const getLessonById = async (
     const { id } = req.params;
 
     try {
-        const lesson = await LessonModel.findById(id);
+        const lesson = await LessonModel.findById(id).populate("productIds");
 
         if (!lesson) {
             throw new NotFoundError("Lesson not found");
