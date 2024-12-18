@@ -8,9 +8,25 @@ export const addLesson = async (
     res: Response,
     next: NextFunction
 ) => {
+    const {
+        title,
+        shortDescription,
+        videoUrl,
+        fullDescription,
+        selectedProductIds,
+    } = req.body;
+
     try {
-        const lesson = new LessonModel(req.body);
+        const lesson = new LessonModel({
+            title: title,
+            shortDescription: shortDescription,
+            videoUrl: videoUrl,
+            fullDescription: fullDescription,
+            productIds: selectedProductIds,
+        });
+
         await lesson.save();
+
         res.status(201).json({
             message: "Lesson added successfully",
             count: 1,
