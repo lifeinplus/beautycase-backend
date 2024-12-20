@@ -25,11 +25,12 @@ export const addLesson = async (
             productIds: selectedProductIds,
         });
 
-        await lesson.save();
+        const response = await lesson.save();
 
         res.status(201).json({
-            message: "Lesson added successfully",
             count: 1,
+            id: response._id,
+            message: "Lesson added successfully",
         });
     } catch (error) {
         next(error);

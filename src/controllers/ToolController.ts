@@ -10,10 +10,11 @@ export const addTool = async (
 ) => {
     try {
         const tool = new ToolModel(req.body);
-        await tool.save();
+        const response = await tool.save();
         res.status(201).json({
-            message: "Tool added successfully",
             count: 1,
+            id: response._id,
+            message: "Tool added successfully",
         });
     } catch (error) {
         next(error);
