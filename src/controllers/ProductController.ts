@@ -10,10 +10,11 @@ export const addProduct = async (
 ) => {
     try {
         const product = new ProductModel(req.body);
-        await product.save();
+        const response = await product.save();
         res.status(201).json({
-            message: "Product added successfully",
             count: 1,
+            id: response._id,
+            message: "Product added successfully",
         });
     } catch (error) {
         next(error);
