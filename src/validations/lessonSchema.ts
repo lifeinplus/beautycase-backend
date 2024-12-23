@@ -8,7 +8,7 @@ const objectIdSchema = Joi.string().custom((value, helpers) => {
     return value;
 }, "ObjectID Validation");
 
-export const bodySchema = Joi.object({
+export const lessonBodySchema = Joi.object({
     title: Joi.string().min(3).max(100).required(),
     shortDescription: Joi.string().min(10).max(300).required(),
     videoUrl: Joi.string().uri().required(),
@@ -16,6 +16,6 @@ export const bodySchema = Joi.object({
     selectedProductIds: Joi.array().items(objectIdSchema.required()).optional(),
 });
 
-export const paramsSchema = Joi.object({
+export const lessonParamsSchema = Joi.object({
     id: objectIdSchema.required(),
 });

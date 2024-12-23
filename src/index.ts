@@ -12,6 +12,7 @@ import {
     LessonRoutes,
     MakeupBagRoutes,
     ProductRoutes,
+    QuestionnaireRoutes,
     StageRoutes,
     ToolRoutes,
 } from "./routes";
@@ -47,6 +48,7 @@ const StartServer = () => {
     app.use("/api/lessons", LessonRoutes);
     app.use("/api/makeup-bag", MakeupBagRoutes);
     app.use("/api/products", ProductRoutes);
+    app.use("/api/questionnaire", QuestionnaireRoutes);
     app.use("/api/stages", StageRoutes);
     app.use("/api/tools", ToolRoutes);
 

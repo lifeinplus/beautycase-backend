@@ -8,12 +8,12 @@ const objectIdSchema = Joi.string().custom((value, helpers) => {
     return value;
 }, "ObjectID Validation");
 
-export const bodySchema = Joi.object({
+export const productBodySchema = Joi.object({
     name: Joi.string().required(),
     image: Joi.string().uri().required(),
     buy: Joi.string().required(),
 });
 
-export const paramsSchema = Joi.object({
+export const productParamsSchema = Joi.object({
     id: objectIdSchema.required(),
 });

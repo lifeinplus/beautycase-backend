@@ -9,25 +9,25 @@ import {
     getTools,
 } from "../controllers/ToolController";
 import { requestValidator } from "../middlewares";
-import { bodySchema, paramsSchema } from "../validations/toolSchema";
+import { toolBodySchema, toolParamsSchema } from "../validations/toolSchema";
 
 const router = express.Router();
 
 router.get("/all", getTools);
-router.get("/:id", requestValidator({ params: paramsSchema }), getToolById);
+router.get("/:id", requestValidator({ params: toolParamsSchema }), getToolById);
 
 router.post("/one", addTool);
 router.post("/many", addToolsList);
 
 router.put(
     "/:id",
-    requestValidator({ body: bodySchema, params: paramsSchema }),
+    requestValidator({ body: toolBodySchema, params: toolParamsSchema }),
     editTool
 );
 
 router.delete(
     "/:id",
-    requestValidator({ params: paramsSchema }),
+    requestValidator({ params: toolParamsSchema }),
     deleteToolById
 );
 
