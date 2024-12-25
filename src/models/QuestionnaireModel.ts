@@ -1,88 +1,97 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+interface DesiredSkillData {
+    bright?: boolean;
+    delicate?: boolean;
+    evening?: boolean;
+    office?: boolean;
+}
+
+interface ProblemData {
+    eyeshadowCrease?: boolean;
+    eyeshadowMatch?: boolean;
+    foundationPores?: boolean;
+    foundationStay?: boolean;
+    mascaraSmudge?: boolean;
+    sculpting?: boolean;
+}
+
+interface ProcedureData {
+    browCorrection?: boolean;
+    lashExtensions?: boolean;
+    lashLamination?: boolean;
+    none?: boolean;
+}
+
 interface Questionnaire {
-    name: string;
-    instagram: string;
-    city?: string;
     age?: number;
-    makeupBag: string;
-    procedures?: {
-        lashExtensions: boolean;
-        browCorrection: boolean;
-        lashLamination: boolean;
-        none: boolean;
-    };
-    skinType?: string;
     allergies?: string;
-    peeling?: boolean;
-    pores?: string;
-    oilyShine?: string;
-    currentSkills?: string;
-    desiredSkills?: string;
-    makeupTime?: string;
     budget?: string;
-    brushes?: boolean;
-    problems?: {
-        eyeshadowCrease: boolean;
-        mascaraSmudge: boolean;
-        foundationPores: boolean;
-        foundationStay: boolean;
-        sculpting: boolean;
-        eyeshadowMatch: boolean;
-        other: string;
-    };
+    brushes?: string;
+    city?: string;
+    currentSkills?: string;
+    desiredSkills?: DesiredSkillData;
+    instagram: string;
+    makeupBag: string;
+    makeupTime?: string;
+    name: string;
+    oilyShine?: string;
+    peeling?: string;
+    pores?: string;
+    problems?: ProblemData;
+    procedures?: ProcedureData;
     referral?: string;
+    skinType?: string;
 }
 
 interface QuestionnaireDocument extends Questionnaire, Document {}
 
 const QuestionnaireSchema: Schema = new Schema(
     {
-        name: { type: String, required: true },
-        instagram: { type: String, required: true },
-        city: { type: String },
         age: { type: Number },
+        allergies: { type: String },
+        budget: {
+            type: String,
+            enum: ["30", "30-50", "50-100", "100"],
+        },
+        brushes: { type: String },
+        city: { type: String },
+        currentSkills: { type: String },
+        desiredSkills: {
+            bright: { type: Boolean },
+            delicate: { type: Boolean },
+            evening: { type: Boolean },
+            office: { type: Boolean },
+        },
+        instagram: { type: String, required: true },
         makeupBag: { type: String, required: true },
+        makeupTime: {
+            type: String,
+            enum: ["15", "15-30", "30-60"],
+        },
+        name: { type: String, required: true },
+        oilyShine: { type: String },
+        peeling: { type: String },
+        pores: { type: String },
+        problems: {
+            eyeshadowCrease: { type: Boolean },
+            eyeshadowMatch: { type: Boolean },
+            foundationPores: { type: Boolean },
+            foundationStay: { type: Boolean },
+            mascaraSmudge: { type: Boolean },
+            sculpting: { type: Boolean },
+        },
         procedures: {
-            lashExtensions: { type: Boolean },
             browCorrection: { type: Boolean },
+            lashExtensions: { type: Boolean },
             lashLamination: { type: Boolean },
             none: { type: Boolean },
         },
-        skinType: { type: String },
-        allergies: { type: String },
-        peeling: { type: Boolean },
-        pores: { type: Boolean },
-        oilyShine: { type: Boolean },
-        currentSkills: { type: String },
-        desiredSkills: { type: String },
-        makeupTime: {
-            type: String,
-            enum: ["до 15 минут", "15-25 минут", "30-60 минут"],
-        },
-        budget: {
-            type: String,
-            enum: [
-                "до 3 тыс. рублей",
-                "до 5 тыс. рублей",
-                "до 10 тыс. рублей",
-                "более 10 тыс. рублей",
-            ],
-        },
-        brushes: { type: Boolean },
-        problems: {
-            eyeshadowCrease: { type: Boolean },
-            mascaraSmudge: { type: Boolean },
-            foundationPores: { type: Boolean },
-            foundationStay: { type: Boolean },
-            sculpting: { type: Boolean },
-            eyeshadowMatch: { type: Boolean },
-            other: { type: String },
-        },
         referral: {
             type: String,
-            enum: ["Инстаграм", "Ютуб", "Другое"],
+            enum: ["instagram", "youtube", "other"],
         },
+        skinType: { type: String },
     },
     { timestamps: true, versionKey: false }
 );
