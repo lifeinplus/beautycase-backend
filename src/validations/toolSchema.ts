@@ -8,13 +8,13 @@ const objectIdSchema = Joi.string().custom((value, helpers) => {
     return value;
 }, "ObjectID Validation");
 
-export const bodySchema = Joi.object({
+export const toolBodySchema = Joi.object({
     name: Joi.string().required().min(1).max(100),
     image: Joi.string().required().uri(),
     number: Joi.string().optional().empty(""),
     comment: Joi.string().optional().empty("").max(500),
 });
 
-export const paramsSchema = Joi.object({
+export const toolParamsSchema = Joi.object({
     id: objectIdSchema.required(),
 });
