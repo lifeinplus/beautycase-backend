@@ -1,6 +1,14 @@
 import Joi from "joi";
+import mongoose from "mongoose";
 
-export const questionnaireSchema = Joi.object({
+const objectIdSchema = Joi.string().custom((value, helpers) => {
+    if (!mongoose.Types.ObjectId.isValid(value)) {
+        return helpers.message({ custom: "Invalid MongoDB ObjectID" });
+    }
+    return value;
+}, "ObjectID Validation");
+
+export const questionnaireBodySchema = Joi.object({
     age: Joi.number(),
     allergies: Joi.string().allow(""),
     budget: Joi.string().valid("50", "50-100", "100"),
@@ -48,4 +56,8 @@ export const questionnaireSchema = Joi.object({
         "other"
     ),
     skinType: Joi.string(),
+});
+
+export const questionnaireParamsSchema = Joi.object({
+    id: objectIdSchema.required(),
 });
