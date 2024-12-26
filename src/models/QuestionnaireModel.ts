@@ -5,6 +5,7 @@ interface DesiredSkillData {
     delicate?: boolean;
     evening?: boolean;
     office?: boolean;
+    filming?: boolean;
 }
 
 interface ProblemData {
@@ -31,7 +32,7 @@ interface Questionnaire {
     city?: string;
     currentSkills?: string;
     desiredSkills?: DesiredSkillData;
-    instagram: string;
+    instagram?: string;
     makeupBag: string;
     makeupTime?: string;
     name: string;
@@ -52,7 +53,7 @@ const QuestionnaireSchema: Schema = new Schema(
         allergies: { type: String },
         budget: {
             type: String,
-            enum: ["30", "30-50", "50-100", "100"],
+            enum: ["50", "50-100", "100"],
         },
         brushes: { type: String },
         city: { type: String },
@@ -62,8 +63,9 @@ const QuestionnaireSchema: Schema = new Schema(
             delicate: { type: Boolean },
             evening: { type: Boolean },
             office: { type: Boolean },
+            filming: { type: Boolean },
         },
-        instagram: { type: String, required: true },
+        instagram: { type: String },
         makeupBag: { type: String, required: true },
         makeupTime: {
             type: String,
@@ -89,7 +91,13 @@ const QuestionnaireSchema: Schema = new Schema(
         },
         referral: {
             type: String,
-            enum: ["instagram", "youtube", "other"],
+            enum: [
+                "instagram",
+                "youtube",
+                "personal",
+                "recommendation",
+                "other",
+            ],
         },
         skinType: { type: String },
     },
