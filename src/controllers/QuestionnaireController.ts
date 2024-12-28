@@ -42,3 +42,21 @@ export const getQuestionnaireById = async (
         next(error);
     }
 };
+
+export const getQuestionnaires = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const questionnaires = await QuestionnaireModel.find();
+
+        if (!questionnaires) {
+            throw new NotFoundError("Questionnaires not found");
+        }
+
+        res.status(200).json(questionnaires);
+    } catch (error) {
+        next(error);
+    }
+};
