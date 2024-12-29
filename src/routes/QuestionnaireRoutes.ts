@@ -5,7 +5,7 @@ import {
     getQuestionnaireById,
     getQuestionnaires,
 } from "../controllers/QuestionnaireController";
-import { requestValidator } from "../middlewares";
+import { jwtVerifier, requestValidator, rolesVerifier } from "../middlewares";
 import {
     questionnaireBodySchema,
     questionnaireParamsSchema,
@@ -13,9 +13,16 @@ import {
 
 const router = express.Router();
 
-router.get("/all", getQuestionnaires);
+router.get(
+    "/all",
+    jwtVerifier,
+    rolesVerifier(["admin", "mua"]),
+    getQuestionnaires
+);
 router.get(
     "/:id",
+    jwtVerifier,
+    rolesVerifier(["admin", "mua"]),
     requestValidator({ params: questionnaireParamsSchema }),
     getQuestionnaireById
 );

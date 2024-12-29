@@ -5,12 +5,13 @@ import {
     addStagesList,
     getStages,
 } from "../controllers/StageController";
+import { rolesVerifier } from "../middlewares";
 
 const router = express.Router();
 
 router.get("/all", getStages);
 
-router.post("/one", addStage);
-router.post("/many", addStagesList);
+router.post("/one", rolesVerifier(["admin", "mua"]), addStage);
+router.post("/many", rolesVerifier(["admin", "mua"]), addStagesList);
 
 export default router;

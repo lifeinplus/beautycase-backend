@@ -26,6 +26,7 @@ export const jwtVerifier = (
             config.auth.accessToken.secret
         ) as UserJwtPayload;
 
+        req.role = decoded.role;
         req.userId = decoded.userId;
         req.username = decoded.username;
 

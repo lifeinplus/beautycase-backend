@@ -21,8 +21,8 @@ export const register = async (
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await UserModel.create({
-            creationDate: new Date(),
             password: hashedPassword,
+            role: "client",
             username,
         });
 

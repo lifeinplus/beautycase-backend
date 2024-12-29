@@ -5,7 +5,12 @@ import mongoose from "mongoose";
 
 import config from "./config";
 import { Logging } from "./library";
-import { errorHandler, jwtVerifier, requestLogger } from "./middlewares";
+import {
+    errorHandler,
+    jwtVerifier,
+    requestLogger,
+    rolesVerifier,
+} from "./middlewares";
 import {
     AuthRoutes,
     BrandRoutes,
@@ -45,6 +50,7 @@ const StartServer = () => {
     app.use("/api/auth", AuthRoutes);
     app.use("/api/questionnaires", QuestionnaireRoutes);
     app.use(jwtVerifier);
+    app.use(rolesVerifier(["admin", "mua", "client"]));
     app.use("/api/brands", BrandRoutes);
     app.use("/api/lessons", LessonRoutes);
     app.use("/api/makeup-bag", MakeupBagRoutes);

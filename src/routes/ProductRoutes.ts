@@ -8,7 +8,7 @@ import {
     getProductById,
     getProducts,
 } from "../controllers/ProductController";
-import { requestValidator } from "../middlewares";
+import { requestValidator, rolesVerifier } from "../middlewares";
 import {
     productBodySchema,
     productParamsSchema,
@@ -16,24 +16,31 @@ import {
 
 const router = express.Router();
 
-router.get("/all", getProducts);
+router.get("/all", rolesVerifier(["admin", "mua"]), getProducts);
 router.get(
     "/:id",
     requestValidator({ params: productParamsSchema }),
     getProductById
 );
 
-router.post("/one", requestValidator({ body: productBodySchema }), addProduct);
-router.post("/many", addProductsList);
+router.post(
+    "/one",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: productBodySchema }),
+    addProduct
+);
+router.post("/many", rolesVerifier(["admin", "mua"]), addProductsList);
 
 router.put(
     "/:id",
+    rolesVerifier(["admin", "mua"]),
     requestValidator({ body: productBodySchema, params: productParamsSchema }),
     editProduct
 );
 
 router.delete(
     "/:id",
+    rolesVerifier(["admin", "mua"]),
     requestValidator({ params: productParamsSchema }),
     deleteProductById
 );
