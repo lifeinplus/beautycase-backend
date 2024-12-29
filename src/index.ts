@@ -43,7 +43,7 @@ const StartServer = () => {
     });
 
     app.use("/api/auth", AuthRoutes);
-    app.use("/api/questionnaire", QuestionnaireRoutes);
+    app.use("/api/questionnaires", QuestionnaireRoutes);
     app.use(jwtVerifier);
     app.use("/api/brands", BrandRoutes);
     app.use("/api/lessons", LessonRoutes);

@@ -1,9 +1,17 @@
 import Joi from "joi";
+import mongoose from "mongoose";
 
-export const questionnaireSchema = Joi.object({
+const objectIdSchema = Joi.string().custom((value, helpers) => {
+    if (!mongoose.Types.ObjectId.isValid(value)) {
+        return helpers.message({ custom: "Invalid MongoDB ObjectID" });
+    }
+    return value;
+}, "ObjectID Validation");
+
+export const questionnaireBodySchema = Joi.object({
     age: Joi.number(),
     allergies: Joi.string().allow(""),
-    budget: Joi.string().valid("30", "30-50", "50-100", "100"),
+    budget: Joi.string().valid("50", "50-100", "100"),
     brushes: Joi.string().valid("yes", "no"),
     city: Joi.string(),
     currentSkills: Joi.string().allow(""),
@@ -12,10 +20,9 @@ export const questionnaireSchema = Joi.object({
         evening: Joi.boolean().required(),
         bright: Joi.boolean().required(),
         office: Joi.boolean().required(),
+        filming: Joi.boolean().required(),
     }).optional(),
-    instagram: Joi.string().required().messages({
-        "string.empty": "Укажите псевдоним в Instagram",
-    }),
+    instagram: Joi.string(),
     makeupBag: Joi.string().required().messages({
         "string.empty": "Укажите, что сейчас есть в косметичке",
     }),
@@ -41,6 +48,16 @@ export const questionnaireSchema = Joi.object({
         lashLamination: Joi.boolean(),
         none: Joi.boolean(),
     }),
-    referral: Joi.string().valid("instagram", "youtube", "other"),
+    referral: Joi.string().valid(
+        "instagram",
+        "youtube",
+        "personal",
+        "recommendation",
+        "other"
+    ),
     skinType: Joi.string(),
+});
+
+export const questionnaireParamsSchema = Joi.object({
+    id: objectIdSchema.required(),
 });

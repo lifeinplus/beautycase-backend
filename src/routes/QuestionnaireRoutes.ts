@@ -1,14 +1,28 @@
 import express from "express";
 
-import { addQuestionnaire } from "../controllers/QuestionnaireController";
+import {
+    addQuestionnaire,
+    getQuestionnaireById,
+    getQuestionnaires,
+} from "../controllers/QuestionnaireController";
 import { requestValidator } from "../middlewares";
-import { questionnaireSchema } from "../validations";
+import {
+    questionnaireBodySchema,
+    questionnaireParamsSchema,
+} from "../validations";
 
 const router = express.Router();
 
+router.get("/all", getQuestionnaires);
+router.get(
+    "/:id",
+    requestValidator({ params: questionnaireParamsSchema }),
+    getQuestionnaireById
+);
+
 router.post(
     "/one",
-    requestValidator({ body: questionnaireSchema }),
+    requestValidator({ body: questionnaireBodySchema }),
     addQuestionnaire
 );
 
