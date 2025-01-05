@@ -1,10 +1,11 @@
 import express from "express";
 
 import { addBrand, getBrands } from "../controllers/BrandController";
+import { rolesVerifier } from "../middlewares";
 
 const router = express.Router();
 
 router.get("/all", getBrands);
-router.post("/one", addBrand);
+router.post("/one", rolesVerifier(["admin", "mua"]), addBrand);
 
 export default router;

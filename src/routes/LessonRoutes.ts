@@ -8,7 +8,7 @@ import {
     getLessonById,
     getLessons,
 } from "../controllers/LessonController";
-import { requestValidator } from "../middlewares";
+import { requestValidator, rolesVerifier } from "../middlewares";
 import {
     lessonBodySchema,
     lessonParamsSchema,
@@ -23,17 +23,24 @@ router.get(
     getLessonById
 );
 
-router.post("/one", requestValidator({ body: lessonBodySchema }), addLesson);
-router.post("/many", addLessonsList);
+router.post(
+    "/one",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: lessonBodySchema }),
+    addLesson
+);
+router.post("/many", rolesVerifier(["admin", "mua"]), addLessonsList);
 
 router.put(
     "/:id",
+    rolesVerifier(["admin", "mua"]),
     requestValidator({ body: lessonBodySchema, params: lessonParamsSchema }),
     editLesson
 );
 
 router.delete(
     "/:id",
+    rolesVerifier(["admin", "mua"]),
     requestValidator({ params: lessonParamsSchema }),
     deleteLessonById
 );

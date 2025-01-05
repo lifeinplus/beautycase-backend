@@ -48,7 +48,7 @@ export const refresh = async (
             throw new UnauthorizedError();
         }
 
-        const { _id: userId, refreshTokens, username } = foundUser;
+        const { _id: userId, refreshTokens, role, username } = foundUser;
 
         const decoded = jwt.verify(
             cookies.jwt,
@@ -60,7 +60,7 @@ export const refresh = async (
         }
 
         const newAccessToken = jwt.sign(
-            { userId, username },
+            { role, userId, username },
             config.auth.accessToken.secret,
             config.auth.accessToken.options
         );
@@ -82,6 +82,7 @@ export const refresh = async (
             .cookie("jwt", newRefreshToken, config.auth.cookieOptions)
             .json({
                 accessToken: newAccessToken,
+                role,
                 userId,
                 username,
             });

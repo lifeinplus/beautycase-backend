@@ -25,7 +25,13 @@ export const login = async (
             throw new UnauthorizedError("User not found");
         }
 
-        const { _id: userId, password, refreshTokens, username } = foundUser;
+        const {
+            _id: userId,
+            password,
+            refreshTokens,
+            role,
+            username,
+        } = foundUser;
 
         const isMatch = await bcrypt.compare(reqPassword, password);
 
@@ -34,7 +40,7 @@ export const login = async (
         }
 
         const newAccessToken = jwt.sign(
-            { userId, username },
+            { role, userId, username },
             config.auth.accessToken.secret,
             config.auth.accessToken.options
         );
@@ -73,6 +79,7 @@ export const login = async (
             .cookie("jwt", newRefreshToken, config.auth.cookieOptions)
             .json({
                 accessToken: newAccessToken,
+                role,
                 userId,
                 username,
             });
