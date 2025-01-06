@@ -20,6 +20,7 @@ import {
     QuestionnaireRoutes,
     StageRoutes,
     ToolRoutes,
+    UserRoutes,
 } from "./routes";
 import { NotFoundError } from "./utils";
 
@@ -53,10 +54,11 @@ const StartServer = () => {
     app.use(rolesVerifier(["admin", "mua", "client"]));
     app.use("/api/brands", BrandRoutes);
     app.use("/api/lessons", LessonRoutes);
-    app.use("/api/makeup-bag", MakeupBagRoutes);
+    app.use("/api/makeup-bags", MakeupBagRoutes);
     app.use("/api/products", ProductRoutes);
     app.use("/api/stages", StageRoutes);
     app.use("/api/tools", ToolRoutes);
+    app.use("/api/users", UserRoutes);
 
     app.use((req, res, next) => {
         next(new NotFoundError("URL not found"));
