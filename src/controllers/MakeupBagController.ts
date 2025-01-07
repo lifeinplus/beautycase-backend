@@ -1,26 +1,67 @@
 import { NextFunction, Request, Response } from "express";
 
-import { BrandModel, StageModel } from "../models";
+import { BrandModel, MakeupBagModel, StageModel } from "../models";
 import { NotFoundError } from "../utils";
 
-export const getMakeupBag = async (
+export const addMakeupBag = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const brands = await BrandModel.find().populate("toolIds");
-        const stages = await StageModel.find().populate("productIds");
+        const makeupBag = new MakeupBagModel(req.body);
 
-        if (!brands.length) {
-            throw new NotFoundError("Brands not found");
+        const response = await makeupBag.save();
+
+        res.status(201).json({
+            count: 1,
+            id: response._id,
+            message: "MakeupBag added successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getMakeupBagById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    try {
+        const makeupBag = await MakeupBagModel.findById(id).populate(
+            "brandIds",
+            "stageIds"
+        );
+
+        if (!makeupBag) {
+            throw new NotFoundError("MakeupBag not found");
         }
 
-        if (!stages.length) {
-            throw new NotFoundError("Stages not found");
+        res.status(200).json(makeupBag);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getMakeupBags = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const makeupBags = await MakeupBagModel.find().populate({
+            path: "clientId",
+            select: "username",
+        });
+
+        if (!makeupBags) {
+            throw new NotFoundError("MakeupBags not found");
         }
 
-        res.status(200).json({ brands, stages });
+        res.status(200).json(makeupBags);
     } catch (error) {
         next(error);
     }

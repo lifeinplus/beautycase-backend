@@ -6,6 +6,7 @@ import ProductRoutes from "./ProductRoutes";
 import QuestionnaireRoutes from "./QuestionnaireRoutes";
 import StageRoutes from "./StageRoutes";
 import ToolRoutes from "./ToolRoutes";
+import UserRoutes from "./UserRoutes";
 
 export {
     AuthRoutes,
@@ -16,4 +17,5 @@ export {
     QuestionnaireRoutes,
     StageRoutes,
     ToolRoutes,
+    UserRoutes,
 };
