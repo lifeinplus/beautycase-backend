@@ -18,7 +18,7 @@ const StageSchema: Schema = new Schema(
         steps: { type: [String], required: true },
         productIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     },
-    { versionKey: false }
+    { timestamps: true, versionKey: false }
 );
 
 export default mongoose.model<StageDocument>("Stage", StageSchema);
