@@ -13,7 +13,7 @@ import { stageBodySchema, stageParamsSchema } from "../validations";
 
 const router = express.Router();
 
-router.get("/all", getStages);
+router.get("/all", rolesVerifier(["admin", "mua"]), getStages);
 router.get(
     "/:id",
     requestValidator({ params: stageParamsSchema }),

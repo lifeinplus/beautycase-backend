@@ -10,6 +10,7 @@ const objectIdSchema = Joi.string().custom((value, helpers) => {
 
 export const makeupBagBodySchema = Joi.object({
     clientId: objectIdSchema.required(),
+    selectedStageIds: Joi.array().items(objectIdSchema.required()).optional(),
 });
 
 export const makeupBagParamsSchema = Joi.object({

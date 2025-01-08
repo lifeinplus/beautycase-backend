@@ -2,6 +2,8 @@ import express from "express";
 
 import {
     addMakeupBag,
+    deleteMakeupBagById,
+    editMakeupBag,
     getMakeupBagById,
     getMakeupBags,
 } from "../controllers/MakeupBagController";
@@ -22,6 +24,23 @@ router.post(
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: makeupBagBodySchema }),
     addMakeupBag
+);
+
+router.put(
+    "/:id",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({
+        body: makeupBagBodySchema,
+        params: makeupBagParamsSchema,
+    }),
+    editMakeupBag
+);
+
+router.delete(
+    "/:id",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ params: makeupBagParamsSchema }),
+    deleteMakeupBagById
 );
 
 export default router;
