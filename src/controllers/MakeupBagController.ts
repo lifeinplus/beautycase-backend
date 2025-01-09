@@ -8,12 +8,13 @@ export const addMakeupBag = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { clientId, selectedStageIds } = req.body;
+    const { clientId, selectedStageIds, selectedToolIds } = req.body;
 
     try {
         const makeupBag = new MakeupBagModel({
             clientId,
             stageIds: selectedStageIds,
+            toolIds: selectedToolIds,
         });
 
         const response = await makeupBag.save();
@@ -49,7 +50,7 @@ export const editMakeupBag = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { clientId, selectedStageIds } = req.body;
+    const { clientId, selectedStageIds, selectedToolIds } = req.body;
 
     try {
         const makeupBag = await MakeupBagModel.findById(id).exec();
@@ -60,6 +61,7 @@ export const editMakeupBag = async (
 
         makeupBag.clientId = clientId;
         makeupBag.stageIds = selectedStageIds;
+        makeupBag.toolIds = selectedToolIds;
 
         await makeupBag.save();
 
@@ -77,10 +79,16 @@ export const getMakeupBagById = async (
     const { id } = req.params;
 
     try {
-        const makeupBag = await MakeupBagModel.findById(id).populate({
-            path: "stageIds",
-            populate: { path: "productIds" },
-        });
+        const makeupBag = await MakeupBagModel.findById(id).populate([
+            {
+                path: "stageIds",
+                populate: { path: "productIds" },
+            },
+            {
+                path: "toolIds",
+                populate: { path: "brandId" },
+            },
+        ]);
 
         if (!makeupBag) {
             throw new NotFoundError("MakeupBag not found");
