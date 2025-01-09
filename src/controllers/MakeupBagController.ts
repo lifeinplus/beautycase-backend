@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { BrandModel, MakeupBagModel, StageModel } from "../models";
+import { MakeupBagModel } from "../models";
 import { NotFoundError } from "../utils";
 
 export const addMakeupBag = async (
@@ -8,8 +8,14 @@ export const addMakeupBag = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { clientId, selectedStageIds, selectedToolIds } = req.body;
+
     try {
-        const makeupBag = new MakeupBagModel(req.body);
+        const makeupBag = new MakeupBagModel({
+            clientId,
+            stageIds: selectedStageIds,
+            toolIds: selectedToolIds,
+        });
 
         const response = await makeupBag.save();
 
@@ -23,6 +29,48 @@ export const addMakeupBag = async (
     }
 };
 
+export const deleteMakeupBagById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    try {
+        await MakeupBagModel.findByIdAndDelete(id);
+        res.status(200).json({ message: "MakeupBag successfully deleted" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const editMakeupBag = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+    const { clientId, selectedStageIds, selectedToolIds } = req.body;
+
+    try {
+        const makeupBag = await MakeupBagModel.findById(id).exec();
+
+        if (!makeupBag) {
+            throw new NotFoundError("MakeupBag not found");
+        }
+
+        makeupBag.clientId = clientId;
+        makeupBag.stageIds = selectedStageIds;
+        makeupBag.toolIds = selectedToolIds;
+
+        await makeupBag.save();
+
+        res.status(200).json({ message: "MakeupBag successfully changed" });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getMakeupBagById = async (
     req: Request,
     res: Response,
@@ -31,10 +79,16 @@ export const getMakeupBagById = async (
     const { id } = req.params;
 
     try {
-        const makeupBag = await MakeupBagModel.findById(id).populate(
-            "brandIds",
-            "stageIds"
-        );
+        const makeupBag = await MakeupBagModel.findById(id).populate([
+            {
+                path: "stageIds",
+                populate: { path: "productIds" },
+            },
+            {
+                path: "toolIds",
+                populate: { path: "brandId" },
+            },
+        ]);
 
         if (!makeupBag) {
             throw new NotFoundError("MakeupBag not found");

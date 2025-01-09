@@ -9,7 +9,7 @@ export const getBrands = async (
     next: NextFunction
 ) => {
     try {
-        const brands = await BrandModel.find().populate("toolIds");
+        const brands = await BrandModel.find();
 
         if (!brands.length) {
             throw new NotFoundError("Brands not found");

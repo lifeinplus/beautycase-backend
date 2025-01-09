@@ -16,20 +16,25 @@ const router = express.Router();
 router.get("/all", rolesVerifier(["admin", "mua"]), getTools);
 router.get("/:id", requestValidator({ params: toolParamsSchema }), getToolById);
 
-router.post("/one", rolesVerifier(["admin", "mua"]), addTool);
+router.post(
+    "/one",
+    requestValidator({ body: toolBodySchema }),
+    rolesVerifier(["admin", "mua"]),
+    addTool
+);
 router.post("/many", rolesVerifier(["admin", "mua"]), addToolsList);
 
 router.put(
     "/:id",
-    rolesVerifier(["admin", "mua"]),
     requestValidator({ body: toolBodySchema, params: toolParamsSchema }),
+    rolesVerifier(["admin", "mua"]),
     editTool
 );
 
 router.delete(
     "/:id",
-    rolesVerifier(["admin", "mua"]),
     requestValidator({ params: toolParamsSchema }),
+    rolesVerifier(["admin", "mua"]),
     deleteToolById
 );
 

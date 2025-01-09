@@ -8,12 +8,23 @@ export const addStage = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { title, subtitle, image, steps, selectedProductIds } = req.body;
+
     try {
-        const stage = new StageModel(req.body);
-        await stage.save();
+        const stage = new StageModel({
+            title,
+            subtitle,
+            image,
+            steps,
+            productIds: selectedProductIds,
+        });
+
+        const response = await stage.save();
+
         res.status(201).json({
-            message: "Stage added successfully",
             count: 1,
+            id: response._id,
+            message: "Stage added successfully",
         });
     } catch (error) {
         next(error);
@@ -42,13 +53,77 @@ export const addStagesList = async (
     }
 };
 
+export const deleteStageById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    try {
+        await StageModel.findByIdAndDelete(id);
+        res.status(200).json({ message: "Stage successfully deleted" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const editStage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+    const { title, subtitle, image, steps, selectedProductIds } = req.body;
+
+    try {
+        const stage = await StageModel.findById(id).exec();
+
+        if (!stage) {
+            throw new NotFoundError("Stage not found");
+        }
+
+        stage.title = title;
+        stage.subtitle = subtitle;
+        stage.image = image;
+        stage.steps = steps;
+        stage.productIds = selectedProductIds;
+
+        await stage.save();
+
+        res.status(200).json({ message: "Stage successfully changed" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getStageById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    try {
+        const stage = await StageModel.findById(id).populate("productIds");
+
+        if (!stage) {
+            throw new NotFoundError("Stage not found");
+        }
+
+        res.status(200).json(stage);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getStages = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const stages = await StageModel.find().populate("productIds");
+        const stages = await StageModel.find();
 
         if (!stages.length) {
             throw new NotFoundError("Stages not found");
