@@ -6,3 +6,4 @@ export * from "./questionnaireSchema";
 export * from "./registerSchema";
 export * from "./stageSchema";
 export * from "./toolSchema";
+export * from "./userSchema";
