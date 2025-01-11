@@ -6,7 +6,7 @@ import {
     editMakeupBag,
     getMakeupBagById,
     getMakeupBags,
-} from "../controllers/MakeupBagController";
+} from "../controllers";
 import { requestValidator, rolesVerifier } from "../middlewares";
 import { makeupBagBodySchema, makeupBagParamsSchema } from "../validations";
 

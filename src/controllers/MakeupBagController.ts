@@ -8,10 +8,12 @@ export const addMakeupBag = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { clientId, selectedStageIds, selectedToolIds } = req.body;
+    const { categoryId, clientId, selectedStageIds, selectedToolIds } =
+        req.body;
 
     try {
         const makeupBag = new MakeupBagModel({
+            categoryId,
             clientId,
             stageIds: selectedStageIds,
             toolIds: selectedToolIds,
@@ -50,7 +52,8 @@ export const editMakeupBag = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { clientId, selectedStageIds, selectedToolIds } = req.body;
+    const { categoryId, clientId, selectedStageIds, selectedToolIds } =
+        req.body;
 
     try {
         const makeupBag = await MakeupBagModel.findById(id).exec();
@@ -59,6 +62,7 @@ export const editMakeupBag = async (
             throw new NotFoundError("MakeupBag not found");
         }
 
+        makeupBag.categoryId = categoryId;
         makeupBag.clientId = clientId;
         makeupBag.stageIds = selectedStageIds;
         makeupBag.toolIds = selectedToolIds;
@@ -80,6 +84,9 @@ export const getMakeupBagById = async (
 
     try {
         const makeupBag = await MakeupBagModel.findById(id).populate([
+            {
+                path: "categoryId",
+            },
             {
                 path: "stageIds",
                 populate: { path: "productIds" },
@@ -106,10 +113,16 @@ export const getMakeupBags = async (
     next: NextFunction
 ) => {
     try {
-        const makeupBags = await MakeupBagModel.find().populate({
-            path: "clientId",
-            select: "username",
-        });
+        const makeupBags = await MakeupBagModel.find().populate([
+            {
+                path: "categoryId",
+                select: "name",
+            },
+            {
+                path: "clientId",
+                select: "username",
+            },
+        ]);
 
         if (!makeupBags) {
             throw new NotFoundError("MakeupBags not found");

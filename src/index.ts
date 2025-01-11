@@ -14,6 +14,7 @@ import {
 import {
     AuthRoutes,
     BrandRoutes,
+    CategoryRoutes,
     LessonRoutes,
     MakeupBagRoutes,
     ProductRoutes,
@@ -53,6 +54,7 @@ const StartServer = () => {
     app.use(jwtVerifier);
     app.use(rolesVerifier(["admin", "mua", "client"]));
     app.use("/api/brands", BrandRoutes);
+    app.use("/api/categories", CategoryRoutes);
     app.use("/api/lessons", LessonRoutes);
     app.use("/api/makeup-bags", MakeupBagRoutes);
     app.use("/api/products", ProductRoutes);
