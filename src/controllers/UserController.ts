@@ -12,7 +12,9 @@ export const getUserById = async (
 
     try {
         const user = await UserModel.findById(id);
-        const makeupBags = await MakeupBagModel.find({ clientId: id });
+        const makeupBags = await MakeupBagModel.find({ clientId: id }).populate(
+            "categoryId"
+        );
 
         if (!user) {
             throw new NotFoundError("User not found");

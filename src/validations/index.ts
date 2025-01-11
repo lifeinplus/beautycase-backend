@@ -1,3 +1,4 @@
+export * from "./categorySchema";
 export * from "./lessonSchema";
 export * from "./loginSchema";
 export * from "./makeupBagSchema";

@@ -1,5 +1,6 @@
 import AuthRoutes from "./AuthRoutes";
 import BrandRoutes from "./BrandRoutes";
+import CategoryRoutes from "./CategoryRoutes";
 import LessonRoutes from "./LessonRoutes";
 import MakeupBagRoutes from "./MakeupBagRoutes";
 import ProductRoutes from "./ProductRoutes";
@@ -11,6 +12,7 @@ import UserRoutes from "./UserRoutes";
 export {
     AuthRoutes,
     BrandRoutes,
+    CategoryRoutes,
     LessonRoutes,
     MakeupBagRoutes,
     ProductRoutes,

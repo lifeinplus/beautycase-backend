@@ -8,13 +8,11 @@ const objectIdSchema = Joi.string().custom((value, helpers) => {
     return value;
 }, "ObjectID Validation");
 
-export const makeupBagBodySchema = Joi.object({
-    clientId: objectIdSchema.required(),
-    categoryId: objectIdSchema.required(),
-    selectedStageIds: Joi.array().items(objectIdSchema).optional(),
-    selectedToolIds: Joi.array().items(objectIdSchema).optional(),
+export const categoryBodySchema = Joi.object({
+    name: Joi.string().required(),
+    type: Joi.string().required(),
 });
 
-export const makeupBagParamsSchema = Joi.object({
+export const categoryParamsSchema = Joi.object({
     id: objectIdSchema.required(),
 });
