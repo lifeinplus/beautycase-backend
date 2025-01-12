@@ -64,7 +64,7 @@ export const editProduct = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { name, image, buy } = req.body;
+    const { name, brandId, image, buy } = req.body;
 
     try {
         const product = await ProductModel.findById(id).exec();
@@ -74,6 +74,7 @@ export const editProduct = async (
         }
 
         product.name = name;
+        product.brandId = brandId;
         product.image = image;
         product.buy = buy;
 
@@ -93,7 +94,7 @@ export const getProductById = async (
     const { id } = req.params;
 
     try {
-        const product = await ProductModel.findById(id);
+        const product = await ProductModel.findById(id).populate("brandId");
 
         if (!product) {
             throw new NotFoundError("Product not found");

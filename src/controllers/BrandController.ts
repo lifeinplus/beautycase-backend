@@ -9,7 +9,7 @@ export const getBrands = async (
     next: NextFunction
 ) => {
     try {
-        const brands = await BrandModel.find();
+        const brands = await BrandModel.find().sort("name");
 
         if (!brands.length) {
             throw new NotFoundError("Brands not found");
