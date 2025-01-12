@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 interface Product {
     name: string;
+    brandId: string;
     image: string;
     buy: string;
 }
@@ -11,6 +12,7 @@ interface ProductDocument extends Product, Document {}
 const ProductSchema: Schema = new Schema(
     {
         name: { type: String, required: true },
+        brandId: { type: Schema.Types.ObjectId, required: true, ref: "Brand" },
         image: { type: String, required: true },
         buy: { type: String, required: true },
     },
