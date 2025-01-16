@@ -5,5 +5,6 @@ export * from "./MakeupBagController";
 export * from "./ProductController";
 export * from "./QuestionnaireController";
 export * from "./StageController";
+export * from "./StoreController";
 export * from "./ToolController";
 export * from "./UserController";

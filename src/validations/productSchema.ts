@@ -8,11 +8,17 @@ const objectIdSchema = Joi.string().custom((value, helpers) => {
     return value;
 }, "ObjectID Validation");
 
+const storeSchema = Joi.object({
+    _id: objectIdSchema.required(),
+    name: Joi.string().trim().min(1).max(100).required(),
+    link: Joi.string().uri().required(),
+});
+
 export const productBodySchema = Joi.object({
     name: Joi.string().required(),
     brandId: objectIdSchema.required(),
     image: Joi.string().uri().required(),
-    buy: Joi.string().required(),
+    stores: Joi.array().items(storeSchema).required(),
 });
 
 export const productParamsSchema = Joi.object({

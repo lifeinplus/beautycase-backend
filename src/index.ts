@@ -20,6 +20,7 @@ import {
     ProductRoutes,
     QuestionnaireRoutes,
     StageRoutes,
+    StoreRoutes,
     ToolRoutes,
     UserRoutes,
 } from "./routes";
@@ -59,6 +60,7 @@ const StartServer = () => {
     app.use("/api/makeup-bags", MakeupBagRoutes);
     app.use("/api/products", ProductRoutes);
     app.use("/api/stages", StageRoutes);
+    app.use("/api/stores", StoreRoutes);
     app.use("/api/tools", ToolRoutes);
     app.use("/api/users", UserRoutes);
 
