@@ -64,7 +64,7 @@ export const editTool = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { name, brandId, image, stores, number, comment } = req.body;
+    const { name, brandId, image, number, comment, storeLinks } = req.body;
 
     try {
         const tool = await ToolModel.findById(id).exec();
@@ -76,9 +76,9 @@ export const editTool = async (
         tool.name = name;
         tool.brandId = brandId;
         tool.image = image;
-        tool.stores = stores;
         tool.number = number;
         tool.comment = comment;
+        tool.storeLinks = storeLinks;
 
         const response = await tool.save();
 
