@@ -78,9 +78,12 @@ export const editProduct = async (
         product.image = image;
         product.stores = stores;
 
-        await product.save();
+        const response = await product.save();
 
-        res.status(200).json({ message: "Product successfully changed" });
+        res.status(200).json({
+            id: response._id,
+            message: "Product successfully changed",
+        });
     } catch (error) {
         next(error);
     }
