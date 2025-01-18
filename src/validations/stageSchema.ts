@@ -1,12 +1,6 @@
 import Joi from "joi";
-import mongoose from "mongoose";
 
-const objectIdSchema = Joi.string().custom((value, helpers) => {
-    if (!mongoose.Types.ObjectId.isValid(value)) {
-        return helpers.message({ custom: "Invalid MongoDB ObjectID" });
-    }
-    return value;
-}, "ObjectID Validation");
+import { objectIdSchema } from "./shared";
 
 export const stageBodySchema = Joi.object({
     title: Joi.string().min(3).max(100).required(),

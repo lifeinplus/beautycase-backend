@@ -1,3 +1,4 @@
+export * from "./brandSchema";
 export * from "./categorySchema";
 export * from "./lessonSchema";
 export * from "./loginSchema";

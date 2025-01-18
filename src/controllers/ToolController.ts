@@ -64,7 +64,7 @@ export const editTool = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { brandId, name, image, number, comment } = req.body;
+    const { name, brandId, image, number, comment, storeLinks } = req.body;
 
     try {
         const tool = await ToolModel.findById(id).exec();
@@ -73,15 +73,19 @@ export const editTool = async (
             throw new NotFoundError("Tool not found");
         }
 
-        tool.brandId = brandId;
         tool.name = name;
+        tool.brandId = brandId;
         tool.image = image;
         tool.number = number;
         tool.comment = comment;
+        tool.storeLinks = storeLinks;
 
-        await tool.save();
+        const response = await tool.save();
 
-        res.status(200).json({ message: "Tool successfully changed" });
+        res.status(200).json({
+            id: response._id,
+            message: "Tool successfully changed",
+        });
     } catch (error) {
         next(error);
     }

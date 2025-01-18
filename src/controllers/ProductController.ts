@@ -64,7 +64,7 @@ export const editProduct = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { name, brandId, image, buy } = req.body;
+    const { name, brandId, image, shade, comment, storeLinks } = req.body;
 
     try {
         const product = await ProductModel.findById(id).exec();
@@ -76,11 +76,16 @@ export const editProduct = async (
         product.name = name;
         product.brandId = brandId;
         product.image = image;
-        product.buy = buy;
+        product.shade = shade;
+        product.comment = comment;
+        product.storeLinks = storeLinks;
 
-        await product.save();
+        const response = await product.save();
 
-        res.status(200).json({ message: "Product successfully changed" });
+        res.status(200).json({
+            id: response._id,
+            message: "Product successfully changed",
+        });
     } catch (error) {
         next(error);
     }

@@ -1,18 +1,14 @@
 import Joi from "joi";
-import mongoose from "mongoose";
 
-const objectIdSchema = Joi.string().custom((value, helpers) => {
-    if (!mongoose.Types.ObjectId.isValid(value)) {
-        return helpers.message({ custom: "Invalid MongoDB ObjectID" });
-    }
-    return value;
-}, "ObjectID Validation");
+import { objectIdSchema, storeLinkSchema } from "./shared";
 
 export const productBodySchema = Joi.object({
-    name: Joi.string().required(),
+    name: Joi.string().required().min(1).max(100),
     brandId: objectIdSchema.required(),
-    image: Joi.string().uri().required(),
-    buy: Joi.string().required(),
+    image: Joi.string().required().uri(),
+    shade: Joi.string().required(),
+    comment: Joi.string().required().max(500),
+    storeLinks: Joi.array().items(storeLinkSchema).required(),
 });
 
 export const productParamsSchema = Joi.object({
