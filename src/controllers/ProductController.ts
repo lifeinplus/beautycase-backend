@@ -64,7 +64,7 @@ export const editProduct = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { name, brandId, image, storeLinks } = req.body;
+    const { name, brandId, image, shade, comment, storeLinks } = req.body;
 
     try {
         const product = await ProductModel.findById(id).exec();
@@ -76,6 +76,8 @@ export const editProduct = async (
         product.name = name;
         product.brandId = brandId;
         product.image = image;
+        product.shade = shade;
+        product.comment = comment;
         product.storeLinks = storeLinks;
 
         const response = await product.save();
