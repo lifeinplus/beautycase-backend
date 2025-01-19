@@ -5,7 +5,7 @@ interface Stage {
     subtitle: string;
     image: string;
     steps: string[];
-    productIds?: string[];
+    productIds: string[];
 }
 
 interface StageDocument extends Stage, Document {}
@@ -16,7 +16,11 @@ const StageSchema: Schema = new Schema(
         subtitle: { type: String, required: true },
         image: { type: String, required: true },
         steps: { type: [String], required: true },
-        productIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+        productIds: {
+            type: [Schema.Types.ObjectId],
+            ref: "Product",
+            required: true,
+        },
     },
     { timestamps: true, versionKey: false }
 );

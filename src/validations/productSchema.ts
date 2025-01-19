@@ -3,10 +3,10 @@ import Joi from "joi";
 import { objectIdSchema, storeLinkSchema } from "./shared";
 
 export const productBodySchema = Joi.object({
-    name: Joi.string().required().min(1).max(100),
     brandId: objectIdSchema.required(),
+    name: Joi.string().required().min(1).max(100),
     image: Joi.string().required().uri(),
-    shade: Joi.string().required(),
+    shade: Joi.string().optional(),
     comment: Joi.string().required().max(500),
     storeLinks: Joi.array().items(storeLinkSchema).required(),
 });

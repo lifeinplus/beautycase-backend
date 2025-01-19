@@ -99,7 +99,7 @@ export const getToolById = async (
     const { id } = req.params;
 
     try {
-        const tool = await ToolModel.findById(id).populate({ path: "brandId" });
+        const tool = await ToolModel.findById(id).populate("brandId");
 
         if (!tool) {
             throw new NotFoundError("Tool not found");

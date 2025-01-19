@@ -6,7 +6,6 @@ import { rolesVerifier } from "../middlewares";
 const router = express.Router();
 
 router.get("/all", rolesVerifier(["admin", "mua"]), getBrands);
-
 router.post("/one", rolesVerifier(["admin", "mua"]), addBrand);
 
 export default router;
