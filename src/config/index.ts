@@ -22,6 +22,9 @@ const {
     ACCESS_TOKEN_EXPIRES_IN = "5m",
     REFRESH_TOKEN_SECRET = "",
     REFRESH_TOKEN_EXPIRES_IN = "1h",
+    CLOUDINARY_CLOUD_NAME = "",
+    CLOUDINARY_API_KEY = "",
+    CLOUDINARY_API_SECRET = "",
     CORS_CREDENTIALS = "",
     CORS_ORIGIN = "",
     PASSWORD_LENGTH_MIN = "8",
@@ -49,6 +52,13 @@ const auth: AuthOptions = {
     passwordLengthMin: parseInt(PASSWORD_LENGTH_MIN),
 };
 
+const cloudinary = {
+    cloud_name: CLOUDINARY_CLOUD_NAME,
+    api_key: CLOUDINARY_API_KEY,
+    api_secret: CLOUDINARY_API_SECRET,
+    secure: true,
+};
+
 const cors: CorsOptions = {
     credentials: CORS_CREDENTIALS.toLowerCase() === "true",
     origin: CORS_ORIGIN,
@@ -56,6 +66,7 @@ const cors: CorsOptions = {
 
 const config = {
     auth,
+    cloudinary,
     cors,
     mongoUri: process.env.MONGO_URI,
     port: process.env.PORT || 3000,

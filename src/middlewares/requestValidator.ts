@@ -17,6 +17,7 @@ export const requestValidator = (schemas: Schemas) => {
         if (schemas.body) {
             const { error } = schemas.body.validate(req.body, options);
 
+            // console.log(req.body);
             // console.log(error);
 
             if (error) {

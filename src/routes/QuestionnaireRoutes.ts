@@ -5,7 +5,12 @@ import {
     getQuestionnaireById,
     getQuestionnaires,
 } from "../controllers/QuestionnaireController";
-import { jwtVerifier, requestValidator, rolesVerifier } from "../middlewares";
+import {
+    jwtVerifier,
+    requestValidator,
+    rolesVerifier,
+    multerUpload,
+} from "../middlewares";
 import {
     questionnaireBodySchema,
     questionnaireParamsSchema,
@@ -29,6 +34,7 @@ router.get(
 
 router.post(
     "/one",
+    multerUpload.single("makeupBagPhoto"),
     requestValidator({ body: questionnaireBodySchema }),
     addQuestionnaire
 );
