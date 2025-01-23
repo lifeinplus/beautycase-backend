@@ -5,7 +5,7 @@ interface Lesson {
     shortDescription: string;
     videoUrl: string;
     fullDescription: string;
-    productIds?: string[];
+    productIds: string[];
 }
 
 interface LessonDocument extends Lesson, Document {}
@@ -16,7 +16,11 @@ const LessonSchema: Schema = new Schema(
         shortDescription: { type: String, required: true },
         videoUrl: { type: String, required: true },
         fullDescription: { type: String, required: true },
-        productIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+        productIds: {
+            type: [Schema.Types.ObjectId],
+            ref: "Product",
+            required: true,
+        },
     },
     { versionKey: false }
 );

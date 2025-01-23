@@ -89,7 +89,11 @@ export const getMakeupBagById = async (
             },
             {
                 path: "stageIds",
-                populate: { path: "productIds" },
+                populate: {
+                    path: "productIds",
+                    populate: { path: "brandId" },
+                    select: "name image",
+                },
             },
             {
                 path: "toolIds",
