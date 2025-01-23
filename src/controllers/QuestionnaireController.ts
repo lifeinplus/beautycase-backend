@@ -7,7 +7,7 @@ import { NextFunction, Request, Response } from "express";
 
 import config from "../config";
 import { QuestionnaireModel } from "../models";
-import { BadRequestError, NotFoundError } from "../utils";
+import { AppError, NotFoundError } from "../utils";
 
 cloudinary.config(config.cloudinary);
 
@@ -16,37 +16,39 @@ export const addQuestionnaire = async (
     res: Response,
     next: NextFunction
 ) => {
-    if (!req.file) {
-        throw new BadRequestError("No file uploaded");
-    }
+    const { body, file } = req;
 
     try {
-        const questionnaire = new QuestionnaireModel(req.body);
+        const questionnaire = new QuestionnaireModel(body);
         const response = await questionnaire.save();
 
-        const fileBuffer = req.file.buffer;
+        if (file) {
+            const fileBuffer = file.buffer;
 
-        const options: UploadApiOptions = {
-            folder: `questionnaires/${response._id}`,
-            overwrite: true,
-            public_id: "makeup-bag",
-            unique_filename: false,
-            use_filename: false,
-        };
+            const options: UploadApiOptions = {
+                folder: `questionnaires/${response._id}`,
+                overwrite: true,
+                public_id: "makeup-bag",
+                unique_filename: false,
+                use_filename: false,
+            };
 
-        const uploadResult: UploadApiResponse | undefined = await new Promise(
-            (resolve, reject) => {
-                cloudinary.uploader
-                    .upload_stream(options, (error, result) => {
-                        if (error) return reject(error);
-                        resolve(result);
-                    })
-                    .end(fileBuffer);
-            }
-        );
+            const uploadResult: UploadApiResponse | undefined =
+                await new Promise((resolve, reject) => {
+                    cloudinary.uploader
+                        .upload_stream(options, (error, result) => {
+                            if (error)
+                                return reject(
+                                    new AppError(error.http_code, error.message)
+                                );
+                            resolve(result);
+                        })
+                        .end(fileBuffer);
+                });
 
-        questionnaire.makeupBagPhoto = uploadResult?.public_id;
-        await questionnaire.save();
+            questionnaire.makeupBagPhoto = uploadResult?.public_id;
+            await questionnaire.save();
+        }
 
         res.status(201).json({
             count: 1,
