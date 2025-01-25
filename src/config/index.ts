@@ -45,8 +45,8 @@ const auth: AuthOptions = {
     },
     cookieOptions: {
         httpOnly: true,
-        sameSite: "none",
-        secure: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000,
     },
     passwordLengthMin: parseInt(PASSWORD_LENGTH_MIN),

@@ -37,16 +37,17 @@ export const addQuestionnaire = async (
                 await new Promise((resolve, reject) => {
                     cloudinary.uploader
                         .upload_stream(options, (error, result) => {
-                            if (error)
+                            if (error) {
                                 return reject(
                                     new AppError(error.http_code, error.message)
                                 );
+                            }
                             resolve(result);
                         })
                         .end(fileBuffer);
                 });
 
-            questionnaire.makeupBagPhoto = uploadResult?.public_id;
+            questionnaire.makeupBagPhotoId = uploadResult?.public_id;
             await questionnaire.save();
         }
 

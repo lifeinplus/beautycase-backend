@@ -92,8 +92,6 @@ export const refresh = async (
                 foundUser.refreshTokens = [...refreshTokenArray];
                 await foundUser.save();
             }
-
-            throw new UnauthorizedError(error.message);
         }
 
         next(error);
