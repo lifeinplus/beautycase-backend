@@ -6,7 +6,7 @@ export const productBodySchema = Joi.object({
     brandId: objectIdSchema.required(),
     name: Joi.string().required().min(1).max(100),
     image: Joi.string().required().uri(),
-    shade: Joi.string().optional(),
+    shade: Joi.string().optional().allow(""),
     comment: Joi.string().required().max(500),
     storeLinks: Joi.array().items(storeLinkSchema).required(),
 });

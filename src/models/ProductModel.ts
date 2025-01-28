@@ -25,4 +25,16 @@ const ProductSchema = new Schema(
     { versionKey: false }
 );
 
+ProductSchema.virtual("brand").get(function () {
+    return this.brandId;
+});
+
+ProductSchema.set("toJSON", {
+    virtuals: true,
+    transform: (_, ret) => {
+        delete ret.brandId;
+        return ret;
+    },
+});
+
 export default mongoose.model<ProductDocument>("Product", ProductSchema);

@@ -25,4 +25,16 @@ const ToolSchema: Schema = new Schema(
     { versionKey: false }
 );
 
+ToolSchema.virtual("brand").get(function () {
+    return this.brandId;
+});
+
+ToolSchema.set("toJSON", {
+    virtuals: true,
+    transform: (_, ret) => {
+        delete ret.brandId;
+        return ret;
+    },
+});
+
 export default mongoose.model<ToolDocument>("Tool", ToolSchema);
