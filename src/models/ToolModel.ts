@@ -22,19 +22,24 @@ const ToolSchema: Schema = new Schema(
         comment: { type: String, required: true },
         storeLinks: { type: [StoreLinkSchema], required: true },
     },
-    { versionKey: false }
+    {
+        id: false,
+        toJSON: {
+            transform: (_, ret) => {
+                delete ret.brandId;
+                return ret;
+            },
+            virtuals: true,
+        },
+        versionKey: false,
+        virtuals: {
+            brand: {
+                get() {
+                    return this.brandId;
+                },
+            },
+        },
+    }
 );
-
-ToolSchema.virtual("brand").get(function () {
-    return this.brandId;
-});
-
-ToolSchema.set("toJSON", {
-    virtuals: true,
-    transform: (_, ret) => {
-        delete ret.brandId;
-        return ret;
-    },
-});
 
 export default mongoose.model<ToolDocument>("Tool", ToolSchema);

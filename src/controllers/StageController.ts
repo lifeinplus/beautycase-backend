@@ -8,7 +8,7 @@ export const addStage = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { title, subtitle, image, steps, selectedProductIds } = req.body;
+    const { title, subtitle, image, steps, productIds } = req.body;
 
     try {
         const stage = new StageModel({
@@ -16,7 +16,7 @@ export const addStage = async (
             subtitle,
             image,
             steps,
-            productIds: selectedProductIds,
+            productIds,
         });
 
         const response = await stage.save();
@@ -74,7 +74,7 @@ export const editStage = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { title, subtitle, image, steps, selectedProductIds } = req.body;
+    const { title, subtitle, image, steps, productIds } = req.body;
 
     try {
         const stage = await StageModel.findById(id).exec();
@@ -87,7 +87,7 @@ export const editStage = async (
         stage.subtitle = subtitle;
         stage.image = image;
         stage.steps = steps;
-        stage.productIds = selectedProductIds;
+        stage.productIds = productIds;
 
         await stage.save();
 
@@ -105,7 +105,10 @@ export const getStageById = async (
     const { id } = req.params;
 
     try {
-        const stage = await StageModel.findById(id).populate("productIds");
+        const stage = await StageModel.findById(id).populate(
+            "productIds",
+            "image"
+        );
 
         if (!stage) {
             throw new NotFoundError("Stage not found");
@@ -123,7 +126,9 @@ export const getStages = async (
     next: NextFunction
 ) => {
     try {
-        const stages = await StageModel.find();
+        const stages = await StageModel.find().select(
+            "createdAt image subtitle title"
+        );
 
         if (!stages.length) {
             throw new NotFoundError("Stages not found");

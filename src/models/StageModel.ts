@@ -22,19 +22,25 @@ const StageSchema: Schema = new Schema(
             required: true,
         },
     },
-    { timestamps: true, versionKey: false }
+    {
+        id: false,
+        timestamps: true,
+        toJSON: {
+            transform: (_, ret) => {
+                delete ret.productIds;
+                return ret;
+            },
+            virtuals: true,
+        },
+        versionKey: false,
+        virtuals: {
+            products: {
+                get() {
+                    return this.productIds;
+                },
+            },
+        },
+    }
 );
-
-StageSchema.virtual("products").get(function () {
-    return this.productIds;
-});
-
-StageSchema.set("toJSON", {
-    virtuals: true,
-    transform: (_, ret) => {
-        delete ret.productIds;
-        return ret;
-    },
-});
 
 export default mongoose.model<StageDocument>("Stage", StageSchema);

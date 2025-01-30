@@ -117,7 +117,7 @@ export const getProducts = async (
     next: NextFunction
 ) => {
     try {
-        const products = await ProductModel.find();
+        const products = await ProductModel.find().select("image");
 
         if (!products.length) {
             throw new NotFoundError("Products not found");

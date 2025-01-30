@@ -117,7 +117,7 @@ export const getTools = async (
     next: NextFunction
 ) => {
     try {
-        const tools = await ToolModel.find();
+        const tools = await ToolModel.find().select("image");
 
         if (!tools.length) {
             throw new NotFoundError("Tools not found");
