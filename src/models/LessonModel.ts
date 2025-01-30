@@ -22,7 +22,25 @@ const LessonSchema: Schema = new Schema(
             required: true,
         },
     },
-    { versionKey: false }
+    {
+        id: false,
+        timestamps: true,
+        toJSON: {
+            transform: (_, ret) => {
+                delete ret.productIds;
+                return ret;
+            },
+            virtuals: true,
+        },
+        versionKey: false,
+        virtuals: {
+            products: {
+                get() {
+                    return this.productIds;
+                },
+            },
+        },
+    }
 );
 
 export default mongoose.model<LessonDocument>("Lesson", LessonSchema);

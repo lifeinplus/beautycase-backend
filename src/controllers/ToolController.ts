@@ -64,7 +64,7 @@ export const editTool = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { name, brandId, image, number, comment, storeLinks } = req.body;
+    const { name, brandId, imageUrl, number, comment, storeLinks } = req.body;
 
     try {
         const tool = await ToolModel.findById(id).exec();
@@ -75,7 +75,7 @@ export const editTool = async (
 
         tool.name = name;
         tool.brandId = brandId;
-        tool.image = image;
+        tool.imageUrl = imageUrl;
         tool.number = number;
         tool.comment = comment;
         tool.storeLinks = storeLinks;
@@ -117,7 +117,7 @@ export const getTools = async (
     next: NextFunction
 ) => {
     try {
-        const tools = await ToolModel.find();
+        const tools = await ToolModel.find().select("imageUrl");
 
         if (!tools.length) {
             throw new NotFoundError("Tools not found");

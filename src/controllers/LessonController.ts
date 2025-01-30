@@ -8,21 +8,16 @@ export const addLesson = async (
     res: Response,
     next: NextFunction
 ) => {
-    const {
-        title,
-        shortDescription,
-        videoUrl,
-        fullDescription,
-        selectedProductIds,
-    } = req.body;
+    const { title, shortDescription, videoUrl, fullDescription, productIds } =
+        req.body;
 
     try {
         const lesson = new LessonModel({
-            title: title,
-            shortDescription: shortDescription,
-            videoUrl: videoUrl,
-            fullDescription: fullDescription,
-            productIds: selectedProductIds,
+            title,
+            shortDescription,
+            videoUrl,
+            fullDescription,
+            productIds,
         });
 
         const response = await lesson.save();
@@ -80,13 +75,8 @@ export const editLesson = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const {
-        title,
-        shortDescription,
-        videoUrl,
-        fullDescription,
-        selectedProductIds,
-    } = req.body;
+    const { title, shortDescription, videoUrl, fullDescription, productIds } =
+        req.body;
 
     try {
         const lesson = await LessonModel.findById(id).exec();
@@ -99,7 +89,7 @@ export const editLesson = async (
         lesson.shortDescription = shortDescription;
         lesson.videoUrl = videoUrl;
         lesson.fullDescription = fullDescription;
-        lesson.productIds = selectedProductIds;
+        lesson.productIds = productIds;
 
         await lesson.save();
 
@@ -117,7 +107,10 @@ export const getLessonById = async (
     const { id } = req.params;
 
     try {
-        const lesson = await LessonModel.findById(id).populate("productIds");
+        const lesson = await LessonModel.findById(id).populate(
+            "productIds",
+            "imageUrl"
+        );
 
         if (!lesson) {
             throw new NotFoundError("Lesson not found");
@@ -135,7 +128,9 @@ export const getLessons = async (
     next: NextFunction
 ) => {
     try {
-        const lessons = await LessonModel.find();
+        const lessons = await LessonModel.find().select(
+            "-fullDescription -productIds"
+        );
 
         if (!lessons.length) {
             throw new NotFoundError("Lessons not found");

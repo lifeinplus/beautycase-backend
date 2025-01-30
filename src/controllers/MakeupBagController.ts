@@ -8,15 +8,14 @@ export const addMakeupBag = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { categoryId, clientId, selectedStageIds, selectedToolIds } =
-        req.body;
+    const { categoryId, clientId, stageIds, toolIds } = req.body;
 
     try {
         const makeupBag = new MakeupBagModel({
             categoryId,
             clientId,
-            stageIds: selectedStageIds,
-            toolIds: selectedToolIds,
+            stageIds,
+            toolIds,
         });
 
         const response = await makeupBag.save();
@@ -52,8 +51,7 @@ export const editMakeupBag = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { categoryId, clientId, selectedStageIds, selectedToolIds } =
-        req.body;
+    const { categoryId, clientId, stageIds, toolIds } = req.body;
 
     try {
         const makeupBag = await MakeupBagModel.findById(id).exec();
@@ -64,8 +62,8 @@ export const editMakeupBag = async (
 
         makeupBag.categoryId = categoryId;
         makeupBag.clientId = clientId;
-        makeupBag.stageIds = selectedStageIds;
-        makeupBag.toolIds = selectedToolIds;
+        makeupBag.stageIds = stageIds;
+        makeupBag.toolIds = toolIds;
 
         await makeupBag.save();
 
@@ -88,15 +86,20 @@ export const getMakeupBagById = async (
                 path: "categoryId",
             },
             {
+                path: "clientId",
+                select: "username",
+            },
+            {
                 path: "stageIds",
                 populate: {
                     path: "productIds",
                     populate: { path: "brandId" },
-                    select: "name image",
+                    select: "name imageUrl",
                 },
             },
             {
                 path: "toolIds",
+                select: "brandId imageUrl name",
                 populate: { path: "brandId" },
             },
         ]);
@@ -117,16 +120,18 @@ export const getMakeupBags = async (
     next: NextFunction
 ) => {
     try {
-        const makeupBags = await MakeupBagModel.find().populate([
-            {
-                path: "categoryId",
-                select: "name",
-            },
-            {
-                path: "clientId",
-                select: "username",
-            },
-        ]);
+        const makeupBags = await MakeupBagModel.find()
+            .select("categoryId clientId createdAt")
+            .populate([
+                {
+                    path: "categoryId",
+                    select: "name",
+                },
+                {
+                    path: "clientId",
+                    select: "username",
+                },
+            ]);
 
         if (!makeupBags) {
             throw new NotFoundError("MakeupBags not found");

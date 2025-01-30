@@ -10,7 +10,7 @@ const BrandSchema: Schema = new Schema(
     {
         name: { type: String, required: true, unique: true },
     },
-    { versionKey: false }
+    { id: false, versionKey: false }
 );
 
 export default mongoose.model<BrandDocument>("Brand", BrandSchema);

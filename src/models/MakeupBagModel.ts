@@ -32,7 +32,43 @@ const MakeupBagSchema: Schema = new Schema(
             required: true,
         },
     },
-    { timestamps: true, versionKey: false }
+    {
+        id: false,
+        timestamps: true,
+        toJSON: {
+            transform: (_, ret) => {
+                delete ret.categoryId;
+                delete ret.clientId;
+                delete ret.stageIds;
+                delete ret.toolIds;
+                return ret;
+            },
+            virtuals: true,
+        },
+        versionKey: false,
+        virtuals: {
+            category: {
+                get() {
+                    return this.categoryId;
+                },
+            },
+            client: {
+                get() {
+                    return this.clientId;
+                },
+            },
+            stages: {
+                get() {
+                    return this.stageIds;
+                },
+            },
+            tools: {
+                get() {
+                    return this.toolIds;
+                },
+            },
+        },
+    }
 );
 
 export default mongoose.model<MakeupBagDocument>("MakeupBag", MakeupBagSchema);
