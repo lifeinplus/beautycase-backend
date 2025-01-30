@@ -94,12 +94,12 @@ export const getMakeupBagById = async (
                 populate: {
                     path: "productIds",
                     populate: { path: "brandId" },
-                    select: "name image",
+                    select: "name imageUrl",
                 },
             },
             {
                 path: "toolIds",
-                select: "brandId image name",
+                select: "brandId imageUrl name",
                 populate: { path: "brandId" },
             },
         ]);

@@ -109,7 +109,7 @@ export const getLessonById = async (
     try {
         const lesson = await LessonModel.findById(id).populate(
             "productIds",
-            "image"
+            "imageUrl"
         );
 
         if (!lesson) {

@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 interface Stage {
     title: string;
     subtitle: string;
-    image: string;
+    imageUrl: string;
     steps: string[];
     productIds: string[];
 }
@@ -14,7 +14,7 @@ const StageSchema: Schema = new Schema(
     {
         title: { type: String, required: true },
         subtitle: { type: String, required: true },
-        image: { type: String, required: true },
+        imageUrl: { type: String, required: true },
         steps: { type: [String], required: true },
         productIds: {
             type: [Schema.Types.ObjectId],

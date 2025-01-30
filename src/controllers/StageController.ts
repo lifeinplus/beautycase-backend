@@ -8,13 +8,13 @@ export const addStage = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { title, subtitle, image, steps, productIds } = req.body;
+    const { title, subtitle, imageUrl, steps, productIds } = req.body;
 
     try {
         const stage = new StageModel({
             title,
             subtitle,
-            image,
+            imageUrl,
             steps,
             productIds,
         });
@@ -74,7 +74,7 @@ export const editStage = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    const { title, subtitle, image, steps, productIds } = req.body;
+    const { title, subtitle, imageUrl, steps, productIds } = req.body;
 
     try {
         const stage = await StageModel.findById(id).exec();
@@ -85,7 +85,7 @@ export const editStage = async (
 
         stage.title = title;
         stage.subtitle = subtitle;
-        stage.image = image;
+        stage.imageUrl = imageUrl;
         stage.steps = steps;
         stage.productIds = productIds;
 
@@ -107,7 +107,7 @@ export const getStageById = async (
     try {
         const stage = await StageModel.findById(id).populate(
             "productIds",
-            "image"
+            "imageUrl"
         );
 
         if (!stage) {
@@ -127,7 +127,7 @@ export const getStages = async (
 ) => {
     try {
         const stages = await StageModel.find().select(
-            "createdAt image subtitle title"
+            "createdAt imageUrl subtitle title"
         );
 
         if (!stages.length) {
