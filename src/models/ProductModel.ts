@@ -5,7 +5,9 @@ import { StoreLink, StoreLinkSchema } from "./shared";
 interface Product {
     brandId: string;
     name: string;
-    imageUrl: string;
+    imageFile?: File;
+    imageId?: string;
+    imageUrl?: string;
     shade?: string;
     comment: string;
     storeLinks: StoreLink[];
@@ -17,6 +19,7 @@ const ProductSchema = new Schema(
     {
         brandId: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
         name: { type: String, required: true },
+        imageId: { type: String },
         imageUrl: { type: String, required: true },
         shade: { type: String },
         comment: { type: String, required: true },

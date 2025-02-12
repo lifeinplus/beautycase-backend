@@ -2,13 +2,13 @@ import express from "express";
 
 import {
     addProduct,
-    addProductsList,
     deleteProductById,
     editProduct,
     getProductById,
     getProducts,
+    uploadImageTemp,
 } from "../controllers/ProductController";
-import { requestValidator, rolesVerifier } from "../middlewares";
+import { multerUpload, requestValidator, rolesVerifier } from "../middlewares";
 import {
     productBodySchema,
     productParamsSchema,
@@ -17,10 +17,18 @@ import {
 const router = express.Router();
 
 router.get("/all", rolesVerifier(["admin", "mua"]), getProducts);
+
 router.get(
     "/:id",
     requestValidator({ params: productParamsSchema }),
     getProductById
+);
+
+router.post(
+    "/image-temp",
+    rolesVerifier(["admin", "mua"]),
+    multerUpload.single("imageFile"),
+    uploadImageTemp
 );
 
 router.post(
@@ -29,7 +37,6 @@ router.post(
     requestValidator({ body: productBodySchema }),
     addProduct
 );
-router.post("/many", rolesVerifier(["admin", "mua"]), addProductsList);
 
 router.put(
     "/:id",
