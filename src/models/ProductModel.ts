@@ -7,7 +7,7 @@ interface Product {
     name: string;
     imageFile?: File;
     imageId?: string;
-    imageUrl?: string;
+    imageUrl: string;
     shade?: string;
     comment: string;
     storeLinks: StoreLink[];

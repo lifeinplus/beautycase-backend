@@ -6,9 +6,8 @@ import {
     editProduct,
     getProductById,
     getProducts,
-    uploadImageTemp,
 } from "../controllers/ProductController";
-import { multerUpload, requestValidator, rolesVerifier } from "../middlewares";
+import { requestValidator, rolesVerifier } from "../middlewares";
 import {
     productBodySchema,
     productParamsSchema,
@@ -22,13 +21,6 @@ router.get(
     "/:id",
     requestValidator({ params: productParamsSchema }),
     getProductById
-);
-
-router.post(
-    "/image-temp",
-    rolesVerifier(["admin", "mua"]),
-    multerUpload.single("imageFile"),
-    uploadImageTemp
 );
 
 router.post(

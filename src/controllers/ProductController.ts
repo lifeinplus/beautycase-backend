@@ -1,10 +1,9 @@
-import { v2 as cloudinary, type UploadApiOptions } from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
 import { ProductModel } from "../models";
-import { BadRequestError, NotFoundError } from "../utils";
-
-const tempImages = new Map();
+import { tempUploadsService } from "../services";
+import { NotFoundError } from "../utils";
 
 export const addProduct = async (
     req: Request,
@@ -15,10 +14,9 @@ export const addProduct = async (
 
     try {
         const product = new ProductModel(body);
+        const publicId = tempUploadsService.get(body.imageUrl);
 
-        if (tempImages.has(body.imageUrl)) {
-            const publicId = tempImages.get(body.imageUrl);
-
+        if (publicId) {
             await cloudinary.uploader.explicit(publicId, {
                 asset_folder: "products",
                 display_name: product._id,
@@ -34,7 +32,7 @@ export const addProduct = async (
 
             product.imageId = response.public_id;
             product.imageUrl = response.secure_url;
-            tempImages.delete(body.imageUrl);
+            tempUploadsService.remove(body.imageUrl);
         }
 
         await product.save();
@@ -64,7 +62,7 @@ export const deleteProductById = async (
         }
 
         if (product.imageId) {
-            const response = await cloudinary.uploader.destroy(product.imageId);
+            await cloudinary.uploader.destroy(product.imageId);
         }
 
         await ProductModel.findByIdAndDelete(id);
@@ -99,19 +97,16 @@ export const editProduct = async (
         product.comment = comment;
         product.storeLinks = storeLinks;
 
-        if (tempImages.has(imageUrl)) {
-            const oldPublicId = tempImages.get(imageUrl);
+        const publicId = tempUploadsService.get(imageUrl);
 
+        if (publicId) {
             const renamed = await cloudinary.uploader.rename(
-                oldPublicId,
+                publicId,
                 `products/${product._id}`,
-                {
-                    invalidate: true,
-                    overwrite: true,
-                }
+                { invalidate: true, overwrite: true }
             );
 
-            const explicited = await cloudinary.uploader.explicit(
+            const moved = await cloudinary.uploader.explicit(
                 renamed.public_id,
                 {
                     asset_folder: "products",
@@ -121,9 +116,9 @@ export const editProduct = async (
                 }
             );
 
-            product.imageId = explicited.public_id;
-            product.imageUrl = explicited.secure_url;
-            tempImages.delete(imageUrl);
+            product.imageId = moved.public_id;
+            product.imageUrl = moved.secure_url;
+            tempUploadsService.remove(imageUrl);
         }
 
         if (product.imageId && !imageUrl.includes("cloudinary")) {
@@ -175,41 +170,6 @@ export const getProducts = async (
         }
 
         res.status(200).json(products);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const uploadImageTemp = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    const { file } = req;
-
-    try {
-        if (!file) {
-            throw new BadRequestError("File upload failed");
-        }
-
-        const fileStr = file.buffer.toString("base64");
-        const dataUri = `data:${file.mimetype};base64,${fileStr}`;
-
-        const options: UploadApiOptions = {
-            folder: "products/temp",
-            overwrite: true,
-            resource_type: "auto",
-            unique_filename: true,
-            use_filename: false,
-        };
-
-        const uploadResult = await cloudinary.uploader.upload(dataUri, options);
-
-        tempImages.set(uploadResult.secure_url, uploadResult.public_id);
-
-        res.status(200).json({
-            imageUrl: uploadResult.secure_url,
-        });
     } catch (error) {
         next(error);
     }

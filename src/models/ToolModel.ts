@@ -5,6 +5,7 @@ import { StoreLink, StoreLinkSchema } from "./shared";
 interface Tool {
     brandId: string;
     name: string;
+    imageId?: string;
     imageUrl: string;
     number?: string;
     comment: string;
@@ -17,6 +18,7 @@ const ToolSchema: Schema = new Schema(
     {
         brandId: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
         name: { type: String, required: true },
+        imageId: { type: String },
         imageUrl: { type: String, required: true },
         number: { type: String },
         comment: { type: String, required: true },

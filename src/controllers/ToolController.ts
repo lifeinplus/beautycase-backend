@@ -1,42 +1,46 @@
+import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
 import { ToolModel } from "../models";
-import { BadRequestError, NotFoundError } from "../utils";
+import { tempUploadsService } from "../services";
+import { NotFoundError } from "../utils";
 
 export const addTool = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
+    const { body } = req;
+
     try {
-        const tool = new ToolModel(req.body);
-        const response = await tool.save();
+        const tool = new ToolModel(body);
+        const publicId = tempUploadsService.get(body.imageUrl);
+
+        if (publicId) {
+            await cloudinary.uploader.explicit(publicId, {
+                asset_folder: "tools",
+                display_name: tool._id,
+                invalidate: true,
+                type: "upload",
+            });
+
+            const response = await cloudinary.uploader.rename(
+                publicId,
+                `tools/${tool._id}`,
+                { invalidate: true }
+            );
+
+            tool.imageId = response.public_id;
+            tool.imageUrl = response.secure_url;
+            tempUploadsService.remove(body.imageUrl);
+        }
+
+        await tool.save();
+
         res.status(201).json({
             count: 1,
-            id: response._id,
+            id: tool._id,
             message: "Tool added successfully",
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const addToolsList = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    const tool = req.body;
-
-    if (!Array.isArray(tool) || tool.length === 0) {
-        throw new BadRequestError("Invalid tool list provided");
-    }
-
-    try {
-        const createdTools = await ToolModel.insertMany(tool);
-        res.status(201).json({
-            message: "Tools added successfully",
-            count: createdTools.length,
         });
     } catch (error) {
         next(error);
@@ -51,7 +55,18 @@ export const deleteToolById = async (
     const { id } = req.params;
 
     try {
+        const tool = await ToolModel.findById(id).exec();
+
+        if (!tool) {
+            throw new NotFoundError("Tool not found");
+        }
+
+        if (tool.imageId) {
+            await cloudinary.uploader.destroy(tool.imageId);
+        }
+
         await ToolModel.findByIdAndDelete(id);
+
         res.status(200).json({ message: "Tool successfully deleted" });
     } catch (error) {
         next(error);
@@ -63,8 +78,10 @@ export const editTool = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { id } = req.params;
-    const { name, brandId, imageUrl, number, comment, storeLinks } = req.body;
+    const { body, params } = req;
+
+    const { id } = params;
+    const { name, brandId, imageUrl, number, comment, storeLinks } = body;
 
     try {
         const tool = await ToolModel.findById(id).exec();
@@ -73,17 +90,46 @@ export const editTool = async (
             throw new NotFoundError("Tool not found");
         }
 
-        tool.name = name;
         tool.brandId = brandId;
+        tool.name = name;
         tool.imageUrl = imageUrl;
         tool.number = number;
         tool.comment = comment;
         tool.storeLinks = storeLinks;
 
-        const response = await tool.save();
+        const publicId = tempUploadsService.get(imageUrl);
+
+        if (publicId) {
+            const renamed = await cloudinary.uploader.rename(
+                publicId,
+                `tools/${tool._id}`,
+                { invalidate: true, overwrite: true }
+            );
+
+            const moved = await cloudinary.uploader.explicit(
+                renamed.public_id,
+                {
+                    asset_folder: "tools",
+                    display_name: tool._id,
+                    invalidate: true,
+                    type: "upload",
+                }
+            );
+
+            tool.imageId = moved.public_id;
+            tool.imageUrl = moved.secure_url;
+            tempUploadsService.remove(imageUrl);
+        }
+
+        if (tool.imageId && !imageUrl.includes("cloudinary")) {
+            await cloudinary.uploader.destroy(tool.imageId);
+            tool.imageId = undefined;
+        }
+
+        await tool.save();
 
         res.status(200).json({
-            id: response._id,
+            id: tool._id,
             message: "Tool successfully changed",
         });
     } catch (error) {

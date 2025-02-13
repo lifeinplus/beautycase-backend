@@ -8,4 +8,5 @@ export * from "./questionnaireSchema";
 export * from "./registerSchema";
 export * from "./stageSchema";
 export * from "./toolSchema";
+export * from "./uploadSchema";
 export * from "./userSchema";

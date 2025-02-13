@@ -2,7 +2,6 @@ import express from "express";
 
 import {
     addTool,
-    addToolsList,
     deleteToolById,
     editTool,
     getToolById,
@@ -14,27 +13,27 @@ import { toolBodySchema, toolParamsSchema } from "../validations/toolSchema";
 const router = express.Router();
 
 router.get("/all", rolesVerifier(["admin", "mua"]), getTools);
+
 router.get("/:id", requestValidator({ params: toolParamsSchema }), getToolById);
 
 router.post(
     "/one",
-    requestValidator({ body: toolBodySchema }),
     rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: toolBodySchema }),
     addTool
 );
-router.post("/many", rolesVerifier(["admin", "mua"]), addToolsList);
 
 router.put(
     "/:id",
-    requestValidator({ body: toolBodySchema, params: toolParamsSchema }),
     rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: toolBodySchema, params: toolParamsSchema }),
     editTool
 );
 
 router.delete(
     "/:id",
-    requestValidator({ params: toolParamsSchema }),
     rolesVerifier(["admin", "mua"]),
+    requestValidator({ params: toolParamsSchema }),
     deleteToolById
 );
 

@@ -22,6 +22,7 @@ import {
     StageRoutes,
     StoreRoutes,
     ToolRoutes,
+    UploadRoutes,
     UserRoutes,
 } from "./routes";
 import { NotFoundError } from "./utils";
@@ -62,6 +63,7 @@ const StartServer = () => {
     app.use("/api/stages", StageRoutes);
     app.use("/api/stores", StoreRoutes);
     app.use("/api/tools", ToolRoutes);
+    app.use("/api/uploads", UploadRoutes);
     app.use("/api/users", UserRoutes);
 
     app.use((req, res, next) => {
