@@ -1,52 +1,46 @@
+import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
 import { StageModel } from "../models";
-import { BadRequestError, NotFoundError } from "../utils";
+import { tempUploadsService } from "../services";
+import { NotFoundError } from "../utils";
 
 export const addStage = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const { title, subtitle, imageUrl, steps, productIds } = req.body;
+    const { body } = req;
 
     try {
-        const stage = new StageModel({
-            title,
-            subtitle,
-            imageUrl,
-            steps,
-            productIds,
-        });
+        const stage = new StageModel(body);
+        const publicId = tempUploadsService.get(body.imageUrl);
 
-        const response = await stage.save();
+        if (publicId) {
+            await cloudinary.uploader.explicit(publicId, {
+                asset_folder: "stages",
+                display_name: stage._id,
+                invalidate: true,
+                type: "upload",
+            });
+
+            const response = await cloudinary.uploader.rename(
+                publicId,
+                `stages/${stage._id}`,
+                { invalidate: true }
+            );
+
+            stage.imageId = response.public_id;
+            stage.imageUrl = response.secure_url;
+            tempUploadsService.remove(body.imageUrl);
+        }
+
+        await stage.save();
 
         res.status(201).json({
             count: 1,
-            id: response._id,
+            id: stage._id,
             message: "Stage added successfully",
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const addStagesList = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    const stages = req.body;
-
-    if (!Array.isArray(stages) || stages.length === 0) {
-        throw new BadRequestError("Invalid stage list provided");
-    }
-
-    try {
-        const createdStages = await StageModel.insertMany(stages);
-        res.status(201).json({
-            message: "Stages added successfully",
-            count: createdStages.length,
         });
     } catch (error) {
         next(error);
@@ -61,7 +55,18 @@ export const deleteStageById = async (
     const { id } = req.params;
 
     try {
+        const stage = await StageModel.findById(id).exec();
+
+        if (!stage) {
+            throw new NotFoundError("Stage not found");
+        }
+
+        if (stage.imageId) {
+            await cloudinary.uploader.destroy(stage.imageId);
+        }
+
         await StageModel.findByIdAndDelete(id);
+
         res.status(200).json({ message: "Stage successfully deleted" });
     } catch (error) {
         next(error);
@@ -73,8 +78,10 @@ export const editStage = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { id } = req.params;
-    const { title, subtitle, imageUrl, steps, productIds } = req.body;
+    const { body, params } = req;
+
+    const { id } = params;
+    const { title, subtitle, imageUrl, steps, productIds } = body;
 
     try {
         const stage = await StageModel.findById(id).exec();
@@ -89,9 +96,41 @@ export const editStage = async (
         stage.steps = steps;
         stage.productIds = productIds;
 
+        const publicId = tempUploadsService.get(imageUrl);
+
+        if (publicId) {
+            const renamed = await cloudinary.uploader.rename(
+                publicId,
+                `stages/${stage._id}`,
+                { invalidate: true, overwrite: true }
+            );
+
+            const moved = await cloudinary.uploader.explicit(
+                renamed.public_id,
+                {
+                    asset_folder: "stages",
+                    display_name: stage._id,
+                    invalidate: true,
+                    type: "upload",
+                }
+            );
+
+            stage.imageId = moved.public_id;
+            stage.imageUrl = moved.secure_url;
+            tempUploadsService.remove(imageUrl);
+        }
+
+        if (stage.imageId && !imageUrl.includes("cloudinary")) {
+            await cloudinary.uploader.destroy(stage.imageId);
+            stage.imageId = undefined;
+        }
+
         await stage.save();
 
-        res.status(200).json({ message: "Stage successfully changed" });
+        res.status(200).json({
+            id: stage._id,
+            message: "Stage successfully changed",
+        });
     } catch (error) {
         next(error);
     }

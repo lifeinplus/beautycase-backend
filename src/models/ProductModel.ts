@@ -5,7 +5,6 @@ import { StoreLink, StoreLinkSchema } from "./shared";
 interface Product {
     brandId: string;
     name: string;
-    imageFile?: File;
     imageId?: string;
     imageUrl: string;
     shade?: string;
