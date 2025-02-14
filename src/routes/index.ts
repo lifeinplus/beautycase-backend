@@ -8,6 +8,7 @@ import QuestionnaireRoutes from "./QuestionnaireRoutes";
 import StageRoutes from "./StageRoutes";
 import StoreRoutes from "./StoreRoutes";
 import ToolRoutes from "./ToolRoutes";
+import UploadRoutes from "./UploadRoutes";
 import UserRoutes from "./UserRoutes";
 
 export {
@@ -21,5 +22,6 @@ export {
     StageRoutes,
     StoreRoutes,
     ToolRoutes,
+    UploadRoutes,
     UserRoutes,
 };

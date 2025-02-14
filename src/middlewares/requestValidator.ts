@@ -14,8 +14,11 @@ interface SchemaValue {
 
 const parseObjectFields = (data: any, schema: ObjectSchema) => {
     const schemaDescription = schema.describe();
+
     const objectFields = Object.entries(schemaDescription.keys || {})
-        .filter(([, value]) => (value as SchemaValue).type === "object")
+        .filter(([, value]) =>
+            ["array", "object"].includes((value as SchemaValue).type)
+        )
         .map(([key]) => key);
 
     objectFields.forEach((field) => {
@@ -42,8 +45,8 @@ export const requestValidator = (schemas: Schemas) => {
 
             const { error } = schemas.body.validate(req.body, options);
 
-            // console.log(req.body);
-            // console.log(error);
+            // console.log(111, req.body);
+            // console.log(222, error);
 
             if (error) {
                 throw new BadRequestError(

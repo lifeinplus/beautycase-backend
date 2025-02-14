@@ -2,7 +2,6 @@ import express from "express";
 
 import {
     addStage,
-    addStagesList,
     deleteStageById,
     editStage,
     getStageById,
@@ -14,6 +13,7 @@ import { stageBodySchema, stageParamsSchema } from "../validations";
 const router = express.Router();
 
 router.get("/all", rolesVerifier(["admin", "mua"]), getStages);
+
 router.get(
     "/:id",
     requestValidator({ params: stageParamsSchema }),
@@ -26,7 +26,6 @@ router.post(
     requestValidator({ body: stageBodySchema }),
     addStage
 );
-router.post("/many", rolesVerifier(["admin", "mua"]), addStagesList);
 
 router.put(
     "/:id",

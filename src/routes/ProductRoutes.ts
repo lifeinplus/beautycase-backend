@@ -2,7 +2,6 @@ import express from "express";
 
 import {
     addProduct,
-    addProductsList,
     deleteProductById,
     editProduct,
     getProductById,
@@ -17,6 +16,7 @@ import {
 const router = express.Router();
 
 router.get("/all", rolesVerifier(["admin", "mua"]), getProducts);
+
 router.get(
     "/:id",
     requestValidator({ params: productParamsSchema }),
@@ -29,7 +29,6 @@ router.post(
     requestValidator({ body: productBodySchema }),
     addProduct
 );
-router.post("/many", rolesVerifier(["admin", "mua"]), addProductsList);
 
 router.put(
     "/:id",

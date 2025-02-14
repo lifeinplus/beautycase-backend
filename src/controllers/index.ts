@@ -7,4 +7,5 @@ export * from "./QuestionnaireController";
 export * from "./StageController";
 export * from "./StoreController";
 export * from "./ToolController";
+export * from "./UploadController";
 export * from "./UserController";
