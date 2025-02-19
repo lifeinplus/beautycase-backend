@@ -43,9 +43,22 @@ export const updateStore = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { body, params } = req;
+
+    const { id } = params;
+    const { name } = body;
+
     try {
-        // TODO: Implement updateStore
-        res.status(200).json("stores");
+        const store = await StoreModel.findById(id).exec();
+
+        if (!store) {
+            throw new NotFoundError("Store not found");
+        }
+
+        store.name = name;
+        await store.save();
+
+        res.status(200).json({ message: "Store updated successfully" });
     } catch (error) {
         next(error);
     }
@@ -56,9 +69,11 @@ export const deleteStore = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { id } = req.params;
+
     try {
-        // TODO: Implement deleteStore
-        res.status(200).json("stores");
+        await StoreModel.findByIdAndDelete(id);
+        res.status(200).json({ message: "Store deleted successfully" });
     } catch (error) {
         next(error);
     }
