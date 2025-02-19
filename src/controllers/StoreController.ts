@@ -3,7 +3,24 @@ import { NextFunction, Request, Response } from "express";
 import { StoreModel } from "../models";
 import { NotFoundError } from "../utils";
 
-export const getStores = async (
+export const createStore = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const store = new StoreModel(req.body);
+        await store.save();
+        res.status(201).json({
+            count: 1,
+            message: "Store created successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const readStores = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -21,18 +38,27 @@ export const getStores = async (
     }
 };
 
-export const addStore = async (
+export const updateStore = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const store = new StoreModel(req.body);
-        await store.save();
-        res.status(201).json({
-            message: "Store added successfully",
-            count: 1,
-        });
+        // TODO: Implement updateStore
+        res.status(200).json("stores");
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteStore = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        // TODO: Implement deleteStore
+        res.status(200).json("stores");
     } catch (error) {
         next(error);
     }
