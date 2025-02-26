@@ -1,44 +1,44 @@
 import express from "express";
 
 import {
-    addStage,
-    deleteStageById,
-    editStage,
-    getStageById,
-    getStages,
+    createStage,
+    deleteStage,
+    readStageById,
+    readStages,
+    updateStage,
 } from "../controllers/StageController";
 import { requestValidator, rolesVerifier } from "../middlewares";
 import { stageBodySchema, stageParamsSchema } from "../validations";
 
 const router = express.Router();
 
-router.get("/all", rolesVerifier(["admin", "mua"]), getStages);
+router.post(
+    "/",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: stageBodySchema }),
+    createStage
+);
+
+router.get("/", rolesVerifier(["admin", "mua"]), readStages);
 
 router.get(
     "/:id",
     requestValidator({ params: stageParamsSchema }),
-    getStageById
-);
-
-router.post(
-    "/one",
-    rolesVerifier(["admin", "mua"]),
-    requestValidator({ body: stageBodySchema }),
-    addStage
+    readStageById
 );
 
 router.put(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: stageBodySchema, params: stageParamsSchema }),
-    editStage
+    updateStage
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: stageParamsSchema }),
-    deleteStageById
+    deleteStage
 );
 
 export default router;

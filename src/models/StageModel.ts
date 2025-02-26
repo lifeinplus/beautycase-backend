@@ -5,7 +5,8 @@ interface Stage {
     subtitle: string;
     imageId?: string;
     imageUrl: string;
-    steps: string[];
+    comment?: string;
+    steps?: string[];
     productIds: string[];
 }
 
@@ -17,7 +18,8 @@ const StageSchema: Schema = new Schema(
         subtitle: { type: String, required: true },
         imageId: { type: String },
         imageUrl: { type: String, required: true },
-        steps: { type: [String], required: true },
+        comment: { type: String },
+        steps: { type: [String] },
         productIds: {
             type: [Schema.Types.ObjectId],
             ref: "Product",

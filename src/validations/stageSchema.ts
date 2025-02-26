@@ -6,7 +6,8 @@ export const stageBodySchema = Joi.object({
     title: Joi.string().min(3).max(100).required(),
     subtitle: Joi.string().min(10).max(300).required(),
     imageUrl: Joi.string().uri().required(),
-    steps: Joi.array().items(Joi.string()).required(),
+    comment: Joi.string().optional().max(500),
+    steps: Joi.array().items(Joi.string()).optional(),
     productIds: Joi.array().items(objectIdSchema.required()).required(),
 });
 

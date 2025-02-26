@@ -5,7 +5,7 @@ import { StageModel } from "../models";
 import { tempUploadsService } from "../services";
 import { NotFoundError } from "../utils";
 
-export const addStage = async (
+export const createStage = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -47,7 +47,7 @@ export const addStage = async (
     }
 };
 
-export const deleteStageById = async (
+export const deleteStage = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -73,7 +73,7 @@ export const deleteStageById = async (
     }
 };
 
-export const editStage = async (
+export const updateStage = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -81,7 +81,7 @@ export const editStage = async (
     const { body, params } = req;
 
     const { id } = params;
-    const { title, subtitle, imageUrl, steps, productIds } = body;
+    const { title, subtitle, imageUrl, comment, steps, productIds } = body;
 
     try {
         const stage = await StageModel.findById(id).exec();
@@ -93,6 +93,7 @@ export const editStage = async (
         stage.title = title;
         stage.subtitle = subtitle;
         stage.imageUrl = imageUrl;
+        stage.comment = comment;
         stage.steps = steps;
         stage.productIds = productIds;
 
@@ -136,7 +137,7 @@ export const editStage = async (
     }
 };
 
-export const getStageById = async (
+export const readStageById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -159,7 +160,7 @@ export const getStageById = async (
     }
 };
 
-export const getStages = async (
+export const readStages = async (
     req: Request,
     res: Response,
     next: NextFunction
