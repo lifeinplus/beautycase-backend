@@ -121,7 +121,7 @@ export const getMakeupBags = async (
 ) => {
     try {
         const makeupBags = await MakeupBagModel.find()
-            .select("categoryId clientId createdAt")
+            .select("categoryId clientId createdAt stageIds")
             .populate([
                 {
                     path: "categoryId",
@@ -130,6 +130,10 @@ export const getMakeupBags = async (
                 {
                     path: "clientId",
                     select: "username",
+                },
+                {
+                    path: "stageIds",
+                    select: "_id",
                 },
             ]);
 
