@@ -47,6 +47,41 @@ export const createStage = async (
     }
 };
 
+export const duplicateStage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { params } = req;
+    const { id } = params;
+
+    try {
+        const stage = await StageModel.findById(id).exec();
+
+        if (!stage) {
+            throw new NotFoundError("Stage not found");
+        }
+
+        const duplicatedStage = new StageModel({
+            ...stage.toObject(),
+            _id: undefined,
+            createdAt: undefined,
+            updatedAt: undefined,
+            title: `${stage.title} (Копия)`,
+        });
+
+        await duplicatedStage.save();
+
+        res.status(201).json({
+            count: 1,
+            id: duplicatedStage._id,
+            message: "Stage duplicated successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const deleteStage = async (
     req: Request,
     res: Response,
@@ -59,10 +94,6 @@ export const deleteStage = async (
 
         if (!stage) {
             throw new NotFoundError("Stage not found");
-        }
-
-        if (stage.imageId) {
-            await cloudinary.uploader.destroy(stage.imageId);
         }
 
         await StageModel.findByIdAndDelete(id);
@@ -122,7 +153,6 @@ export const updateStage = async (
         }
 
         if (stage.imageId && !imageUrl.includes("cloudinary")) {
-            await cloudinary.uploader.destroy(stage.imageId);
             stage.imageId = undefined;
         }
 
