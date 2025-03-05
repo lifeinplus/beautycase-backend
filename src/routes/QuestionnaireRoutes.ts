@@ -34,7 +34,6 @@ router.get(
 
 router.post(
     "/one",
-    multerUpload.single("makeupBagPhotoFile"),
     requestValidator({ body: questionnaireBodySchema }),
     addQuestionnaire
 );

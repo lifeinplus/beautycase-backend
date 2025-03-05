@@ -35,7 +35,7 @@ interface Questionnaire {
     instagram?: string;
     makeupBag: string;
     makeupBagPhotoId?: string;
-    makeupBagPhotoFile?: File;
+    makeupBagPhotoUrl?: string;
     makeupTime?: string;
     name: string;
     oilyShine?: string;
@@ -70,6 +70,7 @@ const QuestionnaireSchema: Schema = new Schema(
         instagram: { type: String },
         makeupBag: { type: String, required: true },
         makeupBagPhotoId: { type: String },
+        makeupBagPhotoUrl: { type: String },
         makeupTime: {
             type: String,
             enum: ["15", "15-30", "30-60"],
