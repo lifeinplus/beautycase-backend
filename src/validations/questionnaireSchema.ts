@@ -20,6 +20,7 @@ export const questionnaireBodySchema = Joi.object({
     makeupBag: Joi.string().required().messages({
         "string.empty": "Укажите, что сейчас есть в косметичке",
     }),
+    makeupBagPhotoUrl: Joi.string().uri(),
     makeupTime: Joi.string().valid("15", "15-30", "30-60"),
     name: Joi.string().required().messages({
         "string.empty": "Укажите ваше имя",

@@ -1,13 +1,10 @@
-import {
-    v2 as cloudinary,
-    type UploadApiOptions,
-    type UploadApiResponse,
-} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
 import config from "../config";
 import { QuestionnaireModel } from "../models";
-import { AppError, NotFoundError } from "../utils";
+import { tempUploadsService } from "../services";
+import { NotFoundError } from "../utils";
 
 cloudinary.config(config.cloudinary);
 
@@ -16,44 +13,36 @@ export const addQuestionnaire = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { body, file } = req;
+    const { body } = req;
 
     try {
         const questionnaire = new QuestionnaireModel(body);
-        const response = await questionnaire.save();
+        const publicId = tempUploadsService.get(body.makeupBagPhotoUrl);
 
-        if (file) {
-            const fileBuffer = file.buffer;
+        if (publicId) {
+            await cloudinary.uploader.explicit(publicId, {
+                asset_folder: `questionnaires/${questionnaire._id}`,
+                display_name: "makeup-bag",
+                invalidate: true,
+                type: "upload",
+            });
 
-            const options: UploadApiOptions = {
-                folder: `questionnaires/${response._id}`,
-                overwrite: true,
-                public_id: "makeup-bag",
-                unique_filename: false,
-                use_filename: false,
-            };
+            const response = await cloudinary.uploader.rename(
+                publicId,
+                `questionnaires/${questionnaire._id}/makeup-bag`,
+                { invalidate: true }
+            );
 
-            const uploadResult: UploadApiResponse | undefined =
-                await new Promise((resolve, reject) => {
-                    cloudinary.uploader
-                        .upload_stream(options, (error, result) => {
-                            if (error) {
-                                return reject(
-                                    new AppError(error.http_code, error.message)
-                                );
-                            }
-                            resolve(result);
-                        })
-                        .end(fileBuffer);
-                });
-
-            questionnaire.makeupBagPhotoId = uploadResult?.public_id;
-            await questionnaire.save();
+            questionnaire.makeupBagPhotoId = response?.public_id;
+            questionnaire.makeupBagPhotoUrl = response?.secure_url;
+            tempUploadsService.remove(body.imageUrl);
         }
+
+        await questionnaire.save();
 
         res.status(201).json({
             count: 1,
-            id: response._id,
+            id: questionnaire._id,
             message: "Questionnaire added successfully",
         });
     } catch (error) {

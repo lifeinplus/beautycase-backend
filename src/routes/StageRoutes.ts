@@ -3,6 +3,7 @@ import express from "express";
 import {
     createStage,
     deleteStage,
+    duplicateStage,
     readStageById,
     readStages,
     updateStage,
@@ -17,6 +18,13 @@ router.post(
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: stageBodySchema }),
     createStage
+);
+
+router.post(
+    "/duplicate/:id",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ params: stageParamsSchema }),
+    duplicateStage
 );
 
 router.get("/", rolesVerifier(["admin", "mua"]), readStages);

@@ -53,6 +53,7 @@ const StartServer = () => {
 
     app.use("/api/auth", AuthRoutes);
     app.use("/api/questionnaires", QuestionnaireRoutes);
+    app.use("/api/uploads", UploadRoutes);
     app.use(jwtVerifier);
     app.use(rolesVerifier(["admin", "mua", "client"]));
     app.use("/api/brands", BrandRoutes);
@@ -63,7 +64,6 @@ const StartServer = () => {
     app.use("/api/stages", StageRoutes);
     app.use("/api/stores", StoreRoutes);
     app.use("/api/tools", ToolRoutes);
-    app.use("/api/uploads", UploadRoutes);
     app.use("/api/users", UserRoutes);
 
     app.use((req, res, next) => {
