@@ -5,7 +5,7 @@ import { objectIdSchema } from "./shared";
 export const questionnaireBodySchema = Joi.object({
     age: Joi.number(),
     allergies: Joi.string().allow(""),
-    budget: Joi.string().valid("50", "50-100", "100"),
+    budget: Joi.string().valid("150", "150-250", "250"),
     brushes: Joi.string().valid("yes", "no"),
     city: Joi.string(),
     currentSkills: Joi.string().allow(""),
