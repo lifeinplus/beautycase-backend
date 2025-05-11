@@ -8,7 +8,7 @@ import { NotFoundError } from "../utils";
 
 cloudinary.config(config.cloudinary);
 
-export const addQuestionnaire = async (
+export const createQuestionnaire = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -43,14 +43,14 @@ export const addQuestionnaire = async (
         res.status(201).json({
             count: 1,
             id: questionnaire._id,
-            message: "Questionnaire added successfully",
+            message: "Questionnaire created successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const getQuestionnaireById = async (
+export const readQuestionnaire = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -70,7 +70,7 @@ export const getQuestionnaireById = async (
     }
 };
 
-export const getQuestionnaires = async (
+export const readQuestionnaires = async (
     req: Request,
     res: Response,
     next: NextFunction

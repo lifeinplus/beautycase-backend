@@ -1,11 +1,11 @@
 import express from "express";
 
 import {
-    addProduct,
-    deleteProductById,
-    editProduct,
-    getProductById,
-    getProducts,
+    createProduct,
+    readProduct,
+    readProducts,
+    updateProduct,
+    deleteProduct,
 } from "../controllers/ProductController";
 import { requestValidator, rolesVerifier } from "../middlewares";
 import {
@@ -15,33 +15,33 @@ import {
 
 const router = express.Router();
 
-router.get("/all", rolesVerifier(["admin", "mua"]), getProducts);
+router.post(
+    "/",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: productBodySchema }),
+    createProduct
+);
 
 router.get(
     "/:id",
     requestValidator({ params: productParamsSchema }),
-    getProductById
+    readProduct
 );
 
-router.post(
-    "/one",
-    rolesVerifier(["admin", "mua"]),
-    requestValidator({ body: productBodySchema }),
-    addProduct
-);
+router.get("/", rolesVerifier(["admin", "mua"]), readProducts);
 
 router.put(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: productBodySchema, params: productParamsSchema }),
-    editProduct
+    updateProduct
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: productParamsSchema }),
-    deleteProductById
+    deleteProduct
 );
 
 export default router;

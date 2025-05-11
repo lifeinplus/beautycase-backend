@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
 import { LessonModel } from "../models";
-import { BadRequestError, NotFoundError } from "../utils";
+import { NotFoundError } from "../utils";
 
-export const addLesson = async (
+export const createLesson = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -25,36 +25,14 @@ export const addLesson = async (
         res.status(201).json({
             count: 1,
             id: response._id,
-            message: "Lesson added successfully",
+            message: "Lesson created successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const addLessonsList = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    const lessons = req.body;
-
-    if (!Array.isArray(lessons) || lessons.length === 0) {
-        throw new BadRequestError("Invalid lesson list provided");
-    }
-
-    try {
-        const createdLessons = await LessonModel.insertMany(lessons);
-        res.status(201).json({
-            message: "Lessons added successfully",
-            count: createdLessons.length,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const deleteLessonById = async (
+export const readLesson = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -62,14 +40,42 @@ export const deleteLessonById = async (
     const { id } = req.params;
 
     try {
-        await LessonModel.findByIdAndDelete(id);
-        res.status(200).json({ message: "Lesson successfully deleted" });
+        const lesson = await LessonModel.findById(id).populate(
+            "productIds",
+            "imageUrl"
+        );
+
+        if (!lesson) {
+            throw new NotFoundError("Lesson not found");
+        }
+
+        res.status(200).json(lesson);
     } catch (error) {
         next(error);
     }
 };
 
-export const editLesson = async (
+export const readLessons = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const lessons = await LessonModel.find().select(
+            "-fullDescription -productIds"
+        );
+
+        if (!lessons.length) {
+            throw new NotFoundError("Lessons not found");
+        }
+
+        res.status(200).json(lessons);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateLesson = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -93,13 +99,13 @@ export const editLesson = async (
 
         await lesson.save();
 
-        res.status(200).json({ message: "Lesson successfully changed" });
+        res.status(200).json({ message: "Lesson updated successfully" });
     } catch (error) {
         next(error);
     }
 };
 
-export const getLessonById = async (
+export const deleteLesson = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -107,36 +113,8 @@ export const getLessonById = async (
     const { id } = req.params;
 
     try {
-        const lesson = await LessonModel.findById(id).populate(
-            "productIds",
-            "imageUrl"
-        );
-
-        if (!lesson) {
-            throw new NotFoundError("Lesson not found");
-        }
-
-        res.status(200).json(lesson);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getLessons = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const lessons = await LessonModel.find().select(
-            "-fullDescription -productIds"
-        );
-
-        if (!lessons.length) {
-            throw new NotFoundError("Lessons not found");
-        }
-
-        res.status(200).json(lessons);
+        await LessonModel.findByIdAndDelete(id);
+        res.status(200).json({ message: "Lesson deleted successfully" });
     } catch (error) {
         next(error);
     }

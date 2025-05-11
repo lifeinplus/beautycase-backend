@@ -1,30 +1,31 @@
 import express from "express";
 
 import {
-    addMakeupBag,
-    deleteMakeupBagById,
-    editMakeupBag,
-    getMakeupBagById,
-    getMakeupBags,
+    createMakeupBag,
+    readMakeupBag,
+    readMakeupBags,
+    updateMakeupBag,
+    deleteMakeupBag,
 } from "../controllers";
 import { requestValidator, rolesVerifier } from "../middlewares";
 import { makeupBagBodySchema, makeupBagParamsSchema } from "../validations";
 
 const router = express.Router();
 
-router.get("/all", rolesVerifier(["admin", "mua"]), getMakeupBags);
+router.post(
+    "/",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: makeupBagBodySchema }),
+    createMakeupBag
+);
+
 router.get(
     "/:id",
     requestValidator({ params: makeupBagParamsSchema }),
-    getMakeupBagById
+    readMakeupBag
 );
 
-router.post(
-    "/one",
-    rolesVerifier(["admin", "mua"]),
-    requestValidator({ body: makeupBagBodySchema }),
-    addMakeupBag
-);
+router.get("/", rolesVerifier(["admin", "mua"]), readMakeupBags);
 
 router.put(
     "/:id",
@@ -33,14 +34,14 @@ router.put(
         body: makeupBagBodySchema,
         params: makeupBagParamsSchema,
     }),
-    editMakeupBag
+    updateMakeupBag
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: makeupBagParamsSchema }),
-    deleteMakeupBagById
+    deleteMakeupBag
 );
 
 export default router;

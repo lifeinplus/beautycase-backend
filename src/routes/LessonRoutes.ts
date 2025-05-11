@@ -1,12 +1,11 @@
 import express from "express";
 
 import {
-    addLesson,
-    addLessonsList,
-    deleteLessonById,
-    editLesson,
-    getLessonById,
-    getLessons,
+    createLesson,
+    readLesson,
+    readLessons,
+    updateLesson,
+    deleteLesson,
 } from "../controllers/LessonController";
 import { requestValidator, rolesVerifier } from "../middlewares";
 import {
@@ -16,33 +15,33 @@ import {
 
 const router = express.Router();
 
-router.get("/all", getLessons);
+router.post(
+    "/",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({ body: lessonBodySchema }),
+    createLesson
+);
+
 router.get(
     "/:id",
     requestValidator({ params: lessonParamsSchema }),
-    getLessonById
+    readLesson
 );
 
-router.post(
-    "/one",
-    rolesVerifier(["admin", "mua"]),
-    requestValidator({ body: lessonBodySchema }),
-    addLesson
-);
-router.post("/many", rolesVerifier(["admin", "mua"]), addLessonsList);
+router.get("/", readLessons);
 
 router.put(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: lessonBodySchema, params: lessonParamsSchema }),
-    editLesson
+    updateLesson
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: lessonParamsSchema }),
-    deleteLessonById
+    deleteLesson
 );
 
 export default router;

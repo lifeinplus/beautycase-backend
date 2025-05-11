@@ -2,11 +2,11 @@ import express from "express";
 
 import {
     createStage,
-    deleteStage,
     duplicateStage,
-    readStageById,
+    readStage,
     readStages,
     updateStage,
+    deleteStage,
 } from "../controllers/StageController";
 import { requestValidator, rolesVerifier } from "../middlewares";
 import { stageBodySchema, stageParamsSchema } from "../validations";
@@ -27,13 +27,9 @@ router.post(
     duplicateStage
 );
 
-router.get("/", rolesVerifier(["admin", "mua"]), readStages);
+router.get("/:id", requestValidator({ params: stageParamsSchema }), readStage);
 
-router.get(
-    "/:id",
-    requestValidator({ params: stageParamsSchema }),
-    readStageById
-);
+router.get("/", rolesVerifier(["admin", "mua"]), readStages);
 
 router.put(
     "/:id",

@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { MakeupBagModel, UserModel } from "../models";
 import { NotFoundError } from "../utils";
 
-export const getUserById = async (
+export const readUser = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -26,7 +26,7 @@ export const getUserById = async (
     }
 };
 
-export const getUsers = async (
+export const readUsers = async (
     req: Request,
     res: Response,
     next: NextFunction

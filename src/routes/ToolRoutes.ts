@@ -1,40 +1,40 @@
 import express from "express";
 
 import {
-    addTool,
-    deleteToolById,
-    editTool,
-    getToolById,
-    getTools,
+    createTool,
+    readTool,
+    readTools,
+    updateTool,
+    deleteTool,
 } from "../controllers/ToolController";
 import { requestValidator, rolesVerifier } from "../middlewares";
 import { toolBodySchema, toolParamsSchema } from "../validations/toolSchema";
 
 const router = express.Router();
 
-router.get("/all", rolesVerifier(["admin", "mua"]), getTools);
-
-router.get("/:id", requestValidator({ params: toolParamsSchema }), getToolById);
-
 router.post(
-    "/one",
+    "/",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: toolBodySchema }),
-    addTool
+    createTool
 );
+
+router.get("/:id", requestValidator({ params: toolParamsSchema }), readTool);
+
+router.get("/", rolesVerifier(["admin", "mua"]), readTools);
 
 router.put(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: toolBodySchema, params: toolParamsSchema }),
-    editTool
+    updateTool
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: toolParamsSchema }),
-    deleteToolById
+    deleteTool
 );
 
 export default router;

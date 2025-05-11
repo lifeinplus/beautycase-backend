@@ -5,7 +5,7 @@ import { ToolModel } from "../models";
 import { tempUploadsService } from "../services";
 import { NotFoundError } from "../utils";
 
-export const addTool = async (
+export const createTool = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -40,14 +40,14 @@ export const addTool = async (
         res.status(201).json({
             count: 1,
             id: tool._id,
-            message: "Tool added successfully",
+            message: "Tool created successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const deleteToolById = async (
+export const readTool = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -55,25 +55,37 @@ export const deleteToolById = async (
     const { id } = req.params;
 
     try {
-        const tool = await ToolModel.findById(id).exec();
+        const tool = await ToolModel.findById(id).populate("brandId");
 
         if (!tool) {
             throw new NotFoundError("Tool not found");
         }
 
-        if (tool.imageId) {
-            await cloudinary.uploader.destroy(tool.imageId);
-        }
-
-        await ToolModel.findByIdAndDelete(id);
-
-        res.status(200).json({ message: "Tool successfully deleted" });
+        res.status(200).json(tool);
     } catch (error) {
         next(error);
     }
 };
 
-export const editTool = async (
+export const readTools = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const tools = await ToolModel.find().select("imageUrl");
+
+        if (!tools.length) {
+            throw new NotFoundError("Tools not found");
+        }
+
+        res.status(200).json(tools);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateTool = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -130,14 +142,14 @@ export const editTool = async (
 
         res.status(200).json({
             id: tool._id,
-            message: "Tool successfully changed",
+            message: "Tool updated successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const getToolById = async (
+export const deleteTool = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -145,31 +157,19 @@ export const getToolById = async (
     const { id } = req.params;
 
     try {
-        const tool = await ToolModel.findById(id).populate("brandId");
+        const tool = await ToolModel.findById(id).exec();
 
         if (!tool) {
             throw new NotFoundError("Tool not found");
         }
 
-        res.status(200).json(tool);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getTools = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const tools = await ToolModel.find().select("imageUrl");
-
-        if (!tools.length) {
-            throw new NotFoundError("Tools not found");
+        if (tool.imageId) {
+            await cloudinary.uploader.destroy(tool.imageId);
         }
 
-        res.status(200).json(tools);
+        await ToolModel.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Tool deleted successfully" });
     } catch (error) {
         next(error);
     }
