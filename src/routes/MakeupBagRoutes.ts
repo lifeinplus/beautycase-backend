@@ -6,9 +6,13 @@ import {
     readMakeupBags,
     updateMakeupBag,
     deleteMakeupBag,
-} from "../controllers";
-import { requestValidator, rolesVerifier } from "../middlewares";
-import { makeupBagBodySchema, makeupBagParamsSchema } from "../validations";
+} from "../controllers/MakeupBagController";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
+import {
+    makeupBagBodySchema,
+    makeupBagParamsSchema,
+} from "../validations/makeupBagSchema";
 
 const router = express.Router();
 

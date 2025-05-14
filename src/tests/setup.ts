@@ -1,4 +1,4 @@
-import { DBManager } from "./DBManager";
+import DBManager from "./DBManager";
 
 const dbManager = new DBManager();
 

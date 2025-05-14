@@ -3,9 +3,9 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import config from "../../config";
-import { Logging } from "../../library";
-import { UserModel } from "../../models";
-import { UnauthorizedError } from "../../utils";
+import Logging from "../../library/Logging";
+import UserModel from "../../models/UserModel";
+import { UnauthorizedError } from "../../utils/AppErrors";
 
 export const login = async (
     req: Request,

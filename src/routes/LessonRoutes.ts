@@ -7,7 +7,8 @@ import {
     updateLesson,
     deleteLesson,
 } from "../controllers/LessonController";
-import { requestValidator, rolesVerifier } from "../middlewares";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
 import {
     lessonBodySchema,
     lessonParamsSchema,

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { LessonModel } from "../models";
-import { NotFoundError } from "../utils";
+import LessonModel from "../models/LessonModel";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createLesson = async (
     req: Request,

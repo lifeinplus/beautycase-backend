@@ -5,11 +5,13 @@ import {
     readQuestionnaire,
     readQuestionnaires,
 } from "../controllers/QuestionnaireController";
-import { jwtVerifier, requestValidator, rolesVerifier } from "../middlewares";
+import jwtVerifier from "../middlewares/jwtVerifier";
+import requestValidator from "../middlewares/requestValidator";
+import rolesVerifier from "../middlewares/rolesVerifier";
 import {
     questionnaireBodySchema,
     questionnaireParamsSchema,
-} from "../validations";
+} from "../validations/questionnaireSchema";
 
 const router = express.Router();
 

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 import app from "./app";
 import config from "./config";
-import { Logging } from "./library";
+import Logging from "./library/Logging";
 
 mongoose
     .connect(config.mongoUri || "", { dbName: "beautycaseDB" })

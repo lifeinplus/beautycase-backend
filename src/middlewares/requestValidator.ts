@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ObjectSchema } from "joi";
 
-import { BadRequestError } from "../utils";
+import { BadRequestError } from "../utils/AppErrors";
 
 interface Schemas {
     body?: ObjectSchema;
@@ -34,7 +34,7 @@ const parseObjectFields = (data: any, schema: ObjectSchema) => {
     return data;
 };
 
-export const requestValidator = (schemas: Schemas) => {
+const requestValidator = (schemas: Schemas) => {
     const options = {
         abortEarly: false,
     };
@@ -69,3 +69,5 @@ export const requestValidator = (schemas: Schemas) => {
         next();
     };
 };
+
+export default requestValidator;

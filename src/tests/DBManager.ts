@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 
-export class DBManager {
+class DBManager {
     private mongo: MongoMemoryServer | null = null;
 
     async start() {
@@ -22,3 +22,5 @@ export class DBManager {
         if (this.mongo) await this.mongo.stop();
     }
 }
+
+export default DBManager;

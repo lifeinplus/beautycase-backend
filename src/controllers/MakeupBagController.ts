@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { MakeupBagModel } from "../models";
-import { NotFoundError } from "../utils";
+import MakeupBagModel from "../models/MakeupBagModel";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createMakeupBag = async (
     req: Request,

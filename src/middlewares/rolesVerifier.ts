@@ -1,9 +1,9 @@
 import { NextFunction, Response } from "express";
 
-import { UserRequest } from "../types";
-import { UnauthorizedError } from "../utils";
+import { UserRequest } from "../types/user";
+import { UnauthorizedError } from "../utils/AppErrors";
 
-export const rolesVerifier = (allowedRoles: string[]) => {
+const rolesVerifier = (allowedRoles: string[]) => {
     return (req: UserRequest, res: Response, next: NextFunction) => {
         if (!req?.role) {
             throw new UnauthorizedError();
@@ -18,3 +18,5 @@ export const rolesVerifier = (allowedRoles: string[]) => {
         next();
     };
 };
+
+export default rolesVerifier;

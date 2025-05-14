@@ -7,7 +7,8 @@ import {
     updateTool,
     deleteTool,
 } from "../controllers/ToolController";
-import { requestValidator, rolesVerifier } from "../middlewares";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
 import { toolBodySchema, toolParamsSchema } from "../validations/toolSchema";
 
 const router = express.Router();

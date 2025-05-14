@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-import { objectIdSchema } from "./shared";
+import objectIdSchema from "./shared/objectIdSchema";
 
 export const categoryBodySchema = Joi.object({
     name: Joi.string().required(),

@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 import config from "../../config";
-import { Logging } from "../../library/Logging";
-import { UserModel } from "../../models";
-import { UserJwtPayload } from "../../types";
-import { UnauthorizedError } from "../../utils";
+import Logging from "../../library/Logging";
+import UserModel from "../../models/UserModel";
+import { UserJwtPayload } from "../../types/user";
+import { UnauthorizedError } from "../../utils/AppErrors";
 
 export const refresh = async (
     req: Request,

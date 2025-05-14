@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { CategoryModel } from "../models";
-import { NotFoundError } from "../utils";
+import CategoryModel from "../models/CategoryModel";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createCategory = async (
     req: Request,

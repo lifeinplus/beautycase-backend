@@ -1,8 +1,9 @@
 import express from "express";
 
 import { readUser, readUsers } from "../controllers/UserController";
-import { requestValidator, rolesVerifier } from "../middlewares";
-import { userParamsSchema } from "../validations";
+import requestValidator from "../middlewares/requestValidator";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import { userParamsSchema } from "../validations/userSchema";
 
 const router = express.Router();
 

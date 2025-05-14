@@ -1,8 +1,8 @@
 import { v2 as cloudinary, type UploadApiOptions } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
-import { tempUploadsService } from "../services";
-import { BadRequestError } from "../utils";
+import tempUploadsService from "../services/tempUploadsService";
+import { BadRequestError } from "../utils/AppErrors";
 
 export const uploadImageTemp = async (
     req: Request,

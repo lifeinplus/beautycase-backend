@@ -1,9 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
-import { ProductModel } from "../models";
-import { tempUploadsService } from "../services";
-import { NotFoundError } from "../utils";
+import ProductModel from "../models/ProductModel";
+import tempUploadsService from "../services/tempUploadsService";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createProduct = async (
     req: Request,

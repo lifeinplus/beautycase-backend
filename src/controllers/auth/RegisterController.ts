@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 
-import { UserModel } from "../../models";
-import { ConflictError } from "../../utils";
+import UserModel from "../../models/UserModel";
+import { ConflictError } from "../../utils/AppErrors";
 
 export const register = async (
     req: Request,

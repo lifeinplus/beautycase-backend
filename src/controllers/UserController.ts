@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
-import { MakeupBagModel, UserModel } from "../models";
-import { NotFoundError } from "../utils";
+import MakeupBagModel from "../models/MakeupBagModel";
+import UserModel from "../models/UserModel";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const readUser = async (
     req: Request,

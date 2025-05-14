@@ -8,8 +8,9 @@ import {
     updateStage,
     deleteStage,
 } from "../controllers/StageController";
-import { requestValidator, rolesVerifier } from "../middlewares";
-import { stageBodySchema, stageParamsSchema } from "../validations";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
+import { stageBodySchema, stageParamsSchema } from "../validations/stageSchema";
 
 const router = express.Router();
 

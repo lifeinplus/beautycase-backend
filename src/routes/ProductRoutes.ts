@@ -7,7 +7,8 @@ import {
     updateProduct,
     deleteProduct,
 } from "../controllers/ProductController";
-import { requestValidator, rolesVerifier } from "../middlewares";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
 import {
     productBodySchema,
     productParamsSchema,

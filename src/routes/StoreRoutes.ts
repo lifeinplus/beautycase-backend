@@ -6,8 +6,9 @@ import {
     readStores,
     updateStore,
 } from "../controllers/StoreController";
-import { requestValidator, rolesVerifier } from "../middlewares";
-import { storeBodySchema, storeParamsSchema } from "../validations";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
+import { storeBodySchema, storeParamsSchema } from "../validations/storeSchema";
 
 const router = express.Router();
 

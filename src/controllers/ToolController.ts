@@ -1,9 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
-import { ToolModel } from "../models";
-import { tempUploadsService } from "../services";
-import { NotFoundError } from "../utils";
+import ToolModel from "../models/ToolModel";
+import tempUploadsService from "../services/tempUploadsService";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createTool = async (
     req: Request,

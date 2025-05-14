@@ -3,27 +3,23 @@ import cors from "cors";
 import express from "express";
 
 import config from "./config";
-import {
-    errorHandler,
-    jwtVerifier,
-    requestLogger,
-    rolesVerifier,
-} from "./middlewares";
-import {
-    AuthRoutes,
-    BrandRoutes,
-    CategoryRoutes,
-    LessonRoutes,
-    MakeupBagRoutes,
-    ProductRoutes,
-    QuestionnaireRoutes,
-    StageRoutes,
-    StoreRoutes,
-    ToolRoutes,
-    UploadRoutes,
-    UserRoutes,
-} from "./routes";
-import { NotFoundError } from "./utils";
+import errorHandler from "./middlewares/errorHandler";
+import jwtVerifier from "./middlewares/jwtVerifier";
+import requestLogger from "./middlewares/requestLogger";
+import rolesVerifier from "./middlewares/rolesVerifier";
+import AuthRoutes from "./routes/AuthRoutes";
+import BrandRoutes from "./routes/BrandRoutes";
+import CategoryRoutes from "./routes/CategoryRoutes";
+import LessonRoutes from "./routes/LessonRoutes";
+import MakeupBagRoutes from "./routes/MakeupBagRoutes";
+import ProductRoutes from "./routes/ProductRoutes";
+import QuestionnaireRoutes from "./routes/QuestionnaireRoutes";
+import StageRoutes from "./routes/StageRoutes";
+import StoreRoutes from "./routes/StoreRoutes";
+import ToolRoutes from "./routes/ToolRoutes";
+import UploadRoutes from "./routes/UploadRoutes";
+import UserRoutes from "./routes/UserRoutes";
+import { NotFoundError } from "./utils/AppErrors";
 
 const app = express();
 
