@@ -1,23 +1,15 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
-import mongoose from "mongoose";
+import { DBManager } from "./DBManager";
 
-let mongo: MongoMemoryServer;
+const dbManager = new DBManager();
 
 beforeAll(async () => {
-    mongo = await MongoMemoryServer.create();
-    const uri = mongo.getUri();
-    await mongoose.connect(uri);
+    await dbManager.start();
 });
 
 afterEach(async () => {
-    const collections = mongoose.connection.collections;
-
-    for (const key in collections) {
-        await collections[key].deleteMany({});
-    }
+    await dbManager.cleanup();
 });
 
 afterAll(async () => {
-    await mongoose.connection.close();
-    await mongo.stop();
+    await dbManager.stop();
 });
