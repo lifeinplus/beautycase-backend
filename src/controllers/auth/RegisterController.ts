@@ -26,7 +26,7 @@ export const register = async (
             username,
         });
 
-        res.status(201).json({ message: `Account created successfully` });
+        res.status(201).json({ message: "Account created successfully" });
     } catch (error) {
         next(error);
     }
