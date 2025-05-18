@@ -9,8 +9,8 @@ export const createBrand = async (
     next: NextFunction
 ) => {
     try {
-        const brand = new BrandModel(req.body);
-        await brand.save();
+        await BrandModel.create(req.body);
+
         res.status(201).json({
             count: 1,
             message: "Brand created successfully",
