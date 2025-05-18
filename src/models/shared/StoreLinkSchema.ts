@@ -5,7 +5,9 @@ export interface StoreLink {
     link: string;
 }
 
-export const StoreLinkSchema = new Schema<StoreLink>({
+const StoreLinkSchema = new Schema<StoreLink>({
     name: { type: String, required: true },
     link: { type: String, required: true },
 });
+
+export default StoreLinkSchema;

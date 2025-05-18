@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { BrandModel } from "../models";
-import { NotFoundError } from "../utils";
+import BrandModel from "../models/BrandModel";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createBrand = async (
     req: Request,

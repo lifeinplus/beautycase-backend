@@ -1,8 +1,9 @@
 import express from "express";
 
 import { uploadImageTemp } from "../controllers/UploadController";
-import { multerUpload, requestValidator } from "../middlewares";
-import { uploadBodySchema } from "../validations";
+import multerUpload from "../middlewares/multerUpload";
+import requestValidator from "../middlewares/requestValidator";
+import { uploadBodySchema } from "../validations/uploadSchema";
 
 const router = express.Router();
 

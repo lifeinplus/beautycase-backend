@@ -1,41 +1,39 @@
 import express from "express";
 
 import {
-    addQuestionnaire,
-    getQuestionnaireById,
-    getQuestionnaires,
+    createQuestionnaire,
+    readQuestionnaire,
+    readQuestionnaires,
 } from "../controllers/QuestionnaireController";
-import {
-    jwtVerifier,
-    requestValidator,
-    rolesVerifier,
-    multerUpload,
-} from "../middlewares";
+import jwtVerifier from "../middlewares/jwtVerifier";
+import requestValidator from "../middlewares/requestValidator";
+import rolesVerifier from "../middlewares/rolesVerifier";
 import {
     questionnaireBodySchema,
     questionnaireParamsSchema,
-} from "../validations";
+} from "../validations/questionnaireSchema";
 
 const router = express.Router();
 
-router.get(
-    "/all",
-    jwtVerifier,
-    rolesVerifier(["admin", "mua"]),
-    getQuestionnaires
+router.post(
+    "/",
+    requestValidator({ body: questionnaireBodySchema }),
+    createQuestionnaire
 );
+
 router.get(
     "/:id",
     jwtVerifier,
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: questionnaireParamsSchema }),
-    getQuestionnaireById
+    readQuestionnaire
 );
 
-router.post(
-    "/one",
-    requestValidator({ body: questionnaireBodySchema }),
-    addQuestionnaire
+router.get(
+    "/",
+    jwtVerifier,
+    rolesVerifier(["admin", "mua"]),
+    readQuestionnaires
 );
 
 export default router;

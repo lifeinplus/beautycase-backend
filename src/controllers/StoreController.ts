@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { StoreModel } from "../models";
-import { NotFoundError } from "../utils";
+import StoreModel from "../models/StoreModel";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createStore = async (
     req: Request,

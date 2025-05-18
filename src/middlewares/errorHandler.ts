@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import { Logging } from "../library";
-import { AppError } from "../utils";
+import Logging from "../library/Logging";
+import { AppError } from "../utils/AppErrors";
 
 interface CloudinaryError {
     http_code: number;
@@ -19,7 +19,7 @@ function isCloudinaryError(error: unknown): error is CloudinaryError {
     );
 }
 
-export const errorHandler = (
+const errorHandler = (
     err: any,
     req: Request,
     res: Response,
@@ -52,3 +52,5 @@ export const errorHandler = (
         stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
     });
 };
+
+export default errorHandler;

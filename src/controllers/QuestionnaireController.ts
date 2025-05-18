@@ -2,13 +2,13 @@ import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
 import config from "../config";
-import { QuestionnaireModel } from "../models";
-import { tempUploadsService } from "../services";
-import { NotFoundError } from "../utils";
+import QuestionnaireModel from "../models/QuestionnaireModel";
+import tempUploadsService from "../services/tempUploadsService";
+import { NotFoundError } from "../utils/AppErrors";
 
 cloudinary.config(config.cloudinary);
 
-export const addQuestionnaire = async (
+export const createQuestionnaire = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -43,14 +43,14 @@ export const addQuestionnaire = async (
         res.status(201).json({
             count: 1,
             id: questionnaire._id,
-            message: "Questionnaire added successfully",
+            message: "Questionnaire created successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const getQuestionnaireById = async (
+export const readQuestionnaire = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -70,7 +70,7 @@ export const getQuestionnaireById = async (
     }
 };
 
-export const getQuestionnaires = async (
+export const readQuestionnaires = async (
     req: Request,
     res: Response,
     next: NextFunction

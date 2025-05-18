@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-import { StoreLink, StoreLinkSchema } from "./shared";
+import StoreLinkSchema from "./shared/StoreLinkSchema";
+import type { StoreLink } from "./shared/StoreLinkSchema";
 
 interface Tool {
     brandId: string;

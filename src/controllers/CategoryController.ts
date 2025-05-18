@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
-import { CategoryModel } from "../models";
-import { NotFoundError } from "../utils";
+import CategoryModel from "../models/CategoryModel";
+import { NotFoundError } from "../utils/AppErrors";
 
-export const addCategory = async (
+export const createCategory = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -12,7 +12,7 @@ export const addCategory = async (
         const category = new CategoryModel(req.body);
         await category.save();
         res.status(201).json({
-            message: "Category added successfully",
+            message: "Category created successfully",
             count: 1,
         });
     } catch (error) {
@@ -20,7 +20,7 @@ export const addCategory = async (
     }
 };
 
-export const getCategories = async (
+export const readCategories = async (
     req: Request,
     res: Response,
     next: NextFunction

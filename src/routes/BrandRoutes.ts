@@ -6,8 +6,9 @@ import {
     readBrands,
     updateBrand,
 } from "../controllers/BrandController";
-import { requestValidator, rolesVerifier } from "../middlewares";
-import { brandBodySchema, brandParamsSchema } from "../validations";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
+import { brandBodySchema, brandParamsSchema } from "../validations/brandSchema";
 
 const router = express.Router();
 

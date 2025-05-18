@@ -1,18 +1,22 @@
 import express from "express";
 
-import { addCategory, getCategories } from "../controllers";
-import { requestValidator, rolesVerifier } from "../middlewares";
-import { categoryBodySchema } from "../validations";
+import {
+    createCategory,
+    readCategories,
+} from "../controllers/CategoryController";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import requestValidator from "../middlewares/requestValidator";
+import { categoryBodySchema } from "../validations/categorySchema";
 
 const router = express.Router();
 
-router.get("/all", rolesVerifier(["admin", "mua"]), getCategories);
-
 router.post(
-    "/one",
-    requestValidator({ body: categoryBodySchema }),
+    "/",
     rolesVerifier(["admin", "mua"]),
-    addCategory
+    requestValidator({ body: categoryBodySchema }),
+    createCategory
 );
+
+router.get("/", rolesVerifier(["admin", "mua"]), readCategories);
 
 export default router;

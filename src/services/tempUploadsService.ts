@@ -18,4 +18,4 @@ class TempUploadsService {
     }
 }
 
-export const tempUploadsService = new TempUploadsService();
+export default new TempUploadsService();

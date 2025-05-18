@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
-import { MakeupBagModel } from "../models";
-import { NotFoundError } from "../utils";
+import MakeupBagModel from "../models/MakeupBagModel";
+import { NotFoundError } from "../utils/AppErrors";
 
-export const addMakeupBag = async (
+export const createMakeupBag = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -23,57 +23,14 @@ export const addMakeupBag = async (
         res.status(201).json({
             count: 1,
             id: response._id,
-            message: "MakeupBag added successfully",
+            message: "MakeupBag created successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const deleteMakeupBagById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    const { id } = req.params;
-
-    try {
-        await MakeupBagModel.findByIdAndDelete(id);
-        res.status(200).json({ message: "MakeupBag successfully deleted" });
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const editMakeupBag = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    const { id } = req.params;
-    const { categoryId, clientId, stageIds, toolIds } = req.body;
-
-    try {
-        const makeupBag = await MakeupBagModel.findById(id).exec();
-
-        if (!makeupBag) {
-            throw new NotFoundError("MakeupBag not found");
-        }
-
-        makeupBag.categoryId = categoryId;
-        makeupBag.clientId = clientId;
-        makeupBag.stageIds = stageIds;
-        makeupBag.toolIds = toolIds;
-
-        await makeupBag.save();
-
-        res.status(200).json({ message: "MakeupBag successfully changed" });
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getMakeupBagById = async (
+export const readMakeupBag = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -114,7 +71,7 @@ export const getMakeupBagById = async (
     }
 };
 
-export const getMakeupBags = async (
+export const readMakeupBags = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -142,6 +99,49 @@ export const getMakeupBags = async (
         }
 
         res.status(200).json(makeupBags);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateMakeupBag = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+    const { categoryId, clientId, stageIds, toolIds } = req.body;
+
+    try {
+        const makeupBag = await MakeupBagModel.findById(id).exec();
+
+        if (!makeupBag) {
+            throw new NotFoundError("MakeupBag not found");
+        }
+
+        makeupBag.categoryId = categoryId;
+        makeupBag.clientId = clientId;
+        makeupBag.stageIds = stageIds;
+        makeupBag.toolIds = toolIds;
+
+        await makeupBag.save();
+
+        res.status(200).json({ message: "MakeupBag updated successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteMakeupBag = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    try {
+        await MakeupBagModel.findByIdAndDelete(id);
+        res.status(200).json({ message: "MakeupBag deleted successfully" });
     } catch (error) {
         next(error);
     }

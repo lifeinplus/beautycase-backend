@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-
-import { UserModel } from "../../models";
+import UserModel from "../../models/UserModel";
 
 export const logout = async (
     req: Request,

@@ -1,6 +1,7 @@
 import Joi from "joi";
 
-import { objectIdSchema, storeLinkSchema } from "./shared";
+import objectIdSchema from "./shared/objectIdSchema";
+import storeLinkSchema from "./shared/storeLinkSchema";
 
 export const toolBodySchema = Joi.object({
     brandId: objectIdSchema.required(),

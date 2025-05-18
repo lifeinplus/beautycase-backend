@@ -1,9 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
-import { StageModel } from "../models";
-import { tempUploadsService } from "../services";
-import { NotFoundError } from "../utils";
+import StageModel from "../models/StageModel";
+import tempUploadsService from "../services/tempUploadsService";
+import { NotFoundError } from "../utils/AppErrors";
 
 export const createStage = async (
     req: Request,
@@ -40,7 +40,7 @@ export const createStage = async (
         res.status(201).json({
             count: 1,
             id: stage._id,
-            message: "Stage added successfully",
+            message: "Stage created successfully",
         });
     } catch (error) {
         next(error);
@@ -82,7 +82,7 @@ export const duplicateStage = async (
     }
 };
 
-export const deleteStage = async (
+export const readStage = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -90,15 +90,36 @@ export const deleteStage = async (
     const { id } = req.params;
 
     try {
-        const stage = await StageModel.findById(id).exec();
+        const stage = await StageModel.findById(id).populate(
+            "productIds",
+            "imageUrl"
+        );
 
         if (!stage) {
             throw new NotFoundError("Stage not found");
         }
 
-        await StageModel.findByIdAndDelete(id);
+        res.status(200).json(stage);
+    } catch (error) {
+        next(error);
+    }
+};
 
-        res.status(200).json({ message: "Stage successfully deleted" });
+export const readStages = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const stages = await StageModel.find().select(
+            "createdAt imageUrl subtitle title"
+        );
+
+        if (!stages.length) {
+            throw new NotFoundError("Stages not found");
+        }
+
+        res.status(200).json(stages);
     } catch (error) {
         next(error);
     }
@@ -160,14 +181,14 @@ export const updateStage = async (
 
         res.status(200).json({
             id: stage._id,
-            message: "Stage successfully changed",
+            message: "Stage updated successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const readStageById = async (
+export const deleteStage = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -175,36 +196,15 @@ export const readStageById = async (
     const { id } = req.params;
 
     try {
-        const stage = await StageModel.findById(id).populate(
-            "productIds",
-            "imageUrl"
-        );
+        const stage = await StageModel.findById(id).exec();
 
         if (!stage) {
             throw new NotFoundError("Stage not found");
         }
 
-        res.status(200).json(stage);
-    } catch (error) {
-        next(error);
-    }
-};
+        await StageModel.findByIdAndDelete(id);
 
-export const readStages = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const stages = await StageModel.find().select(
-            "createdAt imageUrl subtitle title"
-        );
-
-        if (!stages.length) {
-            throw new NotFoundError("Stages not found");
-        }
-
-        res.status(200).json(stages);
+        res.status(200).json({ message: "Stage deleted successfully" });
     } catch (error) {
         next(error);
     }

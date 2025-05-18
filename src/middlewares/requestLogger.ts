@@ -1,11 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { Logging } from "../library";
 
-export const requestLogger = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+import Logging from "../library/Logging";
+
+const requestLogger = (req: Request, res: Response, next: NextFunction) => {
     const { method, url } = req;
     Logging.infoIn(`Method: [{method}] - URL: [${url}]`, method);
 
@@ -19,3 +16,5 @@ export const requestLogger = (
 
     next();
 };
+
+export default requestLogger;

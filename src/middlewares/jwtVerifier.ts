@@ -2,14 +2,10 @@ import { NextFunction, Response } from "express";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 import config from "../config";
-import { UserRequest, UserJwtPayload } from "../types";
-import { UnauthorizedError } from "../utils";
+import { UserRequest, UserJwtPayload } from "../types/user";
+import { UnauthorizedError } from "../utils/AppErrors";
 
-export const jwtVerifier = (
-    req: UserRequest,
-    res: Response,
-    next: NextFunction
-) => {
+const jwtVerifier = (req: UserRequest, res: Response, next: NextFunction) => {
     const authorization = req.headers.authorization;
 
     const token = authorization?.startsWith("Bearer ")
@@ -39,3 +35,5 @@ export const jwtVerifier = (
         next(error);
     }
 };
+
+export default jwtVerifier;
