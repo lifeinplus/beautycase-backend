@@ -9,8 +9,8 @@ export const createStore = async (
     next: NextFunction
 ) => {
     try {
-        const store = new StoreModel(req.body);
-        await store.save();
+        await StoreModel.create(req.body);
+
         res.status(201).json({
             count: 1,
             message: "Store created successfully",

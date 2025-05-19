@@ -4,6 +4,7 @@ import supertest from "supertest";
 import app from "../../app";
 import config from "../../config";
 import BrandModel from "../../models/BrandModel";
+import type { Brand } from "../../models/BrandModel";
 import { mockUserJwt } from "../../tests/mocks/auth";
 import { mockError } from "../../tests/mocks/error";
 
@@ -20,8 +21,8 @@ beforeAll(async () => {
 
 describe("BrandController", () => {
     const mockId = "682a378b09c4df2756fcece5";
-    const mockBrand1 = { name: "Test Brand 1" };
-    const mockBrand2 = { name: "Test Brand 2" };
+    const mockBrand1: Brand = { name: "Annbeauty" };
+    const mockBrand2: Brand = { name: "ManlyPRO" };
 
     describe("createBrand", () => {
         it("should create a new brand", async () => {
@@ -53,7 +54,7 @@ describe("BrandController", () => {
     });
 
     describe("readBrands", () => {
-        it("should get all brands", async () => {
+        it("should return all brands", async () => {
             await BrandModel.insertMany([mockBrand1, mockBrand2]);
 
             const res = await request
@@ -90,7 +91,7 @@ describe("BrandController", () => {
             expect(updated?.name).toBe(mockBrand2.name);
         });
 
-        it("should return 404 when updating non-existent brand", async () => {
+        it("should return 404 when updating a non-existent brand", async () => {
             const res = await request
                 .put(`/api/brands/${mockId}`)
                 .set("Authorization", `Bearer ${token}`)

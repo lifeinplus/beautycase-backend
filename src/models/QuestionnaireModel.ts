@@ -24,7 +24,7 @@ interface ProcedureData {
     none?: boolean;
 }
 
-interface Questionnaire {
+export interface Questionnaire {
     age?: number;
     allergies?: string;
     budget?: string;

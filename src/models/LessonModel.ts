@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface Lesson {
+export interface Lesson {
     title: string;
     shortDescription: string;
     videoUrl: string;

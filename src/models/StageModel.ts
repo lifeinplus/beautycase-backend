@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface Stage {
+export interface Stage {
     title: string;
     subtitle: string;
     imageId?: string;

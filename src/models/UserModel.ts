@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface User {
+export interface User {
     password: string;
     refreshTokens: string[];
     role: "admin" | "client" | "mua";

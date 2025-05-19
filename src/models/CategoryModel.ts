@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface Category {
+export interface Category {
     name: string;
     type: string;
 }

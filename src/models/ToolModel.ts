@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 import StoreLinkSchema from "./shared/StoreLinkSchema";
 import type { StoreLink } from "./shared/StoreLinkSchema";
 
-interface Tool {
+export interface Tool {
     brandId: string;
     name: string;
     imageId?: string;

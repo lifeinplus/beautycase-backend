@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface MakeupBag {
+export interface MakeupBag {
     categoryId: string;
     clientId: string;
     stageIds: string[];
