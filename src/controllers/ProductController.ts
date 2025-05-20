@@ -13,7 +13,7 @@ export const createProduct = async (
     const { body } = req;
 
     try {
-        const product = new ProductModel(body);
+        const product = await ProductModel.create(body);
         const publicId = tempUploadsService.get(body.imageUrl);
 
         if (publicId) {

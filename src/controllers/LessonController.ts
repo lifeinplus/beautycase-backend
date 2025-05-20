@@ -12,15 +12,13 @@ export const createLesson = async (
         req.body;
 
     try {
-        const lesson = new LessonModel({
+        const response = await LessonModel.create({
             title,
             shortDescription,
             videoUrl,
             fullDescription,
             productIds,
         });
-
-        const response = await lesson.save();
 
         res.status(201).json({
             count: 1,
