@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-
-import BrandModel from "../models/BrandModel";
-import { NotFoundError } from "../utils/AppErrors";
+import * as BrandService from "../services/BrandService";
 
 export const createBrand = async (
     req: Request,
@@ -9,7 +7,7 @@ export const createBrand = async (
     next: NextFunction
 ) => {
     try {
-        await BrandModel.create(req.body);
+        await BrandService.createBrand(req.body);
 
         res.status(201).json({
             count: 1,
@@ -26,12 +24,7 @@ export const readBrands = async (
     next: NextFunction
 ) => {
     try {
-        const brands = await BrandModel.find().sort("name");
-
-        if (!brands.length) {
-            throw new NotFoundError("Brands not found");
-        }
-
+        const brands = await BrandService.readBrands();
         res.status(200).json(brands);
     } catch (error) {
         next(error);
@@ -49,15 +42,7 @@ export const updateBrand = async (
     const { name } = body;
 
     try {
-        const brand = await BrandModel.findById(id).exec();
-
-        if (!brand) {
-            throw new NotFoundError("Brand not found");
-        }
-
-        brand.name = name;
-        await brand.save();
-
+        await BrandService.updateBrand(id, name);
         res.status(200).json({ message: "Brand updated successfully" });
     } catch (error) {
         next(error);
@@ -72,7 +57,7 @@ export const deleteBrand = async (
     const { id } = req.params;
 
     try {
-        await BrandModel.findByIdAndDelete(id);
+        await BrandService.deleteBrand(id);
         res.status(200).json({ message: "Brand deleted successfully" });
     } catch (error) {
         next(error);

@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 import config from "../config";
-import { UserRequest, UserJwtPayload } from "../types/user";
+import { UserRequest, UserJwtPayload } from "../types/auth";
 import { UnauthorizedError } from "../utils/AppErrors";
 
 const jwtVerifier = (req: UserRequest, res: Response, next: NextFunction) => {

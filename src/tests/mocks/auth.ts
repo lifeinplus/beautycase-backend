@@ -1,4 +1,4 @@
-import type { UserJwtPayload } from "../../types/user";
+import type { UserJwtPayload } from "../../types/auth";
 
 export const mockRole = "client";
 
