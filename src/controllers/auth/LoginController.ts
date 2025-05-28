@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import config from "../../config";
-import * as AuthService from "../../services/AuthService";
+import * as LoginService from "../../services/auth/LoginService";
 
 export const login = async (
     req: Request,
@@ -12,7 +12,7 @@ export const login = async (
     const refreshToken = req.cookies.jwt;
 
     try {
-        const loginResult = await AuthService.login(
+        const loginResult = await LoginService.login(
             { username, password },
             refreshToken
         );

@@ -24,6 +24,12 @@ export interface RefreshResult {
     user: AuthUser;
 }
 
+export interface RegisterCredentials {
+    username: string;
+    password: string;
+    role?: string;
+}
+
 export interface UserJwtPayload extends JwtPayload {
     role: string;
     userId: string;

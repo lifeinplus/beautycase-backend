@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import config from "../../config";
-import * as AuthService from "../../services/AuthService";
+import * as RefreshService from "../../services/auth/RefreshService";
 
 export const refresh = async (
     req: Request,
@@ -15,7 +15,7 @@ export const refresh = async (
             res.clearCookie("jwt");
         }
 
-        const refreshResult = await AuthService.refresh(refreshToken);
+        const refreshResult = await RefreshService.refresh(refreshToken);
 
         res.status(200)
             .cookie(

@@ -1,6 +1,6 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 module.exports = {
-    // clearMocks: true,
+    clearMocks: true,
     coverageDirectory: "coverage",
     collectCoverageFrom: [
         "src/**/*.{js,ts}",
