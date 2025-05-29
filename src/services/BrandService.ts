@@ -1,4 +1,5 @@
 import BrandModel from "../models/BrandModel";
+import type { Brand } from "../models/BrandModel";
 import { NotFoundError } from "../utils/AppErrors";
 
 export const createBrand = async (data: { name: string }) => {
@@ -15,17 +16,25 @@ export const readBrands = async () => {
     return brands;
 };
 
-export const updateBrand = async (id: string, name: string) => {
-    const brand = await BrandModel.findById(id).exec();
+export const updateBrand = async (id: string, data: Brand) => {
+    const brand = await BrandModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
 
     if (!brand) {
         throw new NotFoundError("Brand not found");
     }
 
-    brand.name = name;
-    await brand.save();
+    return brand;
 };
 
 export const deleteBrand = async (id: string) => {
-    await BrandModel.findByIdAndDelete(id);
+    const brand = await BrandModel.findByIdAndDelete(id);
+
+    if (!brand) {
+        throw new NotFoundError("Brand not found");
+    }
+
+    return brand;
 };

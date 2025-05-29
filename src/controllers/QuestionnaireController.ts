@@ -78,7 +78,7 @@ export const readQuestionnaires = async (
     try {
         const questionnaires = await QuestionnaireModel.find();
 
-        if (!questionnaires) {
+        if (!questionnaires.length) {
             throw new NotFoundError("Questionnaires not found");
         }
 

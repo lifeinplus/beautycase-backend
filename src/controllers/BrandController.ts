@@ -42,7 +42,7 @@ export const updateBrand = async (
     const { name } = body;
 
     try {
-        await BrandService.updateBrand(id, name);
+        await BrandService.updateBrand(id, { name });
         res.status(200).json({ message: "Brand updated successfully" });
     } catch (error) {
         next(error);
@@ -57,8 +57,12 @@ export const deleteBrand = async (
     const { id } = req.params;
 
     try {
-        await BrandService.deleteBrand(id);
-        res.status(200).json({ message: "Brand deleted successfully" });
+        const brand = await BrandService.deleteBrand(id);
+
+        res.status(200).json({
+            id: brand._id,
+            message: "Brand deleted successfully",
+        });
     } catch (error) {
         next(error);
     }

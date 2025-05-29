@@ -178,7 +178,7 @@ describe("ProductController", () => {
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.status).toBe(200);
-            expect(res.body.id).toBeUndefined();
+            expect(res.body.id).toBe(String(product._id));
             expect(res.body.message).toBe("Product deleted successfully");
 
             const deleted = await ProductModel.findById(product._id);

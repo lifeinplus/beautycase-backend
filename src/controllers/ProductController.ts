@@ -1,9 +1,6 @@
-import { v2 as cloudinary } from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 
-import ProductModel from "../models/ProductModel";
-import tempUploadsService from "../services/tempUploadsService";
-import { NotFoundError } from "../utils/AppErrors";
+import * as ProductService from "../services/ProductService";
 
 export const createProduct = async (
     req: Request,
@@ -13,29 +10,7 @@ export const createProduct = async (
     const { body } = req;
 
     try {
-        const product = await ProductModel.create(body);
-        const publicId = tempUploadsService.get(body.imageUrl);
-
-        if (publicId) {
-            await cloudinary.uploader.explicit(publicId, {
-                asset_folder: "products",
-                display_name: product._id,
-                invalidate: true,
-                type: "upload",
-            });
-
-            const response = await cloudinary.uploader.rename(
-                publicId,
-                `products/${product._id}`,
-                { invalidate: true }
-            );
-
-            product.imageId = response.public_id;
-            product.imageUrl = response.secure_url;
-            tempUploadsService.remove(body.imageUrl);
-        }
-
-        await product.save();
+        const product = await ProductService.createProduct(body);
 
         res.status(201).json({
             count: 1,
@@ -55,12 +30,7 @@ export const readProduct = async (
     const { id } = req.params;
 
     try {
-        const product = await ProductModel.findById(id).populate("brandId");
-
-        if (!product) {
-            throw new NotFoundError("Product not found");
-        }
-
+        const product = await ProductService.readProduct(id);
         res.status(200).json(product);
     } catch (error) {
         next(error);
@@ -73,12 +43,7 @@ export const readProducts = async (
     next: NextFunction
 ) => {
     try {
-        const products = await ProductModel.find().select("imageUrl");
-
-        if (!products.length) {
-            throw new NotFoundError("Products not found");
-        }
-
+        const products = await ProductService.readProducts();
         res.status(200).json(products);
     } catch (error) {
         next(error);
@@ -90,55 +55,18 @@ export const updateProduct = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { body, params } = req;
-
-    const { id } = params;
-    const { name, brandId, imageUrl, shade, comment, storeLinks } = body;
+    const { id } = req.params;
+    const { name, brandId, imageUrl, shade, comment, storeLinks } = req.body;
 
     try {
-        const product = await ProductModel.findById(id).exec();
-
-        if (!product) {
-            throw new NotFoundError("Product not found");
-        }
-
-        product.brandId = brandId;
-        product.name = name;
-        product.imageUrl = imageUrl;
-        product.shade = shade;
-        product.comment = comment;
-        product.storeLinks = storeLinks;
-
-        const publicId = tempUploadsService.get(imageUrl);
-
-        if (publicId) {
-            const renamed = await cloudinary.uploader.rename(
-                publicId,
-                `products/${product._id}`,
-                { invalidate: true, overwrite: true }
-            );
-
-            const moved = await cloudinary.uploader.explicit(
-                renamed.public_id,
-                {
-                    asset_folder: "products",
-                    display_name: product._id,
-                    invalidate: true,
-                    type: "upload",
-                }
-            );
-
-            product.imageId = moved.public_id;
-            product.imageUrl = moved.secure_url;
-            tempUploadsService.remove(imageUrl);
-        }
-
-        if (product.imageId && !imageUrl.includes("cloudinary")) {
-            await cloudinary.uploader.destroy(product.imageId);
-            product.imageId = undefined;
-        }
-
-        await product.save();
+        const product = await ProductService.updateProduct(id, {
+            name,
+            brandId,
+            imageUrl,
+            shade,
+            comment,
+            storeLinks,
+        });
 
         res.status(200).json({
             id: product._id,
@@ -157,19 +85,12 @@ export const deleteProduct = async (
     const { id } = req.params;
 
     try {
-        const product = await ProductModel.findById(id).exec();
+        const product = await ProductService.deleteProduct(id);
 
-        if (!product) {
-            throw new NotFoundError("Product not found");
-        }
-
-        if (product.imageId) {
-            await cloudinary.uploader.destroy(product.imageId);
-        }
-
-        await ProductModel.findByIdAndDelete(id);
-
-        res.status(200).json({ message: "Product deleted successfully" });
+        res.status(200).json({
+            id: product._id,
+            message: "Product deleted successfully",
+        });
     } catch (error) {
         next(error);
     }
