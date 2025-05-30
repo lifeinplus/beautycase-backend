@@ -47,7 +47,7 @@ export interface Questionnaire {
     skinType?: string;
 }
 
-interface QuestionnaireDocument extends Questionnaire, Document {}
+export interface QuestionnaireDocument extends Questionnaire, Document {}
 
 const QuestionnaireSchema: Schema = new Schema(
     {

@@ -7,7 +7,7 @@ export interface User {
     username: string;
 }
 
-interface UserDocument extends User, Document {}
+export interface UserDocument extends User, Document {}
 
 const UserSchema: Schema = new Schema(
     {

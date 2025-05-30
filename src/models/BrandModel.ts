@@ -4,7 +4,7 @@ export interface Brand {
     name: string;
 }
 
-interface BrandDocument extends Brand, Document {}
+export interface BrandDocument extends Brand, Document {}
 
 const BrandSchema: Schema = new Schema(
     {

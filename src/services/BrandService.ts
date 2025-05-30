@@ -2,7 +2,7 @@ import BrandModel from "../models/BrandModel";
 import type { Brand } from "../models/BrandModel";
 import { NotFoundError } from "../utils/AppErrors";
 
-export const createBrand = async (data: { name: string }) => {
+export const createBrand = async (data: Brand) => {
     return await BrandModel.create(data);
 };
 

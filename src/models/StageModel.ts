@@ -10,7 +10,7 @@ export interface Stage {
     productIds: string[];
 }
 
-interface StageDocument extends Stage, Document {}
+export interface StageDocument extends Stage, Document {}
 
 const StageSchema: Schema = new Schema(
     {

@@ -49,6 +49,12 @@ export const readMakeupBags = async () => {
     return makeupBags;
 };
 
+export const readMakeupBagsByClientId = async (clientId: string) => {
+    return await MakeupBagModel.find({ clientId })
+        .select("categoryId")
+        .populate("categoryId", "name");
+};
+
 export const updateMakeupBag = async (id: string, data: MakeupBag) => {
     const makeupBag = await MakeupBagModel.findByIdAndUpdate(id, data, {
         new: true,

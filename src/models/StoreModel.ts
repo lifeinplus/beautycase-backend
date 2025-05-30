@@ -4,7 +4,7 @@ export interface Store {
     name: string;
 }
 
-interface StoreDocument extends Store, Document {}
+export interface StoreDocument extends Store, Document {}
 
 const StoreSchema: Schema = new Schema(
     {

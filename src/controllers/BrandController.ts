@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+
 import * as BrandService from "../services/BrandService";
 
 export const createBrand = async (
@@ -7,10 +8,11 @@ export const createBrand = async (
     next: NextFunction
 ) => {
     try {
-        await BrandService.createBrand(req.body);
+        const brand = await BrandService.createBrand(req.body);
 
         res.status(201).json({
             count: 1,
+            id: brand._id,
             message: "Brand created successfully",
         });
     } catch (error) {
@@ -37,13 +39,15 @@ export const updateBrand = async (
     next: NextFunction
 ) => {
     const { body, params } = req;
-
     const { id } = params;
-    const { name } = body;
 
     try {
-        await BrandService.updateBrand(id, { name });
-        res.status(200).json({ message: "Brand updated successfully" });
+        const brand = await BrandService.updateBrand(id, body);
+
+        res.status(200).json({
+            id: brand._id,
+            message: "Brand updated successfully",
+        });
     } catch (error) {
         next(error);
     }

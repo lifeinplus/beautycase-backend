@@ -8,7 +8,7 @@ export interface Lesson {
     productIds: string[];
 }
 
-interface LessonDocument extends Lesson, Document {}
+export interface LessonDocument extends Lesson, Document {}
 
 const LessonSchema: Schema = new Schema(
     {

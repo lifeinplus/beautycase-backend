@@ -5,7 +5,7 @@ export interface Category {
     type: string;
 }
 
-interface CategoryDocument extends Category, Document {}
+export interface CategoryDocument extends Category, Document {}
 
 const CategorySchema: Schema = new Schema(
     {

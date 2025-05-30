@@ -13,7 +13,7 @@ export interface Product {
     storeLinks: StoreLink[];
 }
 
-interface ProductDocument extends Product, Document {}
+export interface ProductDocument extends Product, Document {}
 
 const ProductSchema = new Schema(
     {

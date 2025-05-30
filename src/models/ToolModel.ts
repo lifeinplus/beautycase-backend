@@ -13,7 +13,7 @@ export interface Tool {
     storeLinks: StoreLink[];
 }
 
-interface ToolDocument extends Tool, Document {}
+export interface ToolDocument extends Tool, Document {}
 
 const ToolSchema: Schema = new Schema(
     {

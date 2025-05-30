@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import MakeupBagModel from "../models/MakeupBagModel";
-import UserModel from "../models/UserModel";
-import { NotFoundError } from "../utils/AppErrors";
+import * as UserService from "../services/UserService";
 
 export const readUser = async (
     req: Request,
@@ -12,14 +10,9 @@ export const readUser = async (
     const { id } = req.params;
 
     try {
-        const user = await UserModel.findById(id).select("role username");
-        const makeupBags = await MakeupBagModel.find({ clientId: id })
-            .select("categoryId")
-            .populate("categoryId", "name");
-
-        if (!user) {
-            throw new NotFoundError("User not found");
-        }
+        const { user, makeupBags } = await UserService.readUserWithMakeupBags(
+            id
+        );
 
         res.status(200).json({ user, makeupBags });
     } catch (error) {
@@ -33,12 +26,7 @@ export const readUsers = async (
     next: NextFunction
 ) => {
     try {
-        const users = await UserModel.find().select("_id username");
-
-        if (!users.length) {
-            throw new NotFoundError("Users not found");
-        }
-
+        const users = await UserService.readUsers();
         res.status(200).json(users);
     } catch (error) {
         next(error);
