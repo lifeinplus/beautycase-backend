@@ -33,7 +33,7 @@ export const createProduct = async (data: Product) => {
     return product;
 };
 
-export const readProduct = async (id: string) => {
+export const getProductById = async (id: string) => {
     const product = await ProductModel.findById(id).populate("brandId");
 
     if (!product) {
@@ -43,7 +43,7 @@ export const readProduct = async (id: string) => {
     return product;
 };
 
-export const readProducts = async () => {
+export const getAllProducts = async () => {
     const products = await ProductModel.find().select("imageUrl");
 
     if (!products.length) {
@@ -53,7 +53,7 @@ export const readProducts = async () => {
     return products;
 };
 
-export const updateProduct = async (id: string, data: Product) => {
+export const updateProductById = async (id: string, data: Product) => {
     const { imageUrl } = data;
 
     const product = await ProductModel.findByIdAndUpdate(id, data, {
@@ -96,7 +96,7 @@ export const updateProduct = async (id: string, data: Product) => {
     return product;
 };
 
-export const deleteProduct = async (id: string) => {
+export const deleteProductById = async (id: string) => {
     const product = await ProductModel.findByIdAndDelete(id);
 
     if (!product) {

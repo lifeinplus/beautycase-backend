@@ -7,7 +7,7 @@ export const createCategory = async (data: Category) => {
     return category;
 };
 
-export const readCategories = async () => {
+export const getAllCategories = async () => {
     const categories = await CategoryModel.find();
 
     if (!categories.length) {

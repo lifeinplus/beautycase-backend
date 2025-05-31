@@ -84,7 +84,7 @@ export const createTool = async (data: Tool) => {
     return tool;
 };
 
-export const readTool = async (id: string) => {
+export const getToolById = async (id: string) => {
     const tool = await ToolModel.findById(id).populate("brandId");
 
     if (!tool) {
@@ -94,7 +94,7 @@ export const readTool = async (id: string) => {
     return tool;
 };
 
-export const readTools = async () => {
+export const getAllTools = async () => {
     const tools = await ToolModel.find().select("imageUrl");
 
     if (!tools.length) {
@@ -104,7 +104,7 @@ export const readTools = async () => {
     return tools;
 };
 
-export const updateTool = async (id: string, data: Tool) => {
+export const updateToolById = async (id: string, data: Tool) => {
     const { name, brandId, imageUrl, number, comment, storeLinks } = data;
 
     const tool = await ToolModel.findById(id).exec();
@@ -126,7 +126,7 @@ export const updateTool = async (id: string, data: Tool) => {
     return tool;
 };
 
-export const deleteTool = async (id: string) => {
+export const deleteToolById = async (id: string) => {
     const tool = await ToolModel.findByIdAndDelete(id);
 
     if (!tool) {

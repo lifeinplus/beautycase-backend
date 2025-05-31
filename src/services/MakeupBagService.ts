@@ -7,7 +7,7 @@ export const createMakeupBag = async (data: MakeupBag) => {
     return await makeupBag.save();
 };
 
-export const readMakeupBag = async (id: string) => {
+export const getMakeupBagById = async (id: string) => {
     const makeupBag = await MakeupBagModel.findById(id).populate([
         { path: "categoryId" },
         { path: "clientId", select: "username" },
@@ -33,7 +33,7 @@ export const readMakeupBag = async (id: string) => {
     return makeupBag;
 };
 
-export const readMakeupBags = async () => {
+export const getAllMakeupBags = async () => {
     const makeupBags = await MakeupBagModel.find()
         .select("categoryId clientId createdAt stageIds")
         .populate([
@@ -49,13 +49,13 @@ export const readMakeupBags = async () => {
     return makeupBags;
 };
 
-export const readMakeupBagsByClientId = async (clientId: string) => {
+export const getMakeupBagsByClientId = async (clientId: string) => {
     return await MakeupBagModel.find({ clientId })
         .select("categoryId")
         .populate("categoryId", "name");
 };
 
-export const updateMakeupBag = async (id: string, data: MakeupBag) => {
+export const updateMakeupBagById = async (id: string, data: MakeupBag) => {
     const makeupBag = await MakeupBagModel.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,
@@ -68,7 +68,7 @@ export const updateMakeupBag = async (id: string, data: MakeupBag) => {
     return makeupBag;
 };
 
-export const deleteMakeupBag = async (id: string) => {
+export const deleteMakeupBagById = async (id: string) => {
     const makeupBag = await MakeupBagModel.findByIdAndDelete(id);
 
     if (!makeupBag) {

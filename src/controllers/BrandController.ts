@@ -20,20 +20,20 @@ export const createBrand = async (
     }
 };
 
-export const readBrands = async (
+export const getAllBrands = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const brands = await BrandService.readBrands();
+        const brands = await BrandService.getAllBrands();
         res.status(200).json(brands);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateBrand = async (
+export const updateBrandById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -42,7 +42,7 @@ export const updateBrand = async (
     const { id } = params;
 
     try {
-        const brand = await BrandService.updateBrand(id, body);
+        const brand = await BrandService.updateBrandById(id, body);
 
         res.status(200).json({
             id: brand._id,
@@ -53,7 +53,7 @@ export const updateBrand = async (
     }
 };
 
-export const deleteBrand = async (
+export const deleteBrandById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -61,7 +61,7 @@ export const deleteBrand = async (
     const { id } = req.params;
 
     try {
-        const brand = await BrandService.deleteBrand(id);
+        const brand = await BrandService.deleteBrandById(id);
 
         res.status(200).json({
             id: brand._id,

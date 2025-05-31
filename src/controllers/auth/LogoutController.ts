@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import * as LogoutService from "../../services/auth/LogoutService";
 
-export const logout = async (
+export const logoutUser = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -17,7 +17,7 @@ export const logout = async (
     res.clearCookie("jwt");
 
     try {
-        await LogoutService.logout(refreshToken);
+        await LogoutService.logoutUser(refreshToken);
         res.sendStatus(200);
     } catch (error) {
         next(error);

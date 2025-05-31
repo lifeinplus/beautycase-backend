@@ -2,10 +2,10 @@ import express from "express";
 
 import {
     createTool,
-    readTool,
-    readTools,
-    updateTool,
-    deleteTool,
+    getToolById,
+    getAllTools,
+    updateToolById,
+    deleteToolById,
 } from "../controllers/ToolController";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -20,22 +20,22 @@ router.post(
     createTool
 );
 
-router.get("/:id", requestValidator({ params: toolParamsSchema }), readTool);
+router.get("/:id", requestValidator({ params: toolParamsSchema }), getToolById);
 
-router.get("/", rolesVerifier(["admin", "mua"]), readTools);
+router.get("/", rolesVerifier(["admin", "mua"]), getAllTools);
 
 router.put(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: toolBodySchema, params: toolParamsSchema }),
-    updateTool
+    updateToolById
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: toolParamsSchema }),
-    deleteTool
+    deleteToolById
 );
 
 export default router;

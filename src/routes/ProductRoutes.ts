@@ -2,10 +2,10 @@ import express from "express";
 
 import {
     createProduct,
-    readProduct,
-    readProducts,
-    updateProduct,
-    deleteProduct,
+    getProductById,
+    getAllProducts,
+    updateProductById,
+    deleteProductById,
 } from "../controllers/ProductController";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -26,23 +26,23 @@ router.post(
 router.get(
     "/:id",
     requestValidator({ params: productParamsSchema }),
-    readProduct
+    getProductById
 );
 
-router.get("/", rolesVerifier(["admin", "mua"]), readProducts);
+router.get("/", rolesVerifier(["admin", "mua"]), getAllProducts);
 
 router.put(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: productBodySchema, params: productParamsSchema }),
-    updateProduct
+    updateProductById
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: productParamsSchema }),
-    deleteProduct
+    deleteProductById
 );
 
 export default router;

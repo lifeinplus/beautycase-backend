@@ -2,7 +2,7 @@ import express from "express";
 
 import {
     createCategory,
-    readCategories,
+    getAllCategories,
 } from "../controllers/CategoryController";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -17,6 +17,6 @@ router.post(
     createCategory
 );
 
-router.get("/", rolesVerifier(["admin", "mua"]), readCategories);
+router.get("/", rolesVerifier(["admin", "mua"]), getAllCategories);
 
 export default router;

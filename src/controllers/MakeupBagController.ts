@@ -27,7 +27,7 @@ export const createMakeupBag = async (
     }
 };
 
-export const readMakeupBag = async (
+export const getMakeupBagById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -35,41 +35,36 @@ export const readMakeupBag = async (
     const { id } = req.params;
 
     try {
-        const makeupBag = await MakeupBagService.readMakeupBag(id);
+        const makeupBag = await MakeupBagService.getMakeupBagById(id);
         res.status(200).json(makeupBag);
     } catch (error) {
         next(error);
     }
 };
 
-export const readMakeupBags = async (
+export const getAllMakeupBags = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const makeupBags = await MakeupBagService.readMakeupBags();
+        const makeupBags = await MakeupBagService.getAllMakeupBags();
         res.status(200).json(makeupBags);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateMakeupBag = async (
+export const updateMakeupBagById = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const { id } = req.params;
-    const { categoryId, clientId, stageIds, toolIds } = req.body;
+    const { body, params } = req;
+    const { id } = params;
 
     try {
-        const makeupBag = await MakeupBagService.updateMakeupBag(id, {
-            categoryId,
-            clientId,
-            stageIds,
-            toolIds,
-        });
+        const makeupBag = await MakeupBagService.updateMakeupBagById(id, body);
 
         res.status(200).json({
             id: makeupBag._id,
@@ -80,7 +75,7 @@ export const updateMakeupBag = async (
     }
 };
 
-export const deleteMakeupBag = async (
+export const deleteMakeupBagById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -88,7 +83,7 @@ export const deleteMakeupBag = async (
     const { id } = req.params;
 
     try {
-        const makeupBag = await MakeupBagService.deleteMakeupBag(id);
+        const makeupBag = await MakeupBagService.deleteMakeupBagById(id);
 
         res.status(200).json({
             id: makeupBag._id,

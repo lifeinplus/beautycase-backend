@@ -24,7 +24,7 @@ export const createQuestionnaire = async (
     }
 };
 
-export const readQuestionnaire = async (
+export const getQuestionnaireById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -32,20 +32,24 @@ export const readQuestionnaire = async (
     const { id } = req.params;
 
     try {
-        const questionnaire = await QuestionnaireService.readQuestionnaire(id);
+        const questionnaire = await QuestionnaireService.getQuestionnaireById(
+            id
+        );
+
         res.status(200).json(questionnaire);
     } catch (error) {
         next(error);
     }
 };
 
-export const readQuestionnaires = async (
+export const getAllQuestionnaires = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const questionnaires = await QuestionnaireService.readQuestionnaires();
+        const questionnaires =
+            await QuestionnaireService.getAllQuestionnaires();
         res.status(200).json(questionnaires);
     } catch (error) {
         next(error);

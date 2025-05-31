@@ -86,7 +86,7 @@ export const createStage = async (data: Stage) => {
     return stage;
 };
 
-export const duplicateStage = async (id: string) => {
+export const duplicateStageById = async (id: string) => {
     const stage = await StageModel.findById(id).exec();
 
     if (!stage) {
@@ -106,7 +106,7 @@ export const duplicateStage = async (id: string) => {
     return duplicatedStage;
 };
 
-export const readStage = async (id: string) => {
+export const getStageById = async (id: string) => {
     const stage = await StageModel.findById(id).populate(
         "productIds",
         "imageUrl"
@@ -119,7 +119,7 @@ export const readStage = async (id: string) => {
     return stage;
 };
 
-export const readStages = async () => {
+export const getAllStages = async () => {
     const stages = await StageModel.find().select(
         "createdAt imageUrl subtitle title"
     );
@@ -131,7 +131,7 @@ export const readStages = async () => {
     return stages;
 };
 
-export const updateStage = async (id: string, data: Stage) => {
+export const updateStageById = async (id: string, data: Stage) => {
     const { title, subtitle, imageUrl, comment, steps, productIds } = data;
 
     const stage = await StageModel.findById(id).exec();
@@ -153,7 +153,7 @@ export const updateStage = async (id: string, data: Stage) => {
     return stage;
 };
 
-export const deleteStage = async (id: string) => {
+export const deleteStageById = async (id: string) => {
     const stage = await StageModel.findByIdAndDelete(id);
 
     if (!stage) {

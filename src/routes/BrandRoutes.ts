@@ -2,9 +2,9 @@ import express from "express";
 
 import {
     createBrand,
-    deleteBrand,
-    readBrands,
-    updateBrand,
+    deleteBrandById,
+    getAllBrands,
+    updateBrandById,
 } from "../controllers/BrandController";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -19,20 +19,20 @@ router.post(
     createBrand
 );
 
-router.get("/", rolesVerifier(["admin", "mua"]), readBrands);
+router.get("/", rolesVerifier(["admin", "mua"]), getAllBrands);
 
 router.put(
     "/:id",
     rolesVerifier(["admin"]),
     requestValidator({ body: brandBodySchema, params: brandParamsSchema }),
-    updateBrand
+    updateBrandById
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin"]),
     requestValidator({ params: brandParamsSchema }),
-    deleteBrand
+    deleteBrandById
 );
 
 export default router;

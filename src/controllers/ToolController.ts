@@ -22,7 +22,7 @@ export const createTool = async (
     }
 };
 
-export const readTool = async (
+export const getToolById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -30,27 +30,27 @@ export const readTool = async (
     const { id } = req.params;
 
     try {
-        const tool = await ToolService.readTool(id);
+        const tool = await ToolService.getToolById(id);
         res.status(200).json(tool);
     } catch (error) {
         next(error);
     }
 };
 
-export const readTools = async (
+export const getAllTools = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const tools = await ToolService.readTools();
+        const tools = await ToolService.getAllTools();
         res.status(200).json(tools);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateTool = async (
+export const updateToolById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -59,7 +59,7 @@ export const updateTool = async (
     const { id } = params;
 
     try {
-        const tool = await ToolService.updateTool(id, body);
+        const tool = await ToolService.updateToolById(id, body);
 
         res.status(200).json({
             id: tool._id,
@@ -70,7 +70,7 @@ export const updateTool = async (
     }
 };
 
-export const deleteTool = async (
+export const deleteToolById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -78,7 +78,7 @@ export const deleteTool = async (
     const { id } = req.params;
 
     try {
-        const tool = await ToolService.deleteTool(id);
+        const tool = await ToolService.deleteToolById(id);
 
         res.status(200).json({
             id: tool._id,

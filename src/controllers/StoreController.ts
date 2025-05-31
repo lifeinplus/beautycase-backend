@@ -20,20 +20,20 @@ export const createStore = async (
     }
 };
 
-export const readStores = async (
+export const getAllStores = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const stores = await StoreService.readStores();
+        const stores = await StoreService.getAllStores();
         res.status(200).json(stores);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateStore = async (
+export const updateStoreById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -42,7 +42,7 @@ export const updateStore = async (
     const { id } = params;
 
     try {
-        const store = await StoreService.updateStore(id, body);
+        const store = await StoreService.updateStoreById(id, body);
 
         res.status(200).json({
             id: store._id,
@@ -53,7 +53,7 @@ export const updateStore = async (
     }
 };
 
-export const deleteStore = async (
+export const deleteStoreById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -61,7 +61,7 @@ export const deleteStore = async (
     const { id } = req.params;
 
     try {
-        const store = await StoreService.deleteStore(id);
+        const store = await StoreService.deleteStoreById(id);
 
         res.status(200).json({
             id: store._id,

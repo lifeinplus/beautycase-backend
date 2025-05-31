@@ -6,7 +6,7 @@ export const createStore = async (data: Store) => {
     return await StoreModel.create(data);
 };
 
-export const readStores = async () => {
+export const getAllStores = async () => {
     const stores = await StoreModel.find().sort("name");
 
     if (!stores.length) {
@@ -16,7 +16,7 @@ export const readStores = async () => {
     return stores;
 };
 
-export const updateStore = async (id: string, data: Store) => {
+export const updateStoreById = async (id: string, data: Store) => {
     const store = await StoreModel.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,
@@ -29,7 +29,7 @@ export const updateStore = async (id: string, data: Store) => {
     return store;
 };
 
-export const deleteStore = async (id: string) => {
+export const deleteStoreById = async (id: string) => {
     const store = await StoreModel.findByIdAndDelete(id);
 
     if (!store) {

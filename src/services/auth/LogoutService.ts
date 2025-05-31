@@ -1,7 +1,7 @@
 import UserModel from "../../models/UserModel";
 import { filterRefreshTokens } from "./TokenService";
 
-export const logout = async (
+export const logoutUser = async (
     existingRefreshToken: string
 ): Promise<boolean> => {
     const foundUser = await UserModel.findOne({

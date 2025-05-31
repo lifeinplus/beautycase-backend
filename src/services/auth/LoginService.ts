@@ -10,7 +10,7 @@ import {
     signRefreshToken,
 } from "./TokenService";
 
-export const login = async (
+export const loginUser = async (
     credentials: LoginCredentials,
     existingRefreshToken?: string
 ): Promise<LoginResult> => {

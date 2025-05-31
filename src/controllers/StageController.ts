@@ -22,7 +22,7 @@ export const createStage = async (
     }
 };
 
-export const duplicateStage = async (
+export const duplicateStageById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -31,7 +31,7 @@ export const duplicateStage = async (
     const { id } = params;
 
     try {
-        const stage = await StageService.duplicateStage(id);
+        const stage = await StageService.duplicateStageById(id);
 
         res.status(201).json({
             count: 1,
@@ -43,7 +43,7 @@ export const duplicateStage = async (
     }
 };
 
-export const readStage = async (
+export const getStageById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -51,27 +51,27 @@ export const readStage = async (
     const { id } = req.params;
 
     try {
-        const stage = await StageService.readStage(id);
+        const stage = await StageService.getStageById(id);
         res.status(200).json(stage);
     } catch (error) {
         next(error);
     }
 };
 
-export const readStages = async (
+export const getAllStages = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const stages = await StageService.readStages();
+        const stages = await StageService.getAllStages();
         res.status(200).json(stages);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateStage = async (
+export const updateStageById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -80,7 +80,7 @@ export const updateStage = async (
     const { id } = params;
 
     try {
-        const stage = await StageService.updateStage(id, body);
+        const stage = await StageService.updateStageById(id, body);
 
         res.status(200).json({
             id: stage._id,
@@ -91,7 +91,7 @@ export const updateStage = async (
     }
 };
 
-export const deleteStage = async (
+export const deleteStageById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -99,7 +99,7 @@ export const deleteStage = async (
     const { id } = req.params;
 
     try {
-        const stage = await StageService.deleteStage(id);
+        const stage = await StageService.deleteStageById(id);
 
         res.status(200).json({
             id: stage._id,

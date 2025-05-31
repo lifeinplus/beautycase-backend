@@ -20,13 +20,13 @@ export const createCategory = async (
     }
 };
 
-export const readCategories = async (
+export const getAllCategories = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const categories = await CategoryService.readCategories();
+        const categories = await CategoryService.getAllCategories();
         res.status(200).json(categories);
     } catch (error) {
         next(error);

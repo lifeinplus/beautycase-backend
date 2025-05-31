@@ -2,8 +2,8 @@ import express from "express";
 
 import {
     createQuestionnaire,
-    readQuestionnaire,
-    readQuestionnaires,
+    getQuestionnaireById,
+    getAllQuestionnaires,
 } from "../controllers/QuestionnaireController";
 import jwtVerifier from "../middlewares/jwtVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -26,14 +26,14 @@ router.get(
     jwtVerifier,
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: questionnaireParamsSchema }),
-    readQuestionnaire
+    getQuestionnaireById
 );
 
 router.get(
     "/",
     jwtVerifier,
     rolesVerifier(["admin", "mua"]),
-    readQuestionnaires
+    getAllQuestionnaires
 );
 
 export default router;

@@ -29,7 +29,7 @@ export const createLesson = async (
     }
 };
 
-export const readLesson = async (
+export const getLessonById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -37,43 +37,36 @@ export const readLesson = async (
     const { id } = req.params;
 
     try {
-        const lesson = await LessonService.readLesson(id);
+        const lesson = await LessonService.getLessonById(id);
         res.status(200).json(lesson);
     } catch (error) {
         next(error);
     }
 };
 
-export const readLessons = async (
+export const getAllLessons = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const lessons = await LessonService.readLessons();
+        const lessons = await LessonService.getAllLessons();
         res.status(200).json(lessons);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateLesson = async (
+export const updateLessonById = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const { id } = req.params;
-    const { title, shortDescription, videoUrl, fullDescription, productIds } =
-        req.body;
+    const { body, params } = req;
+    const { id } = params;
 
     try {
-        const lesson = await LessonService.updateLesson(id, {
-            title,
-            shortDescription,
-            videoUrl,
-            fullDescription,
-            productIds,
-        });
+        const lesson = await LessonService.updateLessonById(id, body);
 
         res.status(200).json({
             id: lesson._id,
@@ -84,7 +77,7 @@ export const updateLesson = async (
     }
 };
 
-export const deleteLesson = async (
+export const deleteLessonById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -92,7 +85,7 @@ export const deleteLesson = async (
     const { id } = req.params;
 
     try {
-        const lesson = await LessonService.deleteLesson(id);
+        const lesson = await LessonService.deleteLessonById(id);
 
         res.status(200).json({
             id: lesson._id,

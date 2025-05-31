@@ -62,7 +62,7 @@ export const createQuestionnaire = async (data: Questionnaire) => {
     return questionnaire;
 };
 
-export const readQuestionnaire = async (id: string) => {
+export const getQuestionnaireById = async (id: string) => {
     const questionnaire = await QuestionnaireModel.findById(id);
 
     if (!questionnaire) {
@@ -72,7 +72,7 @@ export const readQuestionnaire = async (id: string) => {
     return questionnaire;
 };
 
-export const readQuestionnaires = async () => {
+export const getAllQuestionnaires = async () => {
     const questionnaires = await QuestionnaireModel.find();
 
     if (!questionnaires.length) {

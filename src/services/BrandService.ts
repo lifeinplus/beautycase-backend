@@ -6,7 +6,7 @@ export const createBrand = async (data: Brand) => {
     return await BrandModel.create(data);
 };
 
-export const readBrands = async () => {
+export const getAllBrands = async () => {
     const brands = await BrandModel.find().sort("name");
 
     if (!brands.length) {
@@ -16,7 +16,7 @@ export const readBrands = async () => {
     return brands;
 };
 
-export const updateBrand = async (id: string, data: Brand) => {
+export const updateBrandById = async (id: string, data: Brand) => {
     const brand = await BrandModel.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,
@@ -29,7 +29,7 @@ export const updateBrand = async (id: string, data: Brand) => {
     return brand;
 };
 
-export const deleteBrand = async (id: string) => {
+export const deleteBrandById = async (id: string) => {
     const brand = await BrandModel.findByIdAndDelete(id);
 
     if (!brand) {

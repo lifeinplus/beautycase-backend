@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import * as UserService from "../services/UserService";
 
-export const readUser = async (
+export const getUserById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -10,9 +10,7 @@ export const readUser = async (
     const { id } = req.params;
 
     try {
-        const { user, makeupBags } = await UserService.readUserWithMakeupBags(
-            id
-        );
+        const { user, makeupBags } = await UserService.getUserById(id);
 
         res.status(200).json({ user, makeupBags });
     } catch (error) {
@@ -20,13 +18,13 @@ export const readUser = async (
     }
 };
 
-export const readUsers = async (
+export const getAllUsers = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const users = await UserService.readUsers();
+        const users = await UserService.getAllUsers();
         res.status(200).json(users);
     } catch (error) {
         next(error);

@@ -1,20 +1,20 @@
 import UserModel from "../models/UserModel";
 import { NotFoundError } from "../utils/AppErrors";
-import { readMakeupBagsByClientId } from "./MakeupBagService";
+import { getMakeupBagsByClientId } from "./MakeupBagService";
 
-export const readUserWithMakeupBags = async (id: string) => {
+export const getUserById = async (id: string) => {
     const user = await UserModel.findById(id).select("role username");
 
     if (!user) {
         throw new NotFoundError("User not found");
     }
 
-    const makeupBags = await readMakeupBagsByClientId(id);
+    const makeupBags = await getMakeupBagsByClientId(id);
 
     return { user, makeupBags };
 };
 
-export const readUsers = async () => {
+export const getAllUsers = async () => {
     const users = await UserModel.find().select("_id username");
 
     if (!users.length) {

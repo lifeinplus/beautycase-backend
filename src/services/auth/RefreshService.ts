@@ -11,7 +11,7 @@ import {
     verifyRefreshToken,
 } from "./TokenService";
 
-export const refresh = async (
+export const refreshToken = async (
     existingRefreshToken: string
 ): Promise<RefreshResult> => {
     if (!existingRefreshToken) {

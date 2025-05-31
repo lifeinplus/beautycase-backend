@@ -7,7 +7,7 @@ export const createLesson = async (data: Lesson) => {
     return lesson;
 };
 
-export const readLesson = async (id: string) => {
+export const getLessonById = async (id: string) => {
     const lesson = await LessonModel.findById(id).populate(
         "productIds",
         "imageUrl"
@@ -20,7 +20,7 @@ export const readLesson = async (id: string) => {
     return lesson;
 };
 
-export const readLessons = async () => {
+export const getAllLessons = async () => {
     const lessons = await LessonModel.find().select(
         "-fullDescription -productIds"
     );
@@ -32,7 +32,7 @@ export const readLessons = async () => {
     return lessons;
 };
 
-export const updateLesson = async (id: string, data: Lesson) => {
+export const updateLessonById = async (id: string, data: Lesson) => {
     const lesson = await LessonModel.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,
@@ -45,7 +45,7 @@ export const updateLesson = async (id: string, data: Lesson) => {
     return lesson;
 };
 
-export const deleteLesson = async (id: string) => {
+export const deleteLessonById = async (id: string) => {
     const lesson = await LessonModel.findByIdAndDelete(id);
 
     if (!lesson) {

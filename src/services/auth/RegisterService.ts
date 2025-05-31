@@ -4,7 +4,7 @@ import UserModel from "../../models/UserModel";
 import type { RegisterCredentials } from "../../types/auth";
 import { ConflictError } from "../../utils/AppErrors";
 
-export const register = async (credentials: RegisterCredentials) => {
+export const registerUser = async (credentials: RegisterCredentials) => {
     const { username, password, role = "client" } = credentials;
 
     const foundUser = await UserModel.findOne({ username }).exec();

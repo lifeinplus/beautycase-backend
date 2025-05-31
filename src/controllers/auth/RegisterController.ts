@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import * as RegisterService from "../../services/auth/RegisterService";
 
-export const register = async (
+export const registerUser = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -10,7 +10,7 @@ export const register = async (
     const { username, password } = req.body;
 
     try {
-        await RegisterService.register({ username, password });
+        await RegisterService.registerUser({ username, password });
         res.status(201).json({ message: "Account created successfully" });
     } catch (error) {
         next(error);

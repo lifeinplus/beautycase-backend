@@ -22,7 +22,7 @@ export const createProduct = async (
     }
 };
 
-export const readProduct = async (
+export const getProductById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -30,43 +30,36 @@ export const readProduct = async (
     const { id } = req.params;
 
     try {
-        const product = await ProductService.readProduct(id);
+        const product = await ProductService.getProductById(id);
         res.status(200).json(product);
     } catch (error) {
         next(error);
     }
 };
 
-export const readProducts = async (
+export const getAllProducts = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const products = await ProductService.readProducts();
+        const products = await ProductService.getAllProducts();
         res.status(200).json(products);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateProduct = async (
+export const updateProductById = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const { id } = req.params;
-    const { name, brandId, imageUrl, shade, comment, storeLinks } = req.body;
+    const { body, params } = req;
+    const { id } = params;
 
     try {
-        const product = await ProductService.updateProduct(id, {
-            name,
-            brandId,
-            imageUrl,
-            shade,
-            comment,
-            storeLinks,
-        });
+        const product = await ProductService.updateProductById(id, body);
 
         res.status(200).json({
             id: product._id,
@@ -77,7 +70,7 @@ export const updateProduct = async (
     }
 };
 
-export const deleteProduct = async (
+export const deleteProductById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -85,7 +78,7 @@ export const deleteProduct = async (
     const { id } = req.params;
 
     try {
-        const product = await ProductService.deleteProduct(id);
+        const product = await ProductService.deleteProductById(id);
 
         res.status(200).json({
             id: product._id,
