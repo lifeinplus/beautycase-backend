@@ -53,7 +53,7 @@ describe("StoreController", () => {
         });
     });
 
-    describe("readStores", () => {
+    describe("getAllStores", () => {
         it("should return all stores", async () => {
             await StoreModel.insertMany([mockStore1, mockStore2]);
 
@@ -75,7 +75,7 @@ describe("StoreController", () => {
         });
     });
 
-    describe("updateStore", () => {
+    describe("updateStoreById", () => {
         it("should update a store", async () => {
             const store = await StoreModel.create(mockStore1);
 
@@ -102,7 +102,7 @@ describe("StoreController", () => {
         });
     });
 
-    describe("deleteStore", () => {
+    describe("deleteStoreById", () => {
         it("should delete a store", async () => {
             const store = await StoreModel.create(mockStore1);
 

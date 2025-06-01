@@ -62,7 +62,7 @@ describe("CategoryController", () => {
         });
     });
 
-    describe("readCategories", () => {
+    describe("getAllCategories", () => {
         it("should get all categories", async () => {
             await CategoryModel.create([mockCategory1, mockCategory2]);
 

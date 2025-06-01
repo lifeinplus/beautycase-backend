@@ -92,8 +92,8 @@ describe("ProductController", () => {
         });
     });
 
-    describe("readProduct", () => {
-        it("should read a single product", async () => {
+    describe("getProductById", () => {
+        it("should get a single product by id", async () => {
             const product = await ProductModel.create(mockProduct1);
 
             const res = await request
@@ -114,7 +114,7 @@ describe("ProductController", () => {
         });
     });
 
-    describe("readProducts", () => {
+    describe("getAllProducts", () => {
         it("should return all products (imageUrl only)", async () => {
             await ProductModel.insertMany([mockProduct1, mockProduct2]);
 
@@ -138,7 +138,7 @@ describe("ProductController", () => {
         });
     });
 
-    describe("updateProduct", () => {
+    describe("updateProductById", () => {
         it("should update a product", async () => {
             const product = await ProductModel.create(mockProduct1);
 
@@ -166,7 +166,7 @@ describe("ProductController", () => {
         });
     });
 
-    describe("deleteProduct", () => {
+    describe("deleteProductById", () => {
         it("should delete a product", async () => {
             const product = await ProductModel.create({
                 ...mockProduct1,

@@ -3,10 +3,12 @@ import supertest from "supertest";
 
 import app from "../../app";
 import config from "../../config";
-import BrandModel from "../../models/BrandModel";
 import type { Brand } from "../../models/BrandModel";
+import * as BrandService from "../../services/BrandService";
 import { mockUserJwt } from "../../tests/mocks/auth";
 import { mockError } from "../../tests/mocks/error";
+
+jest.mock("../../services/BrandService");
 
 const request = supertest(app);
 let token: string;
@@ -24,108 +26,146 @@ describe("BrandController", () => {
     const mockBrand1: Brand = { name: "Annbeauty" };
     const mockBrand2: Brand = { name: "ManlyPRO" };
 
-    describe("createBrand", () => {
+    describe("POST /api/brands", () => {
         it("should create a new brand", async () => {
+            jest.mocked(
+                BrandService.createBrand as jest.Mock
+            ).mockResolvedValue({ _id: mockId });
+
             const res = await request
                 .post("/api/brands")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockBrand1);
 
-            expect(res.status).toBe(201);
-            expect(res.body.message).toBe("Brand created successfully");
+            expect(BrandService.createBrand).toHaveBeenCalledWith(mockBrand1);
 
-            const brand = await BrandModel.findOne(mockBrand1);
-            expect(brand).not.toBeNull();
+            expect(res.status).toBe(201);
+            expect(res.body.count).toBe(1);
+            expect(res.body.id).toBe(mockId);
+            expect(res.body.message).toBe("Brand created successfully");
         });
 
-        it("should return an error if brand creation fails", async () => {
-            const mockCreate = jest.spyOn(BrandModel, "create");
-            mockCreate.mockRejectedValue(mockError);
+        it("should return 500 if creating a brand fails", async () => {
+            const mockCreateBrand = jest.spyOn(BrandService, "createBrand");
+            mockCreateBrand.mockRejectedValue(mockError);
 
             const res = await request
                 .post("/api/brands")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand1)
-                .expect(500);
+                .send(mockBrand1);
 
+            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
-            mockCreate.mockRestore();
+
+            mockCreateBrand.mockRestore();
         });
     });
 
-    describe("readBrands", () => {
+    describe("GET /api/brands", () => {
         it("should return all brands", async () => {
-            await BrandModel.insertMany([mockBrand1, mockBrand2]);
+            const mockBrands = [mockBrand1, mockBrand2];
+
+            jest.mocked(
+                BrandService.getAllBrands as jest.Mock
+            ).mockResolvedValue(mockBrands);
 
             const res = await request
                 .get("/api/brands")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.status).toBe(200);
-            expect(res.body.length).toBe(2);
+            expect(res.body).toEqual(mockBrands);
         });
 
-        it("should return 404 if no brands exist", async () => {
+        it("should return 500 if getting all brands fails", async () => {
+            const mockGetAllBrands = jest.spyOn(BrandService, "getAllBrands");
+            mockGetAllBrands.mockRejectedValue(mockError);
+
             const res = await request
                 .get("/api/brands")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe("Brands not found");
+            expect(res.status).toBe(500);
+            expect(res.body).toHaveProperty("message");
+
+            mockGetAllBrands.mockRestore();
         });
     });
 
-    describe("updateBrand", () => {
-        it("should update a brand", async () => {
-            const brand = await BrandModel.create(mockBrand1);
+    describe("PUT /api/brands/:id", () => {
+        it("should update a brand by id", async () => {
+            jest.mocked(
+                BrandService.updateBrandById as jest.Mock
+            ).mockResolvedValue({ _id: mockId });
 
             const res = await request
-                .put(`/api/brands/${brand._id}`)
+                .put(`/api/brands/${mockId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockBrand2);
 
-            expect(res.status).toBe(200);
-            expect(res.body.message).toBe("Brand updated successfully");
+            expect(BrandService.updateBrandById).toHaveBeenCalledWith(
+                mockId,
+                mockBrand2
+            );
 
-            const updated = await BrandModel.findById(brand._id);
-            expect(updated?.name).toBe(mockBrand2.name);
+            expect(res.status).toBe(200);
+            expect(res.body.id).toBe(mockId);
+            expect(res.body.message).toBe("Brand updated successfully");
         });
 
-        it("should return 404 when updating a non-existent brand", async () => {
+        it("should return 500 if updating a brand fails", async () => {
+            const mockUpdateBrandById = jest.spyOn(
+                BrandService,
+                "updateBrandById"
+            );
+
+            mockUpdateBrandById.mockRejectedValue(mockError);
+
             const res = await request
                 .put(`/api/brands/${mockId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockBrand1);
 
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe("Brand not found");
+            expect(res.status).toBe(500);
+            expect(res.body).toHaveProperty("message");
+
+            mockUpdateBrandById.mockRestore();
         });
     });
 
-    describe("deleteBrand", () => {
+    describe("DELETE /api/brands/:id", () => {
         it("should delete a brand", async () => {
-            const brand = await BrandModel.create(mockBrand1);
+            jest.mocked(
+                BrandService.deleteBrandById as jest.Mock
+            ).mockResolvedValue({ _id: mockId });
 
             const res = await request
-                .delete(`/api/brands/${brand._id}`)
+                .delete(`/api/brands/${mockId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.status).toBe(200);
-            expect(res.body.message).toBe("Brand deleted successfully");
+            expect(BrandService.deleteBrandById).toHaveBeenCalledWith(mockId);
 
-            const deleted = await BrandModel.findById(brand._id);
-            expect(deleted).toBeNull();
+            expect(res.status).toBe(200);
+            expect(res.body.id).toBe(mockId);
+            expect(res.body.message).toBe("Brand deleted successfully");
         });
 
-        it("should handle errors during brand deletion", async () => {
-            jest.spyOn(BrandModel, "findByIdAndDelete").mockRejectedValue(
-                mockError
+        it("should return 500 if deleting a brand fails", async () => {
+            const mockDeleteBrandById = jest.spyOn(
+                BrandService,
+                "deleteBrandById"
             );
 
-            await request
+            mockDeleteBrandById.mockRejectedValue(mockError);
+
+            const res = await request
                 .delete(`/api/brands/${mockId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.status).toBe(500);
+            expect(res.body).toHaveProperty("message");
+
+            mockDeleteBrandById.mockRestore();
         });
     });
 });

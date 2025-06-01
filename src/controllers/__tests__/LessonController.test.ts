@@ -77,8 +77,8 @@ describe("LessonController", () => {
         });
     });
 
-    describe("readLesson", () => {
-        it("should read a single lesson with populated product images", async () => {
+    describe("getLessonById", () => {
+        it("should get a single lesson by id with populated product images", async () => {
             const product = await ProductModel.create(mockProduct);
 
             const lesson = await LessonModel.create({
@@ -104,7 +104,7 @@ describe("LessonController", () => {
         });
     });
 
-    describe("readLessons", () => {
+    describe("getAllLessons", () => {
         it("should return all lessons (without fullDescription and productIds)", async () => {
             await LessonModel.insertMany([mockLesson1, mockLesson2]);
 
@@ -128,7 +128,7 @@ describe("LessonController", () => {
         });
     });
 
-    describe("updateLesson", () => {
+    describe("updateLessonById", () => {
         it("should update a lesson", async () => {
             const lesson = await LessonModel.create(mockLesson1);
 
@@ -155,7 +155,7 @@ describe("LessonController", () => {
         });
     });
 
-    describe("deleteLesson", () => {
+    describe("deleteLessonById", () => {
         it("should delete a lesson", async () => {
             const lesson = await LessonModel.create(mockLesson1);
 
