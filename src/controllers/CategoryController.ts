@@ -12,7 +12,7 @@ export const createCategory = async (
 
         res.status(201).json({
             count: 1,
-            id: category.id,
+            id: category._id,
             message: "Category created successfully",
         });
     } catch (error) {

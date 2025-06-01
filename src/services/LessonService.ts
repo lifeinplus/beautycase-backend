@@ -3,8 +3,7 @@ import type { Lesson } from "../models/LessonModel";
 import { NotFoundError } from "../utils/AppErrors";
 
 export const createLesson = async (data: Lesson) => {
-    const lesson = await LessonModel.create(data);
-    return lesson;
+    return await LessonModel.create(data);
 };
 
 export const getLessonById = async (id: string) => {

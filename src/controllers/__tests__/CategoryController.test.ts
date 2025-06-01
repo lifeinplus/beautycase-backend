@@ -3,10 +3,16 @@ import supertest from "supertest";
 
 import app from "../../app";
 import config from "../../config";
-import CategoryModel from "../../models/CategoryModel";
-import type { Category } from "../../models/CategoryModel";
+import * as CategoryService from "../../services/CategoryService";
 import { mockUserJwt } from "../../tests/mocks/auth";
+import {
+    mockCategory1,
+    mockCategory2,
+    mockCategoryId,
+} from "../../tests/mocks/category";
 import { mockError } from "../../tests/mocks/error";
+
+jest.mock("../../services/CategoryService");
 
 const request = supertest(app);
 let token: string;
@@ -20,67 +26,78 @@ beforeAll(async () => {
 });
 
 describe("CategoryController", () => {
-    const mockCategory1: Category = {
-        name: "Базовая косметичка",
-        type: "makeup_bag",
-    };
-
-    const mockCategory2: Category = {
-        name: "Люксовая косметичка",
-        type: "makeup_bag",
-    };
-
-    describe("createCategory", () => {
+    describe("POST /api/categories", () => {
         it("should create a new category", async () => {
+            jest.mocked(
+                CategoryService.createCategory as jest.Mock
+            ).mockResolvedValue({ _id: mockCategoryId });
+
             const res = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockCategory1);
 
+            expect(CategoryService.createCategory).toHaveBeenCalledWith(
+                mockCategory1
+            );
+
             expect(res.status).toBe(201);
+            expect(res.body.count).toBe(1);
+            expect(res.body.id).toBe(mockCategoryId);
             expect(res.body.message).toBe("Category created successfully");
-
-            const category = await CategoryModel.findOne({
-                name: mockCategory1.name,
-            });
-
-            expect(category).not.toBeNull();
         });
 
-        it("should return an error if category creation fails", async () => {
-            const mockCreate = jest.spyOn(CategoryModel, "create");
-            mockCreate.mockRejectedValue(mockError);
+        it("should return 500 if creating a category fails", async () => {
+            const mockCreateCategory = jest.spyOn(
+                CategoryService,
+                "createCategory"
+            );
+
+            mockCreateCategory.mockRejectedValue(mockError);
 
             const res = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockCategory1)
-                .expect(500);
+                .send(mockCategory1);
 
+            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
-            mockCreate.mockRestore();
+            mockCreateCategory.mockRestore();
         });
     });
 
-    describe("getAllCategories", () => {
-        it("should get all categories", async () => {
-            await CategoryModel.create([mockCategory1, mockCategory2]);
+    describe("GET /api/categories", () => {
+        it("should return all categories", async () => {
+            const mockCategories = [mockCategory1, mockCategory2];
+
+            jest.mocked(
+                CategoryService.getAllCategories as jest.Mock
+            ).mockResolvedValue(mockCategories);
 
             const res = await request
                 .get("/api/categories")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.status).toBe(200);
-            expect(res.body.length).toBe(2);
+            expect(res.body).toEqual(mockCategories);
         });
 
-        it("should return 404 if no categories exist", async () => {
+        it("should return 500 if getting all categories fails", async () => {
+            const mockGetAllCategories = jest.spyOn(
+                CategoryService,
+                "getAllCategories"
+            );
+
+            mockGetAllCategories.mockRejectedValue(mockError);
+
             const res = await request
                 .get("/api/categories")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe("Categories not found");
+            expect(res.status).toBe(500);
+            expect(res.body).toHaveProperty("message");
+
+            mockGetAllCategories.mockRestore();
         });
     });
 });
