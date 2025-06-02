@@ -45,8 +45,8 @@ const requestValidator = (schemas: Schemas) => {
 
             const { error } = schemas.body.validate(req.body, options);
 
-            // console.log(111, req.body);
-            // console.log(222, error);
+            // console.log("body", 111, req.body);
+            // console.log("body", 222, error);
 
             if (error) {
                 throw new BadRequestError(
@@ -58,6 +58,10 @@ const requestValidator = (schemas: Schemas) => {
 
         if (schemas.params) {
             const { error } = schemas.params.validate(req.params, options);
+
+            // console.log("params", 111, req.params);
+            // console.log("params", 222, error);
+
             if (error) {
                 throw new BadRequestError(
                     "Validation failed for params",

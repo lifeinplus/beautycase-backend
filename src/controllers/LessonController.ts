@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import LessonModel from "../models/LessonModel";
-import { NotFoundError } from "../utils/AppErrors";
+import * as LessonService from "../services/LessonService";
 
 export const createLesson = async (
     req: Request,
@@ -12,7 +11,7 @@ export const createLesson = async (
         req.body;
 
     try {
-        const lesson = new LessonModel({
+        const lesson = await LessonService.createLesson({
             title,
             shortDescription,
             videoUrl,
@@ -20,11 +19,9 @@ export const createLesson = async (
             productIds,
         });
 
-        const response = await lesson.save();
-
         res.status(201).json({
             count: 1,
-            id: response._id,
+            id: lesson._id,
             message: "Lesson created successfully",
         });
     } catch (error) {
@@ -32,7 +29,7 @@ export const createLesson = async (
     }
 };
 
-export const readLesson = async (
+export const getLessonById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -40,72 +37,47 @@ export const readLesson = async (
     const { id } = req.params;
 
     try {
-        const lesson = await LessonModel.findById(id).populate(
-            "productIds",
-            "imageUrl"
-        );
-
-        if (!lesson) {
-            throw new NotFoundError("Lesson not found");
-        }
-
+        const lesson = await LessonService.getLessonById(id);
         res.status(200).json(lesson);
     } catch (error) {
         next(error);
     }
 };
 
-export const readLessons = async (
+export const getAllLessons = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const lessons = await LessonModel.find().select(
-            "-fullDescription -productIds"
-        );
-
-        if (!lessons.length) {
-            throw new NotFoundError("Lessons not found");
-        }
-
+        const lessons = await LessonService.getAllLessons();
         res.status(200).json(lessons);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateLesson = async (
+export const updateLessonById = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const { id } = req.params;
-    const { title, shortDescription, videoUrl, fullDescription, productIds } =
-        req.body;
+    const { body, params } = req;
+    const { id } = params;
 
     try {
-        const lesson = await LessonModel.findById(id).exec();
+        const lesson = await LessonService.updateLessonById(id, body);
 
-        if (!lesson) {
-            throw new NotFoundError("Lesson not found");
-        }
-
-        lesson.title = title;
-        lesson.shortDescription = shortDescription;
-        lesson.videoUrl = videoUrl;
-        lesson.fullDescription = fullDescription;
-        lesson.productIds = productIds;
-
-        await lesson.save();
-
-        res.status(200).json({ message: "Lesson updated successfully" });
+        res.status(200).json({
+            id: lesson._id,
+            message: "Lesson updated successfully",
+        });
     } catch (error) {
         next(error);
     }
 };
 
-export const deleteLesson = async (
+export const deleteLessonById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -113,8 +85,12 @@ export const deleteLesson = async (
     const { id } = req.params;
 
     try {
-        await LessonModel.findByIdAndDelete(id);
-        res.status(200).json({ message: "Lesson deleted successfully" });
+        const lesson = await LessonService.deleteLessonById(id);
+
+        res.status(200).json({
+            id: lesson._id,
+            message: "Lesson deleted successfully",
+        });
     } catch (error) {
         next(error);
     }

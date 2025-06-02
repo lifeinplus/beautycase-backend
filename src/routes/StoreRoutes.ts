@@ -2,9 +2,9 @@ import express from "express";
 
 import {
     createStore,
-    deleteStore,
-    readStores,
-    updateStore,
+    deleteStoreById,
+    getAllStores,
+    updateStoreById,
 } from "../controllers/StoreController";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -19,20 +19,20 @@ router.post(
     createStore
 );
 
-router.get("/", rolesVerifier(["admin", "mua"]), readStores);
+router.get("/", rolesVerifier(["admin", "mua"]), getAllStores);
 
 router.put(
     "/:id",
     rolesVerifier(["admin"]),
     requestValidator({ body: storeBodySchema, params: storeParamsSchema }),
-    updateStore
+    updateStoreById
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin"]),
     requestValidator({ params: storeParamsSchema }),
-    deleteStore
+    deleteStoreById
 );
 
 export default router;

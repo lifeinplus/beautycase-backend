@@ -24,7 +24,7 @@ interface ProcedureData {
     none?: boolean;
 }
 
-interface Questionnaire {
+export interface Questionnaire {
     age?: number;
     allergies?: string;
     budget?: string;
@@ -47,7 +47,7 @@ interface Questionnaire {
     skinType?: string;
 }
 
-interface QuestionnaireDocument extends Questionnaire, Document {}
+export interface QuestionnaireDocument extends Questionnaire, Document {}
 
 const QuestionnaireSchema: Schema = new Schema(
     {

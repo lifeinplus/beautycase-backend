@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import BrandModel from "../models/BrandModel";
-import { NotFoundError } from "../utils/AppErrors";
+import * as BrandService from "../services/BrandService";
 
 export const createBrand = async (
     req: Request,
@@ -9,10 +8,11 @@ export const createBrand = async (
     next: NextFunction
 ) => {
     try {
-        const brand = new BrandModel(req.body);
-        await brand.save();
+        const brand = await BrandService.createBrand(req.body);
+
         res.status(201).json({
             count: 1,
+            id: brand._id,
             message: "Brand created successfully",
         });
     } catch (error) {
@@ -20,51 +20,40 @@ export const createBrand = async (
     }
 };
 
-export const readBrands = async (
+export const getAllBrands = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const brands = await BrandModel.find().sort("name");
-
-        if (!brands.length) {
-            throw new NotFoundError("Brands not found");
-        }
-
+        const brands = await BrandService.getAllBrands();
         res.status(200).json(brands);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateBrand = async (
+export const updateBrandById = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     const { body, params } = req;
-
     const { id } = params;
-    const { name } = body;
 
     try {
-        const brand = await BrandModel.findById(id).exec();
+        const brand = await BrandService.updateBrandById(id, body);
 
-        if (!brand) {
-            throw new NotFoundError("Brand not found");
-        }
-
-        brand.name = name;
-        await brand.save();
-
-        res.status(200).json({ message: "Brand updated successfully" });
+        res.status(200).json({
+            id: brand._id,
+            message: "Brand updated successfully",
+        });
     } catch (error) {
         next(error);
     }
 };
 
-export const deleteBrand = async (
+export const deleteBrandById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -72,8 +61,12 @@ export const deleteBrand = async (
     const { id } = req.params;
 
     try {
-        await BrandModel.findByIdAndDelete(id);
-        res.status(200).json({ message: "Brand deleted successfully" });
+        const brand = await BrandService.deleteBrandById(id);
+
+        res.status(200).json({
+            id: brand._id,
+            message: "Brand deleted successfully",
+        });
     } catch (error) {
         next(error);
     }

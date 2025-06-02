@@ -2,10 +2,10 @@ import express from "express";
 
 import {
     createMakeupBag,
-    readMakeupBag,
-    readMakeupBags,
-    updateMakeupBag,
-    deleteMakeupBag,
+    getMakeupBagById,
+    getAllMakeupBags,
+    updateMakeupBagById,
+    deleteMakeupBagById,
 } from "../controllers/MakeupBagController";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -26,10 +26,10 @@ router.post(
 router.get(
     "/:id",
     requestValidator({ params: makeupBagParamsSchema }),
-    readMakeupBag
+    getMakeupBagById
 );
 
-router.get("/", rolesVerifier(["admin", "mua"]), readMakeupBags);
+router.get("/", rolesVerifier(["admin", "mua"]), getAllMakeupBags);
 
 router.put(
     "/:id",
@@ -38,14 +38,14 @@ router.put(
         body: makeupBagBodySchema,
         params: makeupBagParamsSchema,
     }),
-    updateMakeupBag
+    updateMakeupBagById
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: makeupBagParamsSchema }),
-    deleteMakeupBag
+    deleteMakeupBagById
 );
 
 export default router;

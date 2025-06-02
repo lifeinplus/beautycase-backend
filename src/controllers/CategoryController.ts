@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import CategoryModel from "../models/CategoryModel";
-import { NotFoundError } from "../utils/AppErrors";
+import * as CategoryService from "../services/CategoryService";
 
 export const createCategory = async (
     req: Request,
@@ -9,29 +8,25 @@ export const createCategory = async (
     next: NextFunction
 ) => {
     try {
-        const category = new CategoryModel(req.body);
-        await category.save();
+        const category = await CategoryService.createCategory(req.body);
+
         res.status(201).json({
-            message: "Category created successfully",
             count: 1,
+            id: category._id,
+            message: "Category created successfully",
         });
     } catch (error) {
         next(error);
     }
 };
 
-export const readCategories = async (
+export const getAllCategories = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const categories = await CategoryModel.find();
-
-        if (!categories.length) {
-            throw new NotFoundError("Categories not found");
-        }
-
+        const categories = await CategoryService.getAllCategories();
         res.status(200).json(categories);
     } catch (error) {
         next(error);

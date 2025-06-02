@@ -9,7 +9,7 @@ import {
     mockToken2,
     mockUser1,
 } from "../../../tests/mocks/auth";
-import { logout } from "../LogoutController";
+import { logoutUser } from "../LogoutController";
 import { mockError } from "../../../tests/mocks/error";
 
 const request = supertest(app);
@@ -60,7 +60,7 @@ describe("LogoutController POST", () => {
 
         const mockNext = jest.fn() as NextFunction;
 
-        await logout(mockReq, mockRes, mockNext);
+        await logoutUser(mockReq, mockRes, mockNext);
 
         expect(mockRes.clearCookie).toHaveBeenCalledWith("jwt");
         expect(mockNext).toHaveBeenCalledWith(mockError);

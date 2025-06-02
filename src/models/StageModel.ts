@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface Stage {
+export interface Stage {
     title: string;
     subtitle: string;
     imageId?: string;
@@ -10,7 +10,7 @@ interface Stage {
     productIds: string[];
 }
 
-interface StageDocument extends Stage, Document {}
+export interface StageDocument extends Stage, Document {}
 
 const StageSchema: Schema = new Schema(
     {

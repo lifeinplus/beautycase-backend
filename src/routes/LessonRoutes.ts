@@ -2,10 +2,10 @@ import express from "express";
 
 import {
     createLesson,
-    readLesson,
-    readLessons,
-    updateLesson,
-    deleteLesson,
+    getLessonById,
+    getAllLessons,
+    updateLessonById,
+    deleteLessonById,
 } from "../controllers/LessonController";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
@@ -26,23 +26,23 @@ router.post(
 router.get(
     "/:id",
     requestValidator({ params: lessonParamsSchema }),
-    readLesson
+    getLessonById
 );
 
-router.get("/", readLessons);
+router.get("/", getAllLessons);
 
 router.put(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: lessonBodySchema, params: lessonParamsSchema }),
-    updateLesson
+    updateLessonById
 );
 
 router.delete(
     "/:id",
     rolesVerifier(["admin", "mua"]),
     requestValidator({ params: lessonParamsSchema }),
-    deleteLesson
+    deleteLessonById
 );
 
 export default router;

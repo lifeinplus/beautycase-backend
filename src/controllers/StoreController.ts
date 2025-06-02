@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import StoreModel from "../models/StoreModel";
-import { NotFoundError } from "../utils/AppErrors";
+import * as StoreService from "../services/StoreService";
 
 export const createStore = async (
     req: Request,
@@ -9,10 +8,11 @@ export const createStore = async (
     next: NextFunction
 ) => {
     try {
-        const store = new StoreModel(req.body);
-        await store.save();
+        const store = await StoreService.createStore(req.body);
+
         res.status(201).json({
             count: 1,
+            id: store._id,
             message: "Store created successfully",
         });
     } catch (error) {
@@ -20,51 +20,40 @@ export const createStore = async (
     }
 };
 
-export const readStores = async (
+export const getAllStores = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const stores = await StoreModel.find().sort("name");
-
-        if (!stores.length) {
-            throw new NotFoundError("Stores not found");
-        }
-
+        const stores = await StoreService.getAllStores();
         res.status(200).json(stores);
     } catch (error) {
         next(error);
     }
 };
 
-export const updateStore = async (
+export const updateStoreById = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     const { body, params } = req;
-
     const { id } = params;
-    const { name } = body;
 
     try {
-        const store = await StoreModel.findById(id).exec();
+        const store = await StoreService.updateStoreById(id, body);
 
-        if (!store) {
-            throw new NotFoundError("Store not found");
-        }
-
-        store.name = name;
-        await store.save();
-
-        res.status(200).json({ message: "Store updated successfully" });
+        res.status(200).json({
+            id: store._id,
+            message: "Store updated successfully",
+        });
     } catch (error) {
         next(error);
     }
 };
 
-export const deleteStore = async (
+export const deleteStoreById = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -72,8 +61,12 @@ export const deleteStore = async (
     const { id } = req.params;
 
     try {
-        await StoreModel.findByIdAndDelete(id);
-        res.status(200).json({ message: "Store deleted successfully" });
+        const store = await StoreService.deleteStoreById(id);
+
+        res.status(200).json({
+            id: store._id,
+            message: "Store deleted successfully",
+        });
     } catch (error) {
         next(error);
     }

@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 
-import { UserRequest } from "../types/user";
+import { UserRequest } from "../types/auth";
 import { UnauthorizedError } from "../utils/AppErrors";
 
 const rolesVerifier = (allowedRoles: string[]) => {

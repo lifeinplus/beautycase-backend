@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface MakeupBag {
+export interface MakeupBag {
     categoryId: string;
     clientId: string;
     stageIds: string[];
     toolIds: string[];
 }
 
-interface MakeupBagDocument extends MakeupBag, Document {}
+export interface MakeupBagDocument extends MakeupBag, Document {}
 
 const MakeupBagSchema: Schema = new Schema(
     {

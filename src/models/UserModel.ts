@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface User {
+export interface User {
     password: string;
     refreshTokens: string[];
     role: "admin" | "client" | "mua";
     username: string;
 }
 
-interface UserDocument extends User, Document {}
+export interface UserDocument extends User, Document {}
 
 const UserSchema: Schema = new Schema(
     {

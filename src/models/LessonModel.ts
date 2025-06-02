@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface Lesson {
+export interface Lesson {
     title: string;
     shortDescription: string;
     videoUrl: string;
@@ -8,7 +8,7 @@ interface Lesson {
     productIds: string[];
 }
 
-interface LessonDocument extends Lesson, Document {}
+export interface LessonDocument extends Lesson, Document {}
 
 const LessonSchema: Schema = new Schema(
     {

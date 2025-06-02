@@ -1,10 +1,8 @@
-import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 
-import UserModel from "../../models/UserModel";
-import { ConflictError } from "../../utils/AppErrors";
+import * as RegisterService from "../../services/auth/RegisterService";
 
-export const register = async (
+export const registerUser = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -12,20 +10,7 @@ export const register = async (
     const { username, password } = req.body;
 
     try {
-        const foundUser = await UserModel.findOne({ username }).exec();
-
-        if (foundUser) {
-            throw new ConflictError("Username already in use");
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        await UserModel.create({
-            password: hashedPassword,
-            role: "client",
-            username,
-        });
-
+        await RegisterService.registerUser({ username, password });
         res.status(201).json({ message: "Account created successfully" });
     } catch (error) {
         next(error);

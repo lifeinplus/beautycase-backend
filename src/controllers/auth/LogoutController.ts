@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import UserModel from "../../models/UserModel";
 
-export const logout = async (
+import * as LogoutService from "../../services/auth/LogoutService";
+
+export const logoutUser = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const cookies = req.cookies;
+    const refreshToken = req.cookies.jwt;
 
-    if (!cookies.jwt) {
+    if (!refreshToken) {
         res.sendStatus(204);
         return;
     }
@@ -16,18 +17,7 @@ export const logout = async (
     res.clearCookie("jwt");
 
     try {
-        const foundUser = await UserModel.findOne({
-            refreshTokens: cookies.jwt,
-        }).exec();
-
-        if (foundUser) {
-            foundUser.refreshTokens = foundUser.refreshTokens.filter(
-                (token) => token !== cookies.jwt
-            );
-
-            await foundUser.save();
-        }
-
+        await LogoutService.logoutUser(refreshToken);
         res.sendStatus(200);
     } catch (error) {
         next(error);

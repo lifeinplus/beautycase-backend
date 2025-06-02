@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 import StoreLinkSchema from "./shared/StoreLinkSchema";
 import type { StoreLink } from "./shared/StoreLinkSchema";
 
-interface Product {
+export interface Product {
     brandId: string;
     name: string;
     imageId?: string;
@@ -13,7 +13,7 @@ interface Product {
     storeLinks: StoreLink[];
 }
 
-interface ProductDocument extends Product, Document {}
+export interface ProductDocument extends Product, Document {}
 
 const ProductSchema = new Schema(
     {

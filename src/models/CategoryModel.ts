@@ -1,11 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface Category {
+export interface Category {
     name: string;
     type: string;
 }
 
-interface CategoryDocument extends Category, Document {}
+export interface CategoryDocument extends Category, Document {}
 
 const CategorySchema: Schema = new Schema(
     {
