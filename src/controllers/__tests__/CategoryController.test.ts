@@ -27,7 +27,7 @@ beforeAll(async () => {
 
 describe("CategoryController", () => {
     describe("POST /api/categories", () => {
-        it("should create a new category", async () => {
+        it("should create a category", async () => {
             jest.mocked(
                 CategoryService.createCategory as jest.Mock
             ).mockResolvedValue({ _id: mockCategoryId });
@@ -35,14 +35,13 @@ describe("CategoryController", () => {
             const res = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockCategory1);
+                .send(mockCategory1)
+                .expect(201);
 
             expect(CategoryService.createCategory).toHaveBeenCalledWith(
                 mockCategory1
             );
 
-            expect(res.status).toBe(201);
-            expect(res.body.count).toBe(1);
             expect(res.body.id).toBe(mockCategoryId);
             expect(res.body.message).toBe("Category created successfully");
         });
@@ -58,16 +57,16 @@ describe("CategoryController", () => {
             const res = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockCategory1);
+                .send(mockCategory1)
+                .expect(500);
 
-            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
             mockCreateCategory.mockRestore();
         });
     });
 
     describe("GET /api/categories", () => {
-        it("should return all categories", async () => {
+        it("should get all categories", async () => {
             const mockCategories = [mockCategory1, mockCategory2];
 
             jest.mocked(
@@ -76,9 +75,9 @@ describe("CategoryController", () => {
 
             const res = await request
                 .get("/api/categories")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body).toEqual(mockCategories);
         });
 
@@ -92,11 +91,10 @@ describe("CategoryController", () => {
 
             const res = await request
                 .get("/api/categories")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(500);
 
-            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
-
             mockGetAllCategories.mockRestore();
         });
     });

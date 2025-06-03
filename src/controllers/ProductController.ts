@@ -13,10 +13,22 @@ export const createProduct = async (
         const product = await ProductService.createProduct(body);
 
         res.status(201).json({
-            count: 1,
             id: product._id,
             message: "Product created successfully",
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllProducts = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const products = await ProductService.getAllProducts();
+        res.status(200).json(products);
     } catch (error) {
         next(error);
     }
@@ -32,19 +44,6 @@ export const getProductById = async (
     try {
         const product = await ProductService.getProductById(id);
         res.status(200).json(product);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getAllProducts = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const products = await ProductService.getAllProducts();
-        res.status(200).json(products);
     } catch (error) {
         next(error);
     }

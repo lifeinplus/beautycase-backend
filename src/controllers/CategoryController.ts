@@ -7,11 +7,12 @@ export const createCategory = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { body } = req;
+
     try {
-        const category = await CategoryService.createCategory(req.body);
+        const category = await CategoryService.createCategory(body);
 
         res.status(201).json({
-            count: 1,
             id: category._id,
             message: "Category created successfully",
         });

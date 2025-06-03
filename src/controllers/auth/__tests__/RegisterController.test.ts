@@ -5,7 +5,7 @@ import UserModel from "../../../models/UserModel";
 import { mockRole, mockUserRegister } from "../../../tests/mocks/auth";
 
 describe("RegisterController POST", () => {
-    it("should successfully register a new user", async () => {
+    it("should register a user", async () => {
         const response = await request(app)
             .post("/api/auth/register")
             .send(mockUserRegister);

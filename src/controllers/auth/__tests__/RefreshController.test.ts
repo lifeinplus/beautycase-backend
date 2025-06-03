@@ -94,9 +94,8 @@ describe("RefreshController GET", () => {
 
         const res = await request
             .get(path)
-            .set("Cookie", [`jwt=${expiredToken}`]);
-
-        expect(res.status).toBe(500);
+            .set("Cookie", [`jwt=${expiredToken}`])
+            .expect(500);
 
         const user = await UserModel.findOne({
             username: mockUser1.username,
@@ -121,9 +120,9 @@ describe("RefreshController GET", () => {
 
         const res = await request
             .get(path)
-            .set("Cookie", [`jwt=${refreshToken}`]);
+            .set("Cookie", [`jwt=${refreshToken}`])
+            .expect(401);
 
-        expect(res.status).toBe(401);
         expect(res.body.message).toBe("Username incorrect");
     });
 });

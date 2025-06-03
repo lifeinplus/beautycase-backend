@@ -1,13 +1,9 @@
 import BrandModel from "../../models/BrandModel";
-import type { Brand } from "../../models/BrandModel";
+import { mockBrand1, mockBrand2, mockBrandId } from "../../tests/mocks/brand";
 import { NotFoundError } from "../../utils/AppErrors";
 import * as BrandService from "../BrandService";
 
 describe("BrandService", () => {
-    const mockId = "682a378b09c4df2756fcece5";
-    const mockBrand1: Brand = { name: "Annbeauty" };
-    const mockBrand2: Brand = { name: "ManlyPRO" };
-
     describe("createBrand", () => {
         it("should create a brand", async () => {
             const brand = await BrandService.createBrand(mockBrand1);
@@ -17,7 +13,7 @@ describe("BrandService", () => {
     });
 
     describe("getAllBrands", () => {
-        it("should get all brands sorted by name", async () => {
+        it("should get all brands", async () => {
             await BrandService.createBrand(mockBrand1);
             await BrandService.createBrand(mockBrand2);
 
@@ -34,7 +30,7 @@ describe("BrandService", () => {
     });
 
     describe("updateBrandById", () => {
-        it("should update brand by ID", async () => {
+        it("should update a brand", async () => {
             const brand = await BrandService.createBrand(mockBrand1);
 
             const updated = await BrandService.updateBrandById(
@@ -47,7 +43,7 @@ describe("BrandService", () => {
 
         it("should throw NotFoundError if brand to update not found", async () => {
             const brandPromise = BrandService.updateBrandById(
-                mockId,
+                mockBrandId,
                 mockBrand2
             );
             await expect(brandPromise).rejects.toThrow(NotFoundError);
@@ -55,7 +51,7 @@ describe("BrandService", () => {
     });
 
     describe("deleteBrandById", () => {
-        it("should delete brand by ID", async () => {
+        it("should delete a brand", async () => {
             const brand = await BrandService.createBrand(mockBrand1);
 
             const deleted = await BrandService.deleteBrandById(
@@ -68,7 +64,7 @@ describe("BrandService", () => {
         });
 
         it("should throw NotFoundError if brand to delete not found", async () => {
-            const brandPromise = BrandService.deleteBrandById(mockId);
+            const brandPromise = BrandService.deleteBrandById(mockBrandId);
             await expect(brandPromise).rejects.toThrow(NotFoundError);
         });
     });

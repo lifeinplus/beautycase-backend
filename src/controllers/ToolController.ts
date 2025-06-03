@@ -13,10 +13,22 @@ export const createTool = async (
         const tool = await ToolService.createTool(body);
 
         res.status(201).json({
-            count: 1,
             id: tool._id,
             message: "Tool created successfully",
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllTools = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const tools = await ToolService.getAllTools();
+        res.status(200).json(tools);
     } catch (error) {
         next(error);
     }
@@ -32,19 +44,6 @@ export const getToolById = async (
     try {
         const tool = await ToolService.getToolById(id);
         res.status(200).json(tool);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getAllTools = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const tools = await ToolService.getAllTools();
-        res.status(200).json(tools);
     } catch (error) {
         next(error);
     }

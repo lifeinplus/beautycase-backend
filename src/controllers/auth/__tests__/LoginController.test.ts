@@ -20,7 +20,7 @@ describe("LoginController POST", () => {
         });
     });
 
-    it("should login successfully and return access token", async () => {
+    it("should login and return access token", async () => {
         const response = await request.post(path).send(mockUser1);
 
         expect(response.status).toBe(200);

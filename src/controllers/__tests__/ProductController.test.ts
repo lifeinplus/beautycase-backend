@@ -61,14 +61,13 @@ describe("ProductController", () => {
     };
 
     describe("createProduct", () => {
-        it("should create a new product", async () => {
+        it("should create a product", async () => {
             const res = await request
                 .post("/api/products")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockProduct1);
+                .send(mockProduct1)
+                .expect(201);
 
-            expect(res.status).toBe(201);
-            expect(res.body.count).toBe(1);
             expect(res.body.id).toBeDefined();
             expect(res.body.message).toBe("Product created successfully");
 
@@ -93,36 +92,36 @@ describe("ProductController", () => {
     });
 
     describe("getProductById", () => {
-        it("should get a single product by id", async () => {
+        it("should get a product", async () => {
             const product = await ProductModel.create(mockProduct1);
 
             const res = await request
                 .get(`/api/products/${product._id}`)
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body.name).toBe(mockProduct1.name);
         });
 
         it("should return 404 if product not found", async () => {
             const res = await request
                 .get(`/api/products/${mockId}`)
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(404);
 
-            expect(res.status).toBe(404);
             expect(res.body.message).toBe("Product not found");
         });
     });
 
     describe("getAllProducts", () => {
-        it("should return all products (imageUrl only)", async () => {
+        it("should get all products (imageUrl only)", async () => {
             await ProductModel.insertMany([mockProduct1, mockProduct2]);
 
             const res = await request
                 .get("/api/products")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body.length).toBe(2);
             expect(res.body[0]).toHaveProperty("imageUrl");
             expect(res.body[0]).not.toHaveProperty("name");
@@ -131,9 +130,9 @@ describe("ProductController", () => {
         it("should return 404 if no products found", async () => {
             const res = await request
                 .get("/api/products")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(404);
 
-            expect(res.status).toBe(404);
             expect(res.body.message).toBe("Products not found");
         });
     });
@@ -145,9 +144,9 @@ describe("ProductController", () => {
             const res = await request
                 .put(`/api/products/${product._id}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockProduct2);
+                .send(mockProduct2)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body.id).toBeDefined();
             expect(res.body.message).toBe("Product updated successfully");
 
@@ -159,9 +158,9 @@ describe("ProductController", () => {
             const res = await request
                 .put(`/api/products/${mockId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockProduct1);
+                .send(mockProduct1)
+                .expect(404);
 
-            expect(res.status).toBe(404);
             expect(res.body.message).toBe("Product not found");
         });
     });
@@ -175,9 +174,9 @@ describe("ProductController", () => {
 
             const res = await request
                 .delete(`/api/products/${product._id}`)
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body.id).toBe(String(product._id));
             expect(res.body.message).toBe("Product deleted successfully");
 
@@ -188,9 +187,9 @@ describe("ProductController", () => {
         it("should return 404 when deleting a non-existent product", async () => {
             const res = await request
                 .delete(`/api/products/${mockId}`)
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(404);
 
-            expect(res.status).toBe(404);
             expect(res.body.message).toBe("Product not found");
         });
     });

@@ -25,13 +25,13 @@ describe("StoreController", () => {
     const mockStore2: Store = { name: "Cult Beauty" };
 
     describe("createStore", () => {
-        it("should create a new store", async () => {
+        it("should create a store", async () => {
             const res = await request
                 .post("/api/stores")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockStore1);
+                .send(mockStore1)
+                .expect(201);
 
-            expect(res.status).toBe(201);
             expect(res.body.message).toBe("Store created successfully");
 
             const store = await StoreModel.findOne(mockStore1);
@@ -54,23 +54,23 @@ describe("StoreController", () => {
     });
 
     describe("getAllStores", () => {
-        it("should return all stores", async () => {
+        it("should get all stores", async () => {
             await StoreModel.insertMany([mockStore1, mockStore2]);
 
             const res = await request
                 .get("/api/stores")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body.length).toBe(2);
         });
 
         it("should return 404 when no stores exist", async () => {
             const res = await request
                 .get("/api/stores")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(404);
 
-            expect(res.status).toBe(404);
             expect(res.body.message).toBe("Stores not found");
         });
     });
@@ -82,9 +82,9 @@ describe("StoreController", () => {
             const res = await request
                 .put(`/api/stores/${store._id}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockStore2);
+                .send(mockStore2)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body.message).toBe("Store updated successfully");
 
             const updated = await StoreModel.findById(store._id);
@@ -95,9 +95,9 @@ describe("StoreController", () => {
             const res = await request
                 .put(`/api/stores/${mockId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockStore1);
+                .send(mockStore1)
+                .expect(404);
 
-            expect(res.status).toBe(404);
             expect(res.body.message).toBe("Store not found");
         });
     });
@@ -108,9 +108,9 @@ describe("StoreController", () => {
 
             const res = await request
                 .delete(`/api/stores/${store._id}`)
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body.message).toBe("Store deleted successfully");
 
             const deleted = await StoreModel.findById(store._id);

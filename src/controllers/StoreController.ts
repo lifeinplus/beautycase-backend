@@ -7,11 +7,12 @@ export const createStore = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { body } = req;
+
     try {
-        const store = await StoreService.createStore(req.body);
+        const store = await StoreService.createStore(body);
 
         res.status(201).json({
-            count: 1,
             id: store._id,
             message: "Store created successfully",
         });

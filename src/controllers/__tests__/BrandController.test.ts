@@ -3,9 +3,9 @@ import supertest from "supertest";
 
 import app from "../../app";
 import config from "../../config";
-import type { Brand } from "../../models/BrandModel";
 import * as BrandService from "../../services/BrandService";
 import { mockUserJwt } from "../../tests/mocks/auth";
+import { mockBrand1, mockBrand2, mockBrandId } from "../../tests/mocks/brand";
 import { mockError } from "../../tests/mocks/error";
 
 jest.mock("../../services/BrandService");
@@ -22,26 +22,21 @@ beforeAll(async () => {
 });
 
 describe("BrandController", () => {
-    const mockId = "682a378b09c4df2756fcece5";
-    const mockBrand1: Brand = { name: "Annbeauty" };
-    const mockBrand2: Brand = { name: "ManlyPRO" };
-
     describe("POST /api/brands", () => {
-        it("should create a new brand", async () => {
+        it("should create a brand", async () => {
             jest.mocked(
                 BrandService.createBrand as jest.Mock
-            ).mockResolvedValue({ _id: mockId });
+            ).mockResolvedValue({ _id: mockBrandId });
 
             const res = await request
                 .post("/api/brands")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand1);
+                .send(mockBrand1)
+                .expect(201);
 
             expect(BrandService.createBrand).toHaveBeenCalledWith(mockBrand1);
 
-            expect(res.status).toBe(201);
-            expect(res.body.count).toBe(1);
-            expect(res.body.id).toBe(mockId);
+            expect(res.body.id).toBe(mockBrandId);
             expect(res.body.message).toBe("Brand created successfully");
         });
 
@@ -52,9 +47,9 @@ describe("BrandController", () => {
             const res = await request
                 .post("/api/brands")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand1);
+                .send(mockBrand1)
+                .expect(500);
 
-            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
 
             mockCreateBrand.mockRestore();
@@ -62,7 +57,7 @@ describe("BrandController", () => {
     });
 
     describe("GET /api/brands", () => {
-        it("should return all brands", async () => {
+        it("should get all brands", async () => {
             const mockBrands = [mockBrand1, mockBrand2];
 
             jest.mocked(
@@ -71,9 +66,9 @@ describe("BrandController", () => {
 
             const res = await request
                 .get("/api/brands")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(res.status).toBe(200);
             expect(res.body).toEqual(mockBrands);
         });
 
@@ -83,33 +78,32 @@ describe("BrandController", () => {
 
             const res = await request
                 .get("/api/brands")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .expect(500);
 
-            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
-
             mockGetAllBrands.mockRestore();
         });
     });
 
     describe("PUT /api/brands/:id", () => {
-        it("should update a brand by id", async () => {
+        it("should update a brand", async () => {
             jest.mocked(
                 BrandService.updateBrandById as jest.Mock
-            ).mockResolvedValue({ _id: mockId });
+            ).mockResolvedValue({ _id: mockBrandId });
 
             const res = await request
-                .put(`/api/brands/${mockId}`)
+                .put(`/api/brands/${mockBrandId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand2);
+                .send(mockBrand2)
+                .expect(200);
 
             expect(BrandService.updateBrandById).toHaveBeenCalledWith(
-                mockId,
+                mockBrandId,
                 mockBrand2
             );
 
-            expect(res.status).toBe(200);
-            expect(res.body.id).toBe(mockId);
+            expect(res.body.id).toBe(mockBrandId);
             expect(res.body.message).toBe("Brand updated successfully");
         });
 
@@ -122,11 +116,11 @@ describe("BrandController", () => {
             mockUpdateBrandById.mockRejectedValue(mockError);
 
             const res = await request
-                .put(`/api/brands/${mockId}`)
+                .put(`/api/brands/${mockBrandId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand1);
+                .send(mockBrand1)
+                .expect(500);
 
-            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
 
             mockUpdateBrandById.mockRestore();
@@ -137,16 +131,18 @@ describe("BrandController", () => {
         it("should delete a brand", async () => {
             jest.mocked(
                 BrandService.deleteBrandById as jest.Mock
-            ).mockResolvedValue({ _id: mockId });
+            ).mockResolvedValue({ _id: mockBrandId });
 
             const res = await request
-                .delete(`/api/brands/${mockId}`)
-                .set("Authorization", `Bearer ${token}`);
+                .delete(`/api/brands/${mockBrandId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .expect(200);
 
-            expect(BrandService.deleteBrandById).toHaveBeenCalledWith(mockId);
+            expect(BrandService.deleteBrandById).toHaveBeenCalledWith(
+                mockBrandId
+            );
 
-            expect(res.status).toBe(200);
-            expect(res.body.id).toBe(mockId);
+            expect(res.body.id).toBe(mockBrandId);
             expect(res.body.message).toBe("Brand deleted successfully");
         });
 
@@ -159,10 +155,10 @@ describe("BrandController", () => {
             mockDeleteBrandById.mockRejectedValue(mockError);
 
             const res = await request
-                .delete(`/api/brands/${mockId}`)
-                .set("Authorization", `Bearer ${token}`);
+                .delete(`/api/brands/${mockBrandId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .expect(500);
 
-            expect(res.status).toBe(500);
             expect(res.body).toHaveProperty("message");
 
             mockDeleteBrandById.mockRestore();

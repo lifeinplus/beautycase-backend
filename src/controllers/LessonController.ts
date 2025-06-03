@@ -7,23 +7,28 @@ export const createLesson = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { title, shortDescription, videoUrl, fullDescription, productIds } =
-        req.body;
+    const { body } = req;
 
     try {
-        const lesson = await LessonService.createLesson({
-            title,
-            shortDescription,
-            videoUrl,
-            fullDescription,
-            productIds,
-        });
+        const lesson = await LessonService.createLesson(body);
 
         res.status(201).json({
-            count: 1,
             id: lesson._id,
             message: "Lesson created successfully",
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllLessons = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const lessons = await LessonService.getAllLessons();
+        res.status(200).json(lessons);
     } catch (error) {
         next(error);
     }
@@ -39,19 +44,6 @@ export const getLessonById = async (
     try {
         const lesson = await LessonService.getLessonById(id);
         res.status(200).json(lesson);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getAllLessons = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const lessons = await LessonService.getAllLessons();
-        res.status(200).json(lessons);
     } catch (error) {
         next(error);
     }
