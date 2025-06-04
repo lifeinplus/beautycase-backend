@@ -2,6 +2,16 @@ import UserModel from "../models/UserModel";
 import { NotFoundError } from "../utils/AppErrors";
 import { getMakeupBagsByClientId } from "./MakeupBagService";
 
+export const getAllUsers = async () => {
+    const users = await UserModel.find().select("_id username");
+
+    if (!users.length) {
+        throw new NotFoundError("Users not found");
+    }
+
+    return users;
+};
+
 export const getUserById = async (id: string) => {
     const user = await UserModel.findById(id).select("role username");
 
@@ -12,14 +22,4 @@ export const getUserById = async (id: string) => {
     const makeupBags = await getMakeupBagsByClientId(id);
 
     return { user, makeupBags };
-};
-
-export const getAllUsers = async () => {
-    const users = await UserModel.find().select("_id username");
-
-    if (!users.length) {
-        throw new NotFoundError("Users not found");
-    }
-
-    return users;
 };

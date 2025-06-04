@@ -84,16 +84,6 @@ export const createTool = async (data: Tool) => {
     return tool;
 };
 
-export const getToolById = async (id: string) => {
-    const tool = await ToolModel.findById(id).populate("brandId");
-
-    if (!tool) {
-        throw new NotFoundError("Tool not found");
-    }
-
-    return tool;
-};
-
 export const getAllTools = async () => {
     const tools = await ToolModel.find().select("imageUrl");
 
@@ -102,6 +92,16 @@ export const getAllTools = async () => {
     }
 
     return tools;
+};
+
+export const getToolById = async (id: string) => {
+    const tool = await ToolModel.findById(id).populate("brandId");
+
+    if (!tool) {
+        throw new NotFoundError("Tool not found");
+    }
+
+    return tool;
 };
 
 export const updateToolById = async (id: string, data: Tool) => {

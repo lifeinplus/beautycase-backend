@@ -106,6 +106,18 @@ export const duplicateStageById = async (id: string) => {
     return duplicatedStage;
 };
 
+export const getAllStages = async () => {
+    const stages = await StageModel.find().select(
+        "createdAt imageUrl subtitle title"
+    );
+
+    if (!stages.length) {
+        throw new NotFoundError("Stages not found");
+    }
+
+    return stages;
+};
+
 export const getStageById = async (id: string) => {
     const stage = await StageModel.findById(id).populate(
         "productIds",
@@ -117,18 +129,6 @@ export const getStageById = async (id: string) => {
     }
 
     return stage;
-};
-
-export const getAllStages = async () => {
-    const stages = await StageModel.find().select(
-        "createdAt imageUrl subtitle title"
-    );
-
-    if (!stages.length) {
-        throw new NotFoundError("Stages not found");
-    }
-
-    return stages;
 };
 
 export const updateStageById = async (id: string, data: Stage) => {

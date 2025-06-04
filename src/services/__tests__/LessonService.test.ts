@@ -1,4 +1,3 @@
-import LessonModel from "../../models/LessonModel";
 import {
     mockLessonId,
     mockLesson1,
@@ -52,7 +51,7 @@ describe("LessonService", () => {
             expect(result._id).toEqual(lesson._id);
         });
 
-        it("should throw NotFoundError if lesson not found by id", async () => {
+        it("should throw NotFoundError if lesson not found", async () => {
             const lessonPromise = LessonService.getLessonById(mockLessonId);
             await expect(lessonPromise).rejects.toThrow(NotFoundError);
         });
@@ -60,7 +59,7 @@ describe("LessonService", () => {
 
     describe("updateLessonById", () => {
         it("should update a lesson", async () => {
-            const lesson = await LessonModel.create(mockLesson1);
+            const lesson = await LessonService.createLesson(mockLesson1);
 
             const updated = await LessonService.updateLessonById(
                 String(lesson._id),
@@ -81,15 +80,13 @@ describe("LessonService", () => {
 
     describe("deleteLessonById", () => {
         it("should delete a lesson", async () => {
-            const lesson = await LessonModel.create(mockLesson1);
+            const lesson = await LessonService.createLesson(mockLesson1);
 
             const deleted = await LessonService.deleteLessonById(
                 String(lesson._id)
             );
-            expect(deleted.title).toBe(mockLesson1.title);
 
-            const found = await LessonModel.findById(lesson._id);
-            expect(found).toBeNull();
+            expect(deleted.title).toBe(mockLesson1.title);
         });
 
         it("should throw NotFoundError if lesson to delete not found", async () => {

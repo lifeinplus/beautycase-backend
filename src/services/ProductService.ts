@@ -33,16 +33,6 @@ export const createProduct = async (data: Product) => {
     return product;
 };
 
-export const getProductById = async (id: string) => {
-    const product = await ProductModel.findById(id).populate("brandId");
-
-    if (!product) {
-        throw new NotFoundError("Product not found");
-    }
-
-    return product;
-};
-
 export const getAllProducts = async () => {
     const products = await ProductModel.find().select("imageUrl");
 
@@ -51,6 +41,16 @@ export const getAllProducts = async () => {
     }
 
     return products;
+};
+
+export const getProductById = async (id: string) => {
+    const product = await ProductModel.findById(id).populate("brandId");
+
+    if (!product) {
+        throw new NotFoundError("Product not found");
+    }
+
+    return product;
 };
 
 export const updateProductById = async (id: string, data: Product) => {

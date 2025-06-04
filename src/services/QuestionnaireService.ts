@@ -62,16 +62,6 @@ export const createQuestionnaire = async (data: Questionnaire) => {
     return questionnaire;
 };
 
-export const getQuestionnaireById = async (id: string) => {
-    const questionnaire = await QuestionnaireModel.findById(id);
-
-    if (!questionnaire) {
-        throw new NotFoundError("Questionnaire not found");
-    }
-
-    return questionnaire;
-};
-
 export const getAllQuestionnaires = async () => {
     const questionnaires = await QuestionnaireModel.find();
 
@@ -80,4 +70,14 @@ export const getAllQuestionnaires = async () => {
     }
 
     return questionnaires;
+};
+
+export const getQuestionnaireById = async (id: string) => {
+    const questionnaire = await QuestionnaireModel.findById(id);
+
+    if (!questionnaire) {
+        throw new NotFoundError("Questionnaire not found");
+    }
+
+    return questionnaire;
 };
