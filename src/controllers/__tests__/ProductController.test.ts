@@ -3,32 +3,16 @@ import supertest from "supertest";
 
 import app from "../../app";
 import config from "../../config";
-import ProductModel from "../../models/ProductModel";
-import type { Product } from "../../models/ProductModel";
+import * as ProductService from "../../services/ProductService";
 import { mockUserJwt } from "../../tests/mocks/auth";
 import { mockError } from "../../tests/mocks/error";
+import {
+    mockProduct1,
+    mockProduct2,
+    mockProductId,
+} from "../../tests/mocks/product";
 
-jest.mock("cloudinary", () => ({
-    v2: {
-        config: jest.fn(),
-        uploader: {
-            rename: jest.fn().mockResolvedValue({
-                public_id: "products/renamed-id",
-                secure_url: "https://cloudinary.com/renamed-image.jpg",
-            }),
-            explicit: jest.fn().mockResolvedValue({
-                public_id: "products/renamed-id",
-                secure_url: "https://cloudinary.com/renamed-image.jpg",
-            }),
-            destroy: jest.fn().mockResolvedValue({ result: "ok" }),
-        },
-    },
-}));
-
-jest.mock("../../services/tempUploadsService", () => ({
-    get: jest.fn(() => "temp-id"),
-    remove: jest.fn(),
-}));
+jest.mock("../../services/ProductService");
 
 const request = supertest(app);
 let token: string;
@@ -42,155 +26,226 @@ beforeAll(async () => {
 });
 
 describe("ProductController", () => {
-    const mockId = "682a378b09c4df2756fcece5";
-
-    const mockProduct1: Product = {
-        brandId: mockId,
-        name: "Lipstick",
-        imageUrl: "https://image.url/lipstick.png",
-        comment: "Great product",
-        storeLinks: [],
-    };
-
-    const mockProduct2: Product = {
-        brandId: mockId,
-        name: "Foundation",
-        imageUrl: "https://image.url/foundation.png",
-        comment: "Great product",
-        storeLinks: [],
-    };
-
-    describe("createProduct", () => {
+    describe("POST /api/products", () => {
         it("should create a product", async () => {
-            const res = await request
-                .post("/api/products")
-                .set("Authorization", `Bearer ${token}`)
-                .send(mockProduct1)
-                .expect(201);
-
-            expect(res.body.id).toBeDefined();
-            expect(res.body.message).toBe("Product created successfully");
-
-            const product = await ProductModel.findById(res.body.id);
-            expect(product).not.toBeNull();
-            expect(product?.imageId).toBe("products/renamed-id");
-        });
-
-        it("should return an error if product creation fails", async () => {
-            const mockCreate = jest.spyOn(ProductModel, "create");
-            mockCreate.mockRejectedValue(mockError);
+            jest.mocked(
+                ProductService.createProduct as jest.Mock
+            ).mockResolvedValue({ _id: mockProductId });
 
             const res = await request
                 .post("/api/products")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockProduct1)
-                .expect(500);
+                .send(mockProduct2);
 
-            expect(res.body).toHaveProperty("message");
-            mockCreate.mockRestore();
-        });
-    });
+            expect(res.statusCode).toBe(201);
 
-    describe("getProductById", () => {
-        it("should get a product", async () => {
-            const product = await ProductModel.create(mockProduct1);
-
-            const res = await request
-                .get(`/api/products/${product._id}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
-
-            expect(res.body.name).toBe(mockProduct1.name);
-        });
-
-        it("should return 404 if product not found", async () => {
-            const res = await request
-                .get(`/api/products/${mockId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(404);
-
-            expect(res.body.message).toBe("Product not found");
-        });
-    });
-
-    describe("getAllProducts", () => {
-        it("should get all products (imageUrl only)", async () => {
-            await ProductModel.insertMany([mockProduct1, mockProduct2]);
-
-            const res = await request
-                .get("/api/products")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
-
-            expect(res.body.length).toBe(2);
-            expect(res.body[0]).toHaveProperty("imageUrl");
-            expect(res.body[0]).not.toHaveProperty("name");
-        });
-
-        it("should return 404 if no products found", async () => {
-            const res = await request
-                .get("/api/products")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(404);
-
-            expect(res.body.message).toBe("Products not found");
-        });
-    });
-
-    describe("updateProductById", () => {
-        it("should update a product", async () => {
-            const product = await ProductModel.create(mockProduct1);
-
-            const res = await request
-                .put(`/api/products/${product._id}`)
-                .set("Authorization", `Bearer ${token}`)
-                .send(mockProduct2)
-                .expect(200);
-
-            expect(res.body.id).toBeDefined();
-            expect(res.body.message).toBe("Product updated successfully");
-
-            const updated = await ProductModel.findById(res.body.id);
-            expect(updated?.name).toBe(mockProduct2.name);
-        });
-
-        it("should return 404 when updating a non-existent product", async () => {
-            const res = await request
-                .put(`/api/products/${mockId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .send(mockProduct1)
-                .expect(404);
-
-            expect(res.body.message).toBe("Product not found");
-        });
-    });
-
-    describe("deleteProductById", () => {
-        it("should delete a product", async () => {
-            const product = await ProductModel.create({
-                ...mockProduct1,
-                imageId: "products/renamed-id",
+            expect(res.body).toEqual({
+                id: mockProductId,
+                message: "Product created successfully",
             });
 
-            const res = await request
-                .delete(`/api/products/${product._id}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
-
-            expect(res.body.id).toBe(String(product._id));
-            expect(res.body.message).toBe("Product deleted successfully");
-
-            const deleted = await ProductModel.findById(product._id);
-            expect(deleted).toBeNull();
+            expect(ProductService.createProduct).toHaveBeenCalledWith(
+                mockProduct2
+            );
         });
 
-        it("should return 404 when deleting a non-existent product", async () => {
-            const res = await request
-                .delete(`/api/products/${mockId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(404);
+        it("should return 500 if creating a product fails", async () => {
+            const mockCreateProduct = jest.spyOn(
+                ProductService,
+                "createProduct"
+            );
 
-            expect(res.body.message).toBe("Product not found");
+            mockCreateProduct.mockRejectedValue(mockError);
+
+            const res = await request
+                .post("/api/products")
+                .set("Authorization", `Bearer ${token}`)
+                .send(mockProduct2);
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.message).toEqual(mockError.message);
+
+            expect(ProductService.createProduct).toHaveBeenCalledWith(
+                mockProduct2
+            );
+
+            mockCreateProduct.mockRestore();
+        });
+    });
+
+    describe("GET /api/products", () => {
+        it("should get all products (imageUrl only)", async () => {
+            const mockProducts = [mockProduct1, mockProduct2];
+
+            jest.mocked(
+                ProductService.getAllProducts as jest.Mock
+            ).mockResolvedValue(mockProducts);
+
+            const res = await request
+                .get("/api/products")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toEqual(mockProducts);
+            expect(ProductService.getAllProducts).toHaveBeenCalledTimes(1);
+        });
+
+        it("should return 500 if getting all products fails", async () => {
+            const mockGetAllProducts = jest.spyOn(
+                ProductService,
+                "getAllProducts"
+            );
+
+            mockGetAllProducts.mockRejectedValue(mockError);
+
+            const res = await request
+                .get("/api/products")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.message).toEqual(mockError.message);
+            expect(ProductService.getAllProducts).toHaveBeenCalledTimes(1);
+
+            mockGetAllProducts.mockRestore();
+        });
+    });
+
+    describe("GET /api/products/:id", () => {
+        it("should get a product", async () => {
+            const mockResult = { _id: mockProductId, ...mockProduct1 };
+
+            jest.mocked(
+                ProductService.getProductById as jest.Mock
+            ).mockResolvedValue(mockResult);
+
+            const res = await request
+                .get(`/api/products/${mockProductId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toEqual(mockResult);
+
+            expect(ProductService.getProductById).toHaveBeenCalledTimes(1);
+            expect(ProductService.getProductById).toHaveBeenCalledWith(
+                mockProductId
+            );
+        });
+
+        it("should return 500 if getting a product fails", async () => {
+            const mockGetProductById = jest.spyOn(
+                ProductService,
+                "getProductById"
+            );
+
+            mockGetProductById.mockRejectedValue(mockError);
+
+            const res = await request
+                .get(`/api/products/${mockProductId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.message).toBe(mockError.message);
+
+            expect(ProductService.getProductById).toHaveBeenCalledWith(
+                mockProductId
+            );
+
+            mockGetProductById.mockRestore();
+        });
+    });
+
+    describe("PUT /api/products/:id", () => {
+        it("should update a product", async () => {
+            jest.mocked(
+                ProductService.updateProductById as jest.Mock
+            ).mockResolvedValue({ _id: mockProductId });
+
+            const res = await request
+                .put(`/api/products/${mockProductId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .send(mockProduct2);
+
+            expect(res.statusCode).toBe(200);
+
+            expect(res.body).toEqual({
+                id: mockProductId,
+                message: "Product updated successfully",
+            });
+
+            expect(ProductService.updateProductById).toHaveBeenCalledTimes(1);
+            expect(ProductService.updateProductById).toHaveBeenCalledWith(
+                mockProductId,
+                mockProduct2
+            );
+        });
+
+        it("should return 500 if updating a product fails", async () => {
+            const mockUpdateProductById = jest.spyOn(
+                ProductService,
+                "updateProductById"
+            );
+
+            mockUpdateProductById.mockRejectedValue(mockError);
+
+            const res = await request
+                .put(`/api/products/${mockProductId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .send(mockProduct2);
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.message).toBe(mockError.message);
+
+            expect(ProductService.updateProductById).toHaveBeenCalledWith(
+                mockProductId,
+                mockProduct2
+            );
+
+            mockUpdateProductById.mockRestore();
+        });
+    });
+
+    describe("DELETE /api/products/:id", () => {
+        it("should delete a product", async () => {
+            jest.mocked(
+                ProductService.deleteProductById as jest.Mock
+            ).mockResolvedValue({ _id: mockProductId });
+
+            const res = await request
+                .delete(`/api/products/${mockProductId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(200);
+
+            expect(res.body).toEqual({
+                id: mockProductId,
+                message: "Product deleted successfully",
+            });
+
+            expect(ProductService.deleteProductById).toHaveBeenCalledWith(
+                mockProductId
+            );
+        });
+
+        it("should return 500 if deleting a product fails", async () => {
+            const mockDeleteProductById = jest.spyOn(
+                ProductService,
+                "deleteProductById"
+            );
+
+            mockDeleteProductById.mockRejectedValue(mockError);
+
+            const res = await request
+                .delete(`/api/products/${mockProductId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.message).toBe(mockError.message);
+
+            expect(ProductService.deleteProductById).toHaveBeenCalledWith(
+                mockProductId
+            );
+
+            mockDeleteProductById.mockRestore();
         });
     });
 });

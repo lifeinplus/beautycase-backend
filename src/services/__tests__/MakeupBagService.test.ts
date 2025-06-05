@@ -1,14 +1,14 @@
+import { mockBrand1 } from "../../tests/mocks/brand";
+import { mockCategory1 } from "../../tests/mocks/category";
 import {
-    mockBrand,
-    mockCategory,
     mockMakeupBagId,
     mockMakeupBag1,
     mockMakeupBag2,
-    mockProduct,
-    mockStage,
-    mockTool,
-    mockUser,
 } from "../../tests/mocks/makeupBag";
+import { mockProduct1 } from "../../tests/mocks/product";
+import { mockStage } from "../../tests/mocks/stage";
+import { mockTool } from "../../tests/mocks/tool";
+import { mockUser } from "../../tests/mocks/user";
 import { NotFoundError } from "../../utils/AppErrors";
 import * as BrandService from "../BrandService";
 import * as CategoryService from "../CategoryService";
@@ -35,8 +35,11 @@ describe("MakeupBagService", () => {
     });
 
     describe("getAllMakeupBags", () => {
-        it("should get all makeupBags", async () => {
-            const category = await CategoryService.createCategory(mockCategory);
+        it("should get all makeup bags", async () => {
+            const category = await CategoryService.createCategory(
+                mockCategory1
+            );
+
             const stage = await StageService.createStage(mockStage);
 
             await RegisterService.registerUser(mockUser);
@@ -59,7 +62,7 @@ describe("MakeupBagService", () => {
             expect(makeupBags[0]).toHaveProperty("stageIds");
         });
 
-        it("should throw NotFoundError if no makeupBags found", async () => {
+        it("should throw NotFoundError if no makeup bags found", async () => {
             const makeupBagPromise = MakeupBagService.getAllMakeupBags();
             await expect(makeupBagPromise).rejects.toThrow(NotFoundError);
         });
@@ -67,19 +70,21 @@ describe("MakeupBagService", () => {
 
     describe("getMakeupBagById", () => {
         it("should get a makeup bag", async () => {
-            const category = await CategoryService.createCategory(mockCategory);
+            const category = await CategoryService.createCategory(
+                mockCategory1
+            );
 
             await RegisterService.registerUser(mockUser);
             const users = await UserService.getAllUsers();
             const user = users.find((u) => u.username === mockUser.username);
 
-            const product = await ProductService.createProduct(mockProduct);
+            const product = await ProductService.createProduct(mockProduct1);
             const stage = await StageService.createStage({
                 ...mockStage,
                 productIds: [String(product._id)],
             });
 
-            const brand = await BrandService.createBrand(mockBrand);
+            const brand = await BrandService.createBrand(mockBrand1);
             const tool = await ToolService.createTool({
                 ...mockTool,
                 brandId: String(brand._id),
@@ -113,7 +118,9 @@ describe("MakeupBagService", () => {
 
     describe("getMakeupBagsByClientId", () => {
         it("should get makeup bags by clientId", async () => {
-            const category = await CategoryService.createCategory(mockCategory);
+            const category = await CategoryService.createCategory(
+                mockCategory1
+            );
 
             await RegisterService.registerUser(mockUser);
             const users = await UserService.getAllUsers();

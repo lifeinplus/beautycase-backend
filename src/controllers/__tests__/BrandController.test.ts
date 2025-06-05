@@ -31,11 +31,11 @@ describe("BrandController", () => {
             const res = await request
                 .post("/api/brands")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand1)
-                .expect(201);
+                .send(mockBrand1);
 
             expect(BrandService.createBrand).toHaveBeenCalledWith(mockBrand1);
 
+            expect(res.statusCode).toBe(201);
             expect(res.body.id).toBe(mockBrandId);
             expect(res.body.message).toBe("Brand created successfully");
         });
@@ -47,9 +47,9 @@ describe("BrandController", () => {
             const res = await request
                 .post("/api/brands")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand1)
-                .expect(500);
+                .send(mockBrand1);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
 
             mockCreateBrand.mockRestore();
@@ -66,9 +66,9 @@ describe("BrandController", () => {
 
             const res = await request
                 .get("/api/brands")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body).toEqual(mockBrands);
         });
 
@@ -78,10 +78,11 @@ describe("BrandController", () => {
 
             const res = await request
                 .get("/api/brands")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
+
             mockGetAllBrands.mockRestore();
         });
     });
@@ -95,14 +96,14 @@ describe("BrandController", () => {
             const res = await request
                 .put(`/api/brands/${mockBrandId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand2)
-                .expect(200);
+                .send(mockBrand2);
 
             expect(BrandService.updateBrandById).toHaveBeenCalledWith(
                 mockBrandId,
                 mockBrand2
             );
 
+            expect(res.statusCode).toBe(200);
             expect(res.body.id).toBe(mockBrandId);
             expect(res.body.message).toBe("Brand updated successfully");
         });
@@ -118,9 +119,9 @@ describe("BrandController", () => {
             const res = await request
                 .put(`/api/brands/${mockBrandId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockBrand1)
-                .expect(500);
+                .send(mockBrand1);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
 
             mockUpdateBrandById.mockRestore();
@@ -135,13 +136,13 @@ describe("BrandController", () => {
 
             const res = await request
                 .delete(`/api/brands/${mockBrandId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
             expect(BrandService.deleteBrandById).toHaveBeenCalledWith(
                 mockBrandId
             );
 
+            expect(res.statusCode).toBe(200);
             expect(res.body.id).toBe(mockBrandId);
             expect(res.body.message).toBe("Brand deleted successfully");
         });
@@ -156,9 +157,9 @@ describe("BrandController", () => {
 
             const res = await request
                 .delete(`/api/brands/${mockBrandId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
 
             mockDeleteBrandById.mockRestore();

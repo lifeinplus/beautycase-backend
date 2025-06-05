@@ -28,8 +28,6 @@ export const createProduct = async (data: Product) => {
         tempUploadsService.remove(data.imageUrl);
     }
 
-    await product.save();
-
     return product;
 };
 

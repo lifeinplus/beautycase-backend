@@ -2,8 +2,8 @@ import {
     mockLessonId,
     mockLesson1,
     mockLesson2,
-    mockProduct,
 } from "../../tests/mocks/lesson";
+import { mockProduct1 } from "../../tests/mocks/product";
 import { NotFoundError } from "../../utils/AppErrors";
 import * as LessonService from "../LessonService";
 import * as ProductService from "../ProductService";
@@ -37,7 +37,7 @@ describe("LessonService", () => {
 
     describe("getLessonById", () => {
         it("should get a lesson with populated productIds", async () => {
-            const product = await ProductService.createProduct(mockProduct);
+            const product = await ProductService.createProduct(mockProduct1);
 
             const lesson = await LessonService.createLesson({
                 ...mockLesson1,

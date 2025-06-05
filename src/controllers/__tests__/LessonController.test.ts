@@ -35,8 +35,9 @@ describe("LessonController", () => {
             const res = await request
                 .post("/api/lessons")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockLesson1)
-                .expect(201);
+                .send(mockLesson1);
+
+            expect(res.statusCode).toBe(201);
 
             expect(res.body).toEqual({
                 id: mockLessonId,
@@ -55,10 +56,11 @@ describe("LessonController", () => {
             const res = await request
                 .post("/api/lessons")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockLesson1)
-                .expect(500);
+                .send(mockLesson1);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toEqual(mockError.message);
+
             expect(LessonService.createLesson).toHaveBeenCalledWith(
                 mockLesson1
             );
@@ -77,9 +79,9 @@ describe("LessonController", () => {
 
             const res = await request
                 .get("/api/lessons")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body).toEqual(mockLessons);
             expect(LessonService.getAllLessons).toHaveBeenCalledTimes(1);
         });
@@ -94,10 +96,11 @@ describe("LessonController", () => {
 
             const res = await request
                 .get("/api/lessons")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toEqual(mockError.message);
+
             expect(LessonService.getAllLessons).toHaveBeenCalledTimes(1);
 
             mockGetAllLessons.mockRestore();
@@ -114,9 +117,9 @@ describe("LessonController", () => {
 
             const res = await request
                 .get(`/api/lessons/${mockLessonId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body).toEqual(mockResult);
             expect(LessonService.getLessonById).toHaveBeenCalledTimes(1);
             expect(LessonService.getLessonById).toHaveBeenCalledWith(
@@ -124,7 +127,7 @@ describe("LessonController", () => {
             );
         });
 
-        it("should return 500 if lesson not found", async () => {
+        it("should return 500 if getting a lesson fails", async () => {
             const mockGetLessonById = jest.spyOn(
                 LessonService,
                 "getLessonById"
@@ -134,10 +137,11 @@ describe("LessonController", () => {
 
             const res = await request
                 .get(`/api/lessons/${mockLessonId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toBe(mockError.message);
+
             expect(LessonService.getLessonById).toHaveBeenCalledWith(
                 mockLessonId
             );
@@ -155,8 +159,9 @@ describe("LessonController", () => {
             const res = await request
                 .put(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockLesson2)
-                .expect(200);
+                .send(mockLesson2);
+
+            expect(res.statusCode).toBe(200);
 
             expect(res.body).toEqual({
                 id: mockLessonId,
@@ -181,10 +186,11 @@ describe("LessonController", () => {
             const res = await request
                 .put(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockLesson1)
-                .expect(500);
+                .send(mockLesson1);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toBe(mockError.message);
+
             expect(LessonService.updateLessonById).toHaveBeenCalledWith(
                 mockLessonId,
                 mockLesson1
@@ -202,8 +208,9 @@ describe("LessonController", () => {
 
             const res = await request
                 .delete(`/api/lessons/${mockLessonId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(200);
 
             expect(res.body).toEqual({
                 id: mockLessonId,
@@ -225,10 +232,11 @@ describe("LessonController", () => {
 
             const res = await request
                 .delete(`/api/lessons/${mockLessonId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toBe(mockError.message);
+
             expect(LessonService.deleteLessonById).toHaveBeenCalledWith(
                 mockLessonId
             );

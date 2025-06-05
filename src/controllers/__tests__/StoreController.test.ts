@@ -24,108 +24,110 @@ describe("StoreController", () => {
     const mockStore1: Store = { name: "Sephora" };
     const mockStore2: Store = { name: "Cult Beauty" };
 
-    describe("createStore", () => {
+    describe("POST /api/stores", () => {
         it("should create a store", async () => {
             const res = await request
                 .post("/api/stores")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockStore1)
-                .expect(201);
+                .send(mockStore1);
 
+            expect(res.statusCode).toBe(201);
             expect(res.body.message).toBe("Store created successfully");
 
             const store = await StoreModel.findOne(mockStore1);
             expect(store).not.toBeNull();
         });
 
-        it("should return an error if store creation fails", async () => {
+        it("should return 500 if creating a store fails", async () => {
             const mockCreate = jest.spyOn(StoreModel, "create");
             mockCreate.mockRejectedValue(mockError);
 
             const res = await request
                 .post("/api/stores")
                 .set("Authorization", `Bearer ${token}`)
-                .send({ name: "Sephora" })
-                .expect(500);
+                .send({ name: "Sephora" });
 
+            expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
+
             mockCreate.mockRestore();
         });
     });
 
-    describe("getAllStores", () => {
+    describe("GET /api/stores", () => {
         it("should get all stores", async () => {
             await StoreModel.insertMany([mockStore1, mockStore2]);
 
             const res = await request
                 .get("/api/stores")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body.length).toBe(2);
         });
 
-        it("should return 404 when no stores exist", async () => {
+        it("should return 404 if getting all stores fails", async () => {
             const res = await request
                 .get("/api/stores")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(404);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(404);
             expect(res.body.message).toBe("Stores not found");
         });
     });
 
-    describe("updateStoreById", () => {
+    describe("PUT /api/stores/:id", () => {
         it("should update a store", async () => {
             const store = await StoreModel.create(mockStore1);
 
             const res = await request
                 .put(`/api/stores/${store._id}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockStore2)
-                .expect(200);
+                .send(mockStore2);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body.message).toBe("Store updated successfully");
 
             const updated = await StoreModel.findById(store._id);
             expect(updated?.name).toBe(mockStore2.name);
         });
 
-        it("should return 404 when updating a non-existent store", async () => {
+        it("should return 404 if updating a store fails", async () => {
             const res = await request
                 .put(`/api/stores/${mockId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockStore1)
-                .expect(404);
+                .send(mockStore1);
 
+            expect(res.statusCode).toBe(404);
             expect(res.body.message).toBe("Store not found");
         });
     });
 
-    describe("deleteStoreById", () => {
+    describe("DELETE /api/stores/:id", () => {
         it("should delete a store", async () => {
             const store = await StoreModel.create(mockStore1);
 
             const res = await request
                 .delete(`/api/stores/${store._id}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body.message).toBe("Store deleted successfully");
 
             const deleted = await StoreModel.findById(store._id);
             expect(deleted).toBeNull();
         });
 
-        it("should handle errors during store deletion", async () => {
+        it("should return 404 if deleting a store fails", async () => {
             jest.spyOn(StoreModel, "findByIdAndDelete").mockRejectedValue(
                 mockError
             );
 
-            await request
+            const res = await request
                 .delete(`/api/stores/${mockId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(500);
         });
     });
 });

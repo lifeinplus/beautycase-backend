@@ -35,13 +35,13 @@ describe("CategoryController", () => {
             const res = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockCategory1)
-                .expect(201);
+                .send(mockCategory1);
 
             expect(CategoryService.createCategory).toHaveBeenCalledWith(
                 mockCategory1
             );
 
+            expect(res.statusCode).toBe(201);
             expect(res.body.id).toBe(mockCategoryId);
             expect(res.body.message).toBe("Category created successfully");
         });
@@ -57,10 +57,11 @@ describe("CategoryController", () => {
             const res = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockCategory1)
-                .expect(500);
+                .send(mockCategory1);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
+
             mockCreateCategory.mockRestore();
         });
     });
@@ -75,9 +76,9 @@ describe("CategoryController", () => {
 
             const res = await request
                 .get("/api/categories")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body).toEqual(mockCategories);
         });
 
@@ -91,10 +92,11 @@ describe("CategoryController", () => {
 
             const res = await request
                 .get("/api/categories")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
+
             mockGetAllCategories.mockRestore();
         });
     });

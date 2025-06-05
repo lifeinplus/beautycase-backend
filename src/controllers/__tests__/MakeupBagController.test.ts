@@ -35,8 +35,9 @@ describe("MakeupBagController", () => {
             const res = await request
                 .post("/api/makeup-bags")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockMakeupBag1)
-                .expect(201);
+                .send(mockMakeupBag1);
+
+            expect(res.statusCode).toBe(201);
 
             expect(res.body).toEqual({
                 id: mockMakeupBagId,
@@ -53,15 +54,17 @@ describe("MakeupBagController", () => {
                 MakeupBagService,
                 "createMakeupBag"
             );
+
             mockCreateMakeupBag.mockRejectedValue(mockError);
 
             const res = await request
                 .post("/api/makeup-bags")
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockMakeupBag1)
-                .expect(500);
+                .send(mockMakeupBag1);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toEqual(mockError.message);
+
             expect(MakeupBagService.createMakeupBag).toHaveBeenCalledWith(
                 mockMakeupBag1
             );
@@ -71,7 +74,7 @@ describe("MakeupBagController", () => {
     });
 
     describe("GET /api/makeup-bags", () => {
-        it("should get all makeupBags", async () => {
+        it("should get all makeup bags", async () => {
             const mockMakeupBags = [mockMakeupBag1, mockMakeupBag2];
 
             jest.mocked(
@@ -80,14 +83,14 @@ describe("MakeupBagController", () => {
 
             const res = await request
                 .get("/api/makeup-bags")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body).toEqual(mockMakeupBags);
             expect(MakeupBagService.getAllMakeupBags).toHaveBeenCalledTimes(1);
         });
 
-        it("should return 500 if getting all makeupBags fails", async () => {
+        it("should return 500 if getting all makeup bags fails", async () => {
             const mockGetAllMakeupBags = jest.spyOn(
                 MakeupBagService,
                 "getAllMakeupBags"
@@ -97,10 +100,11 @@ describe("MakeupBagController", () => {
 
             const res = await request
                 .get("/api/makeup-bags")
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toEqual(mockError.message);
+
             expect(MakeupBagService.getAllMakeupBags).toHaveBeenCalledTimes(1);
 
             mockGetAllMakeupBags.mockRestore();
@@ -117,17 +121,18 @@ describe("MakeupBagController", () => {
 
             const res = await request
                 .get(`/api/makeup-bags/${mockMakeupBagId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(200);
             expect(res.body).toEqual(mockResult);
+
             expect(MakeupBagService.getMakeupBagById).toHaveBeenCalledTimes(1);
             expect(MakeupBagService.getMakeupBagById).toHaveBeenCalledWith(
                 mockMakeupBagId
             );
         });
 
-        it("should return 500 if makeupBag not found", async () => {
+        it("should return 500 if getting a makeup bag fails", async () => {
             const mockGetMakeupBagById = jest.spyOn(
                 MakeupBagService,
                 "getMakeupBagById"
@@ -137,10 +142,11 @@ describe("MakeupBagController", () => {
 
             const res = await request
                 .get(`/api/makeup-bags/${mockMakeupBagId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toBe(mockError.message);
+
             expect(MakeupBagService.getMakeupBagById).toHaveBeenCalledWith(
                 mockMakeupBagId
             );
@@ -158,8 +164,9 @@ describe("MakeupBagController", () => {
             const res = await request
                 .put(`/api/makeup-bags/${mockMakeupBagId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockMakeupBag2)
-                .expect(200);
+                .send(mockMakeupBag2);
+
+            expect(res.statusCode).toBe(200);
 
             expect(res.body).toEqual({
                 id: mockMakeupBagId,
@@ -186,10 +193,11 @@ describe("MakeupBagController", () => {
             const res = await request
                 .put(`/api/makeup-bags/${mockMakeupBagId}`)
                 .set("Authorization", `Bearer ${token}`)
-                .send(mockMakeupBag1)
-                .expect(500);
+                .send(mockMakeupBag1);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toBe(mockError.message);
+
             expect(MakeupBagService.updateMakeupBagById).toHaveBeenCalledWith(
                 mockMakeupBagId,
                 mockMakeupBag1
@@ -207,8 +215,9 @@ describe("MakeupBagController", () => {
 
             const res = await request
                 .delete(`/api/makeup-bags/${mockMakeupBagId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(200);
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(res.statusCode).toBe(200);
 
             expect(res.body).toEqual({
                 id: mockMakeupBagId,
@@ -230,10 +239,11 @@ describe("MakeupBagController", () => {
 
             const res = await request
                 .delete(`/api/makeup-bags/${mockMakeupBagId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+                .set("Authorization", `Bearer ${token}`);
 
+            expect(res.statusCode).toBe(500);
             expect(res.body.message).toBe(mockError.message);
+
             expect(MakeupBagService.deleteMakeupBagById).toHaveBeenCalledWith(
                 mockMakeupBagId
             );
