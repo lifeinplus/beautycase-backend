@@ -1,4 +1,3 @@
-import BrandModel from "../../models/BrandModel";
 import { mockBrand1, mockBrand2, mockBrandId } from "../../tests/mocks/brand";
 import { NotFoundError } from "../../utils/AppErrors";
 import * as BrandService from "../BrandService";

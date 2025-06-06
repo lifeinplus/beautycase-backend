@@ -3,10 +3,12 @@ import supertest from "supertest";
 
 import app from "../../app";
 import config from "../../config";
-import StoreModel from "../../models/StoreModel";
-import type { Store } from "../../models/StoreModel";
+import * as StoreService from "../../services/StoreService";
 import { mockUserJwt } from "../../tests/mocks/auth";
+import { mockStore1, mockStore2, mockStoreId } from "../../tests/mocks/store";
 import { mockError } from "../../tests/mocks/error";
+
+jest.mock("../../services/StoreService");
 
 const request = supertest(app);
 let token: string;
@@ -20,114 +22,147 @@ beforeAll(async () => {
 });
 
 describe("StoreController", () => {
-    const mockId = "682a378b09c4df2756fcece5";
-    const mockStore1: Store = { name: "Sephora" };
-    const mockStore2: Store = { name: "Cult Beauty" };
-
     describe("POST /api/stores", () => {
         it("should create a store", async () => {
+            jest.mocked(
+                StoreService.createStore as jest.Mock
+            ).mockResolvedValue({ _id: mockStoreId });
+
             const res = await request
                 .post("/api/stores")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockStore1);
 
-            expect(res.statusCode).toBe(201);
-            expect(res.body.message).toBe("Store created successfully");
+            expect(StoreService.createStore).toHaveBeenCalledWith(mockStore1);
 
-            const store = await StoreModel.findOne(mockStore1);
-            expect(store).not.toBeNull();
+            expect(res.statusCode).toBe(201);
+            expect(res.body.id).toBe(mockStoreId);
+            expect(res.body.message).toBe("Store created successfully");
         });
 
         it("should return 500 if creating a store fails", async () => {
-            const mockCreate = jest.spyOn(StoreModel, "create");
-            mockCreate.mockRejectedValue(mockError);
+            const mockCreateStore = jest.spyOn(StoreService, "createStore");
+            mockCreateStore.mockRejectedValue(mockError);
 
             const res = await request
                 .post("/api/stores")
                 .set("Authorization", `Bearer ${token}`)
-                .send({ name: "Sephora" });
+                .send(mockStore1);
 
             expect(res.statusCode).toBe(500);
             expect(res.body).toHaveProperty("message");
 
-            mockCreate.mockRestore();
+            mockCreateStore.mockRestore();
         });
     });
 
     describe("GET /api/stores", () => {
         it("should get all stores", async () => {
-            await StoreModel.insertMany([mockStore1, mockStore2]);
+            const mockStores = [mockStore1, mockStore2];
+
+            jest.mocked(
+                StoreService.getAllStores as jest.Mock
+            ).mockResolvedValue(mockStores);
 
             const res = await request
                 .get("/api/stores")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.statusCode).toBe(200);
-            expect(res.body.length).toBe(2);
+            expect(res.body).toEqual(mockStores);
         });
 
-        it("should return 404 if getting all stores fails", async () => {
+        it("should return 500 if getting all stores fails", async () => {
+            const mockGetAllStores = jest.spyOn(StoreService, "getAllStores");
+            mockGetAllStores.mockRejectedValue(mockError);
+
             const res = await request
                 .get("/api/stores")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(404);
-            expect(res.body.message).toBe("Stores not found");
+            expect(res.statusCode).toBe(500);
+            expect(res.body).toHaveProperty("message");
+
+            mockGetAllStores.mockRestore();
         });
     });
 
     describe("PUT /api/stores/:id", () => {
         it("should update a store", async () => {
-            const store = await StoreModel.create(mockStore1);
+            jest.mocked(
+                StoreService.updateStoreById as jest.Mock
+            ).mockResolvedValue({ _id: mockStoreId });
 
             const res = await request
-                .put(`/api/stores/${store._id}`)
+                .put(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockStore2);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body.message).toBe("Store updated successfully");
+            expect(StoreService.updateStoreById).toHaveBeenCalledWith(
+                mockStoreId,
+                mockStore2
+            );
 
-            const updated = await StoreModel.findById(store._id);
-            expect(updated?.name).toBe(mockStore2.name);
+            expect(res.statusCode).toBe(200);
+            expect(res.body.id).toBe(mockStoreId);
+            expect(res.body.message).toBe("Store updated successfully");
         });
 
-        it("should return 404 if updating a store fails", async () => {
+        it("should return 500 if updating a store fails", async () => {
+            const mockUpdateStoreById = jest.spyOn(
+                StoreService,
+                "updateStoreById"
+            );
+
+            mockUpdateStoreById.mockRejectedValue(mockError);
+
             const res = await request
-                .put(`/api/stores/${mockId}`)
+                .put(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockStore1);
 
-            expect(res.statusCode).toBe(404);
-            expect(res.body.message).toBe("Store not found");
+            expect(res.statusCode).toBe(500);
+            expect(res.body).toHaveProperty("message");
+
+            mockUpdateStoreById.mockRestore();
         });
     });
 
     describe("DELETE /api/stores/:id", () => {
         it("should delete a store", async () => {
-            const store = await StoreModel.create(mockStore1);
+            jest.mocked(
+                StoreService.deleteStoreById as jest.Mock
+            ).mockResolvedValue({ _id: mockStoreId });
 
             const res = await request
-                .delete(`/api/stores/${store._id}`)
+                .delete(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body.message).toBe("Store deleted successfully");
-
-            const deleted = await StoreModel.findById(store._id);
-            expect(deleted).toBeNull();
-        });
-
-        it("should return 404 if deleting a store fails", async () => {
-            jest.spyOn(StoreModel, "findByIdAndDelete").mockRejectedValue(
-                mockError
+            expect(StoreService.deleteStoreById).toHaveBeenCalledWith(
+                mockStoreId
             );
 
+            expect(res.statusCode).toBe(200);
+            expect(res.body.id).toBe(mockStoreId);
+            expect(res.body.message).toBe("Store deleted successfully");
+        });
+
+        it("should return 500 if deleting a store fails", async () => {
+            const mockDeleteStoreById = jest.spyOn(
+                StoreService,
+                "deleteStoreById"
+            );
+
+            mockDeleteStoreById.mockRejectedValue(mockError);
+
             const res = await request
-                .delete(`/api/stores/${mockId}`)
+                .delete(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(res.statusCode).toBe(500);
+            expect(res.body).toHaveProperty("message");
+
+            mockDeleteStoreById.mockRestore();
         });
     });
 });
