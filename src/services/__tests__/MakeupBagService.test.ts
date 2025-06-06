@@ -6,7 +6,7 @@ import {
     mockMakeupBag2,
 } from "../../tests/mocks/makeupBag";
 import { mockProduct1 } from "../../tests/mocks/product";
-import { mockStage } from "../../tests/mocks/stage";
+import { mockStage1 } from "../../tests/mocks/stage";
 import { mockTool } from "../../tests/mocks/tool";
 import { mockUser } from "../../tests/mocks/user";
 import { NotFoundError } from "../../utils/AppErrors";
@@ -38,7 +38,7 @@ describe("MakeupBagService", () => {
                 mockCategory1
             );
 
-            const stage = await StageService.createStage(mockStage);
+            const stage = await StageService.createStage(mockStage1);
 
             await RegisterService.registerUser(mockUser);
             const users = await UserService.getAllUsers();
@@ -78,7 +78,7 @@ describe("MakeupBagService", () => {
 
             const product = await ProductService.createProduct(mockProduct1);
             const stage = await StageService.createStage({
-                ...mockStage,
+                ...mockStage1,
                 productIds: [String(product._id)],
             });
 

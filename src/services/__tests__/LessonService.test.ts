@@ -24,7 +24,7 @@ describe("LessonService", () => {
 
             const result = await LessonService.getAllLessons();
 
-            expect(result.length).toBe(2);
+            expect(result).toHaveLength(2);
             expect(result[0].title).toBe(mockLesson1.title);
             expect(result[1].title).toBe(mockLesson2.title);
         });

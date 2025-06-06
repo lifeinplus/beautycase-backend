@@ -92,7 +92,7 @@ describe("ProductService", () => {
 
             const result = await ProductService.getAllProducts();
 
-            expect(result.length).toBe(2);
+            expect(result).toHaveLength(2);
             expect(result[0]).toHaveProperty("imageUrl");
             expect(result[0].name).toBeUndefined();
         });

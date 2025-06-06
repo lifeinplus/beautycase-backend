@@ -18,7 +18,7 @@ describe("BrandService", () => {
             await BrandService.createBrand(mockBrand2);
 
             const result = await BrandService.getAllBrands();
-            expect(result.length).toBe(2);
+            expect(result).toHaveLength(2);
             expect(result[0].name).toBe(mockBrand1.name);
             expect(result[1].name).toBe(mockBrand2.name);
         });
