@@ -22,15 +22,13 @@ import * as UserService from "../UserService";
 describe("MakeupBagService", () => {
     describe("createMakeupBag", () => {
         it("should create a makeup bag", async () => {
-            const makeupBag = await MakeupBagService.createMakeupBag(
+            const result = await MakeupBagService.createMakeupBag(
                 mockMakeupBag1
             );
 
-            expect(makeupBag).toHaveProperty("_id");
-            expect(String(makeupBag.categoryId)).toBe(
-                mockMakeupBag1.categoryId
-            );
-            expect(String(makeupBag.clientId)).toBe(mockMakeupBag1.clientId);
+            expect(result).toHaveProperty("_id");
+            expect(String(result.categoryId)).toBe(mockMakeupBag1.categoryId);
+            expect(String(result.clientId)).toBe(mockMakeupBag1.clientId);
         });
     });
 
@@ -53,18 +51,18 @@ describe("MakeupBagService", () => {
                 stageIds: [String(stage._id)],
             });
 
-            const makeupBags = await MakeupBagService.getAllMakeupBags();
+            const result = await MakeupBagService.getAllMakeupBags();
 
-            expect(makeupBags).toHaveLength(1);
-            expect(makeupBags[0]).toHaveProperty("categoryId");
-            expect(makeupBags[0]).toHaveProperty("clientId");
-            expect(makeupBags[0]).toHaveProperty("createdAt");
-            expect(makeupBags[0]).toHaveProperty("stageIds");
+            expect(result).toHaveLength(1);
+            expect(result[0]).toHaveProperty("categoryId");
+            expect(result[0]).toHaveProperty("clientId");
+            expect(result[0]).toHaveProperty("createdAt");
+            expect(result[0]).toHaveProperty("stageIds");
         });
 
         it("should throw NotFoundError if no makeup bags found", async () => {
-            const makeupBagPromise = MakeupBagService.getAllMakeupBags();
-            await expect(makeupBagPromise).rejects.toThrow(NotFoundError);
+            const result = MakeupBagService.getAllMakeupBags();
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -110,9 +108,8 @@ describe("MakeupBagService", () => {
         });
 
         it("should throw NotFoundError if makeupBag not found", async () => {
-            const makeupBagPromise =
-                MakeupBagService.getMakeupBagById(mockMakeupBagId);
-            await expect(makeupBagPromise).rejects.toThrow(NotFoundError);
+            const result = MakeupBagService.getMakeupBagById(mockMakeupBagId);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -147,21 +144,21 @@ describe("MakeupBagService", () => {
                 mockMakeupBag1
             );
 
-            const updated = await MakeupBagService.updateMakeupBagById(
+            const result = await MakeupBagService.updateMakeupBagById(
                 String(makeupBag._id),
                 mockMakeupBag2
             );
 
-            expect(String(updated.categoryId)).toBe(mockMakeupBag2.categoryId);
+            expect(String(result.categoryId)).toBe(mockMakeupBag2.categoryId);
         });
 
         it("should throw NotFoundError if makeupBag to update not found ", async () => {
-            const makeupBagPromise = MakeupBagService.updateMakeupBagById(
+            const result = MakeupBagService.updateMakeupBagById(
                 mockMakeupBagId,
                 mockMakeupBag2
             );
 
-            await expect(makeupBagPromise).rejects.toThrow(NotFoundError);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -171,17 +168,17 @@ describe("MakeupBagService", () => {
                 mockMakeupBag1
             );
 
-            const deleted = await MakeupBagService.deleteMakeupBagById(
+            const result = await MakeupBagService.deleteMakeupBagById(
                 String(makeupBag._id)
             );
 
-            expect(String(deleted.categoryId)).toBe(mockMakeupBag1.categoryId);
+            expect(String(result.categoryId)).toBe(mockMakeupBag1.categoryId);
         });
 
         it("should throw NotFoundError if makeupBag to delete not found", async () => {
-            const makeupBagPromise =
+            const result =
                 MakeupBagService.deleteMakeupBagById(mockMakeupBagId);
-            await expect(makeupBagPromise).rejects.toThrow(NotFoundError);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 });

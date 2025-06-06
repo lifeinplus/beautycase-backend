@@ -5,11 +5,9 @@ import * as CategoryService from "../CategoryService";
 describe("CategoryService", () => {
     describe("createCategory", () => {
         it("should create a category", async () => {
-            const category = await CategoryService.createCategory(
-                mockCategory1
-            );
-            expect(category).toHaveProperty("_id");
-            expect(category.name).toBe(mockCategory1.name);
+            const result = await CategoryService.createCategory(mockCategory1);
+            expect(result).toHaveProperty("_id");
+            expect(result.name).toBe(mockCategory1.name);
         });
     });
 
@@ -18,16 +16,16 @@ describe("CategoryService", () => {
             await CategoryService.createCategory(mockCategory1);
             await CategoryService.createCategory(mockCategory2);
 
-            const categories = await CategoryService.getAllCategories();
-            expect(categories).toHaveLength(2);
-            expect(categories[0].name).toBe(mockCategory1.name);
-            expect(categories[1].name).toBe(mockCategory2.name);
+            const result = await CategoryService.getAllCategories();
+
+            expect(result).toHaveLength(2);
+            expect(result[0].name).toBe(mockCategory1.name);
+            expect(result[1].name).toBe(mockCategory2.name);
         });
 
         it("should throw NotFoundError if no categories exist", async () => {
-            await expect(CategoryService.getAllCategories()).rejects.toThrow(
-                NotFoundError
-            );
+            const result = CategoryService.getAllCategories();
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 });

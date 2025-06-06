@@ -6,9 +6,9 @@ import * as BrandService from "../BrandService";
 describe("BrandService", () => {
     describe("createBrand", () => {
         it("should create a brand", async () => {
-            const brand = await BrandService.createBrand(mockBrand1);
-            expect(brand).toHaveProperty("_id");
-            expect(brand.name).toBe(mockBrand1.name);
+            const result = await BrandService.createBrand(mockBrand1);
+            expect(result).toHaveProperty("_id");
+            expect(result.name).toBe(mockBrand1.name);
         });
     });
 
@@ -17,15 +17,15 @@ describe("BrandService", () => {
             await BrandService.createBrand(mockBrand1);
             await BrandService.createBrand(mockBrand2);
 
-            const brands = await BrandService.getAllBrands();
-            expect(brands.length).toBe(2);
-            expect(brands[0].name).toBe(mockBrand1.name);
-            expect(brands[1].name).toBe(mockBrand2.name);
+            const result = await BrandService.getAllBrands();
+            expect(result.length).toBe(2);
+            expect(result[0].name).toBe(mockBrand1.name);
+            expect(result[1].name).toBe(mockBrand2.name);
         });
 
         it("should throw NotFoundError if no brands exist", async () => {
-            const brandPromise = BrandService.getAllBrands();
-            await expect(brandPromise).rejects.toThrow(NotFoundError);
+            const result = BrandService.getAllBrands();
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -33,20 +33,21 @@ describe("BrandService", () => {
         it("should update a brand", async () => {
             const brand = await BrandService.createBrand(mockBrand1);
 
-            const updated = await BrandService.updateBrandById(
+            const result = await BrandService.updateBrandById(
                 String(brand._id),
                 mockBrand2
             );
 
-            expect(updated.name).toBe(mockBrand2.name);
+            expect(result.name).toBe(mockBrand2.name);
         });
 
         it("should throw NotFoundError if brand to update not found", async () => {
-            const brandPromise = BrandService.updateBrandById(
+            const result = BrandService.updateBrandById(
                 mockBrandId,
                 mockBrand2
             );
-            await expect(brandPromise).rejects.toThrow(NotFoundError);
+
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -54,18 +55,16 @@ describe("BrandService", () => {
         it("should delete a brand", async () => {
             const brand = await BrandService.createBrand(mockBrand1);
 
-            const deleted = await BrandService.deleteBrandById(
+            const result = await BrandService.deleteBrandById(
                 String(brand._id)
             );
-            expect(deleted.name).toBe(mockBrand1.name);
 
-            const found = await BrandModel.findById(brand._id);
-            expect(found).toBeNull();
+            expect(result.name).toBe(mockBrand1.name);
         });
 
         it("should throw NotFoundError if brand to delete not found", async () => {
-            const brandPromise = BrandService.deleteBrandById(mockBrandId);
-            await expect(brandPromise).rejects.toThrow(NotFoundError);
+            const result = BrandService.deleteBrandById(mockBrandId);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 });

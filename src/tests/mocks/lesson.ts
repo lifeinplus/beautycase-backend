@@ -7,7 +7,7 @@ export const mockLesson1: Lesson = {
     shortDescription: "Test Short Description 1",
     videoUrl: "https://example.com/video1",
     fullDescription: "Test Full Description 1",
-    productIds: [],
+    productIds: ["683cbe0796c7f5d3d62101e1"],
 };
 
 export const mockLesson2: Lesson = {
@@ -15,5 +15,5 @@ export const mockLesson2: Lesson = {
     shortDescription: "Test Short Description 2",
     videoUrl: "https://example.com/video2",
     fullDescription: "Test Full Description 2",
-    productIds: [],
+    productIds: ["683cbe0796c7f5d3d62101e2"],
 };

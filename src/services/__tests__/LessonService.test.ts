@@ -11,9 +11,9 @@ import * as ProductService from "../ProductService";
 describe("LessonService", () => {
     describe("createLesson", () => {
         it("should create a lesson", async () => {
-            const lesson = await LessonService.createLesson(mockLesson1);
-            expect(lesson).toHaveProperty("_id");
-            expect(lesson.title).toBe(mockLesson1.title);
+            const result = await LessonService.createLesson(mockLesson1);
+            expect(result).toHaveProperty("_id");
+            expect(result.title).toBe(mockLesson1.title);
         });
     });
 
@@ -22,16 +22,16 @@ describe("LessonService", () => {
             await LessonService.createLesson(mockLesson1);
             await LessonService.createLesson(mockLesson2);
 
-            const lessons = await LessonService.getAllLessons();
+            const result = await LessonService.getAllLessons();
 
-            expect(lessons.length).toBe(2);
-            expect(lessons[0].title).toBe(mockLesson1.title);
-            expect(lessons[1].title).toBe(mockLesson2.title);
+            expect(result.length).toBe(2);
+            expect(result[0].title).toBe(mockLesson1.title);
+            expect(result[1].title).toBe(mockLesson2.title);
         });
 
         it("should throw NotFoundError if no lessons found", async () => {
-            const lessonPromise = LessonService.getAllLessons();
-            await expect(lessonPromise).rejects.toThrow(NotFoundError);
+            const result = LessonService.getAllLessons();
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -52,8 +52,8 @@ describe("LessonService", () => {
         });
 
         it("should throw NotFoundError if lesson not found", async () => {
-            const lessonPromise = LessonService.getLessonById(mockLessonId);
-            await expect(lessonPromise).rejects.toThrow(NotFoundError);
+            const result = LessonService.getLessonById(mockLessonId);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -61,20 +61,20 @@ describe("LessonService", () => {
         it("should update a lesson", async () => {
             const lesson = await LessonService.createLesson(mockLesson1);
 
-            const updated = await LessonService.updateLessonById(
+            const result = await LessonService.updateLessonById(
                 String(lesson._id),
                 mockLesson2
             );
 
-            expect(updated.title).toBe(mockLesson2.title);
+            expect(result.title).toBe(mockLesson2.title);
         });
 
         it("should throw NotFoundError if lesson to update not found ", async () => {
-            const lessonPromise = LessonService.updateLessonById(
+            const result = LessonService.updateLessonById(
                 mockLessonId,
                 mockLesson2
             );
-            await expect(lessonPromise).rejects.toThrow(NotFoundError);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -82,16 +82,16 @@ describe("LessonService", () => {
         it("should delete a lesson", async () => {
             const lesson = await LessonService.createLesson(mockLesson1);
 
-            const deleted = await LessonService.deleteLessonById(
+            const result = await LessonService.deleteLessonById(
                 String(lesson._id)
             );
 
-            expect(deleted.title).toBe(mockLesson1.title);
+            expect(result.title).toBe(mockLesson1.title);
         });
 
         it("should throw NotFoundError if lesson to delete not found", async () => {
-            const lessonPromise = LessonService.deleteLessonById(mockLessonId);
-            await expect(lessonPromise).rejects.toThrow(NotFoundError);
+            const result = LessonService.deleteLessonById(mockLessonId);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 });

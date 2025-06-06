@@ -33,11 +33,11 @@ jest.mock("../../services/tempUploadsService", () => ({
 describe("ProductService", () => {
     describe("createProduct", () => {
         it("should create a product", async () => {
-            const product = await ProductService.createProduct(mockProduct1);
+            const result = await ProductService.createProduct(mockProduct1);
 
-            expect(product).toHaveProperty("_id");
-            expect(product.name).toBe(mockProduct1.name);
-            expect(product.imageId).toBe("products/renamed-id");
+            expect(result).toHaveProperty("_id");
+            expect(result.name).toBe(mockProduct1.name);
+            expect(result.imageId).toBe("products/renamed-id");
         });
     });
 
@@ -46,16 +46,16 @@ describe("ProductService", () => {
             await ProductService.createProduct(mockProduct1);
             await ProductService.createProduct(mockProduct2);
 
-            const products = await ProductService.getAllProducts();
+            const result = await ProductService.getAllProducts();
 
-            expect(products.length).toBe(2);
-            expect(products[0]).toHaveProperty("imageUrl");
-            expect(products[0].name).toBeUndefined();
+            expect(result.length).toBe(2);
+            expect(result[0]).toHaveProperty("imageUrl");
+            expect(result[0].name).toBeUndefined();
         });
 
         it("should throw NotFoundError if no products found", async () => {
-            const productPromise = ProductService.getAllProducts();
-            await expect(productPromise).rejects.toThrow(NotFoundError);
+            const result = ProductService.getAllProducts();
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -76,8 +76,8 @@ describe("ProductService", () => {
         });
 
         it("should throw NotFoundError if product not found", async () => {
-            const productPromise = ProductService.getProductById(mockProductId);
-            await expect(productPromise).rejects.toThrow(NotFoundError);
+            const result = ProductService.getProductById(mockProductId);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -85,20 +85,21 @@ describe("ProductService", () => {
         it("should update a product", async () => {
             const product = await ProductService.createProduct(mockProduct1);
 
-            const updated = await ProductService.updateProductById(
+            const result = await ProductService.updateProductById(
                 String(product._id),
                 mockProduct2
             );
 
-            expect(updated.name).toBe(mockProduct2.name);
+            expect(result.name).toBe(mockProduct2.name);
         });
 
         it("should throw NotFoundError if product to update not found ", async () => {
-            const productPromise = ProductService.updateProductById(
+            const result = ProductService.updateProductById(
                 mockProductId,
                 mockProduct2
             );
-            await expect(productPromise).rejects.toThrow(NotFoundError);
+
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 
@@ -109,17 +110,16 @@ describe("ProductService", () => {
                 imageId: "products/renamed-id",
             });
 
-            const deleted = await ProductService.deleteProductById(
+            const result = await ProductService.deleteProductById(
                 String(product._id)
             );
 
-            expect(deleted.name).toBe(mockProduct1.name);
+            expect(result.name).toBe(mockProduct1.name);
         });
 
         it("should throw NotFoundError if product to delete not found", async () => {
-            const productPromise =
-                ProductService.deleteProductById(mockProductId);
-            await expect(productPromise).rejects.toThrow(NotFoundError);
+            const result = ProductService.deleteProductById(mockProductId);
+            await expect(result).rejects.toThrow(NotFoundError);
         });
     });
 });
