@@ -1,93 +1,15 @@
 import { v2 as cloudinary } from "cloudinary";
 
-import Logging from "../library/Logging";
 import ProductModel from "../models/ProductModel";
-import type { Product, ProductDocument } from "../models/ProductModel";
-import { CloudinaryUploadResponse } from "../types/upload";
+import type { Product } from "../models/ProductModel";
 import { NotFoundError } from "../utils/AppErrors";
-import tempUploadsService from "./tempUploadsService";
-
-const handleImageUpdate = async (
-    product: ProductDocument,
-    imageUrl: string
-) => {
-    const publicId = tempUploadsService.get(imageUrl);
-
-    if (publicId) {
-        try {
-            const renamed: CloudinaryUploadResponse =
-                await cloudinary.uploader.rename(
-                    publicId,
-                    `products/${product._id}`,
-                    { invalidate: true, overwrite: true }
-                );
-
-            const moved: CloudinaryUploadResponse =
-                await cloudinary.uploader.explicit(renamed.public_id, {
-                    asset_folder: "products",
-                    display_name: product._id,
-                    invalidate: true,
-                    type: "upload",
-                });
-
-            product.imageId = moved.public_id;
-            product.imageUrl = moved.secure_url;
-
-            tempUploadsService.remove(imageUrl);
-        } catch (error) {
-            Logging.error("Error handling image update:");
-            Logging.error(error);
-            throw error;
-        }
-    }
-
-    if (product.imageId && !imageUrl.includes("cloudinary")) {
-        await cloudinary.uploader.destroy(product.imageId);
-        product.imageId = undefined;
-    }
-};
-
-const handleImageUpload = async (
-    product: ProductDocument,
-    imageUrl: string
-) => {
-    const publicId = tempUploadsService.get(imageUrl);
-
-    if (!publicId) {
-        return;
-    }
-
-    try {
-        await cloudinary.uploader.explicit(publicId, {
-            asset_folder: "products",
-            display_name: product._id,
-            invalidate: true,
-            type: "upload",
-        });
-
-        const renamed: CloudinaryUploadResponse =
-            await cloudinary.uploader.rename(
-                publicId,
-                `products/${product._id}`,
-                { invalidate: true }
-            );
-
-        product.imageId = renamed?.public_id;
-        product.imageUrl = renamed?.secure_url;
-
-        tempUploadsService.remove(imageUrl);
-    } catch (error) {
-        Logging.error("Error handling image upload:");
-        Logging.error(error);
-        throw error;
-    }
-};
+import { handleImageUpdate, handleImageUpload } from "./cloudinaryImageService";
 
 export const createProduct = async (data: Product) => {
     const product = new ProductModel(data);
     const { imageUrl } = data;
 
-    await handleImageUpload(product, imageUrl);
+    await handleImageUpload(product, imageUrl, "products");
     await product.save();
 
     return product;
@@ -125,7 +47,7 @@ export const updateProductById = async (id: string, data: Product) => {
         throw new NotFoundError("Product not found");
     }
 
-    await handleImageUpdate(product, imageUrl);
+    await handleImageUpdate(product, imageUrl, "products");
     await product.save();
 
     return product;

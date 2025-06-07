@@ -5,6 +5,7 @@ import StageModel from "../models/StageModel";
 import type { Stage, StageDocument } from "../models/StageModel";
 import type { CloudinaryUploadResponse } from "../types/upload";
 import { NotFoundError } from "../utils/AppErrors";
+import { handleImageUpload } from "./cloudinaryImageService";
 import tempUploadsService from "./tempUploadsService";
 
 const handleImageUpdate = async (stage: StageDocument, imageUrl: string) => {
@@ -43,42 +44,11 @@ const handleImageUpdate = async (stage: StageDocument, imageUrl: string) => {
     }
 };
 
-const handleImageUpload = async (stage: StageDocument, imageUrl: string) => {
-    const publicId = tempUploadsService.get(imageUrl);
-
-    if (!publicId) {
-        return;
-    }
-
-    try {
-        await cloudinary.uploader.explicit(publicId, {
-            asset_folder: "stages",
-            display_name: stage._id,
-            invalidate: true,
-            type: "upload",
-        });
-
-        const renamed: CloudinaryUploadResponse =
-            await cloudinary.uploader.rename(publicId, `stages/${stage._id}`, {
-                invalidate: true,
-            });
-
-        stage.imageId = renamed.public_id;
-        stage.imageUrl = renamed.secure_url;
-
-        tempUploadsService.remove(imageUrl);
-    } catch (error) {
-        Logging.error("Error handling image upload:");
-        Logging.error(error);
-        throw error;
-    }
-};
-
 export const createStage = async (data: Stage) => {
     const stage = new StageModel(data);
 
     if (data.imageUrl) {
-        await handleImageUpload(stage, data.imageUrl);
+        await handleImageUpload(stage, data.imageUrl, "stages");
     }
 
     await stage.save();
