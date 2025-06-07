@@ -132,20 +132,16 @@ export const getStageById = async (id: string) => {
 };
 
 export const updateStageById = async (id: string, data: Stage) => {
-    const { title, subtitle, imageUrl, comment, steps, productIds } = data;
+    const { imageUrl } = data;
 
-    const stage = await StageModel.findById(id).exec();
+    const stage = await StageModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
 
     if (!stage) {
         throw new NotFoundError("Stage not found");
     }
-
-    stage.title = title;
-    stage.subtitle = subtitle;
-    stage.imageUrl = imageUrl;
-    stage.comment = comment;
-    stage.steps = steps;
-    stage.productIds = productIds;
 
     await handleImageUpdate(stage, imageUrl);
     await stage.save();

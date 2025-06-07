@@ -7,7 +7,7 @@ import {
 } from "../../tests/mocks/makeupBag";
 import { mockProduct1 } from "../../tests/mocks/product";
 import { mockStage1 } from "../../tests/mocks/stage";
-import { mockTool } from "../../tests/mocks/tool";
+import { mockTool1 } from "../../tests/mocks/tool";
 import { mockUser } from "../../tests/mocks/user";
 import { NotFoundError } from "../../utils/AppErrors";
 import * as BrandService from "../BrandService";
@@ -84,7 +84,7 @@ describe("MakeupBagService", () => {
 
             const brand = await BrandService.createBrand(mockBrand1);
             const tool = await ToolService.createTool({
-                ...mockTool,
+                ...mockTool1,
                 brandId: String(brand._id),
             });
 
