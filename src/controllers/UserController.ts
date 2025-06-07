@@ -24,7 +24,6 @@ export const getUserById = async (
 
     try {
         const { user, makeupBags } = await UserService.getUserById(id);
-
         res.status(200).json({ user, makeupBags });
     } catch (error) {
         next(error);

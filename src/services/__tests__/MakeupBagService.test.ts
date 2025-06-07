@@ -8,7 +8,7 @@ import {
 import { mockProduct1 } from "../../tests/mocks/product";
 import { mockStage1 } from "../../tests/mocks/stage";
 import { mockTool1 } from "../../tests/mocks/tool";
-import { mockUser } from "../../tests/mocks/user";
+import { mockUser1 } from "../../tests/mocks/user";
 import { NotFoundError } from "../../utils/AppErrors";
 import * as BrandService from "../BrandService";
 import * as CategoryService from "../CategoryService";
@@ -40,9 +40,9 @@ describe("MakeupBagService", () => {
 
             const stage = await StageService.createStage(mockStage1);
 
-            await RegisterService.registerUser(mockUser);
+            await RegisterService.registerUser(mockUser1);
             const users = await UserService.getAllUsers();
-            const user = users.find((u) => u.username === mockUser.username);
+            const user = users.find((u) => u.username === mockUser1.username);
 
             await MakeupBagService.createMakeupBag({
                 ...mockMakeupBag1,
@@ -72,9 +72,9 @@ describe("MakeupBagService", () => {
                 mockCategory1
             );
 
-            await RegisterService.registerUser(mockUser);
+            await RegisterService.registerUser(mockUser1);
             const users = await UserService.getAllUsers();
-            const user = users.find((u) => u.username === mockUser.username);
+            const user = users.find((u) => u.username === mockUser1.username);
 
             const product = await ProductService.createProduct(mockProduct1);
             const stage = await StageService.createStage({
@@ -119,9 +119,9 @@ describe("MakeupBagService", () => {
                 mockCategory1
             );
 
-            await RegisterService.registerUser(mockUser);
+            await RegisterService.registerUser(mockUser1);
             const users = await UserService.getAllUsers();
-            const user = users.find((u) => u.username === mockUser.username);
+            const user = users.find((u) => u.username === mockUser1.username);
 
             await MakeupBagService.createMakeupBag({
                 categoryId: String(category._id),
