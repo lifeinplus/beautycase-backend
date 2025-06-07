@@ -5,7 +5,7 @@ import app from "../../app";
 import config from "../../config";
 import * as LessonService from "../../services/LessonService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockError } from "../../tests/mocks/error";
+import { mockErrorDatabase } from "../../tests/mocks/error";
 import {
     mockLesson1,
     mockLesson2,
@@ -32,14 +32,14 @@ describe("LessonController", () => {
                 LessonService.createLesson as jest.Mock
             ).mockResolvedValue({ _id: mockLessonId });
 
-            const res = await request
+            const response = await request
                 .post("/api/lessons")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockLesson1);
 
-            expect(res.statusCode).toBe(201);
+            expect(response.statusCode).toBe(201);
 
-            expect(res.body).toEqual({
+            expect(response.body).toEqual({
                 id: mockLessonId,
                 message: "Lesson created successfully",
             });
@@ -51,15 +51,15 @@ describe("LessonController", () => {
 
         it("should return 500 if creating a lesson fails", async () => {
             const mockCreateLesson = jest.spyOn(LessonService, "createLesson");
-            mockCreateLesson.mockRejectedValue(mockError);
+            mockCreateLesson.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .post("/api/lessons")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockLesson1);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toEqual(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
 
             expect(LessonService.createLesson).toHaveBeenCalledWith(
                 mockLesson1
@@ -77,12 +77,12 @@ describe("LessonController", () => {
                 LessonService.getAllLessons as jest.Mock
             ).mockResolvedValue(mockLessons);
 
-            const res = await request
+            const response = await request
                 .get("/api/lessons")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockLessons);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockLessons);
             expect(LessonService.getAllLessons).toHaveBeenCalledTimes(1);
         });
 
@@ -92,14 +92,14 @@ describe("LessonController", () => {
                 "getAllLessons"
             );
 
-            mockGetAllLessons.mockRejectedValue(mockError);
+            mockGetAllLessons.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get("/api/lessons")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toEqual(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
 
             expect(LessonService.getAllLessons).toHaveBeenCalledTimes(1);
 
@@ -115,12 +115,12 @@ describe("LessonController", () => {
                 LessonService.getLessonById as jest.Mock
             ).mockResolvedValue(mockResult);
 
-            const res = await request
+            const response = await request
                 .get(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockResult);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResult);
             expect(LessonService.getLessonById).toHaveBeenCalledTimes(1);
             expect(LessonService.getLessonById).toHaveBeenCalledWith(
                 mockLessonId
@@ -133,14 +133,14 @@ describe("LessonController", () => {
                 "getLessonById"
             );
 
-            mockGetLessonById.mockRejectedValue(mockError);
+            mockGetLessonById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toBe(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
 
             expect(LessonService.getLessonById).toHaveBeenCalledWith(
                 mockLessonId
@@ -156,14 +156,14 @@ describe("LessonController", () => {
                 LessonService.updateLessonById as jest.Mock
             ).mockResolvedValue({ _id: mockLessonId });
 
-            const res = await request
+            const response = await request
                 .put(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockLesson2);
 
-            expect(res.statusCode).toBe(200);
+            expect(response.statusCode).toBe(200);
 
-            expect(res.body).toEqual({
+            expect(response.body).toEqual({
                 id: mockLessonId,
                 message: "Lesson updated successfully",
             });
@@ -181,15 +181,15 @@ describe("LessonController", () => {
                 "updateLessonById"
             );
 
-            mockUpdateLessonById.mockRejectedValue(mockError);
+            mockUpdateLessonById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .put(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockLesson1);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toBe(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
 
             expect(LessonService.updateLessonById).toHaveBeenCalledWith(
                 mockLessonId,
@@ -206,13 +206,13 @@ describe("LessonController", () => {
                 LessonService.deleteLessonById as jest.Mock
             ).mockResolvedValue({ _id: mockLessonId });
 
-            const res = await request
+            const response = await request
                 .delete(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
+            expect(response.statusCode).toBe(200);
 
-            expect(res.body).toEqual({
+            expect(response.body).toEqual({
                 id: mockLessonId,
                 message: "Lesson deleted successfully",
             });
@@ -228,14 +228,14 @@ describe("LessonController", () => {
                 "deleteLessonById"
             );
 
-            mockDeleteLessonById.mockRejectedValue(mockError);
+            mockDeleteLessonById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .delete(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toBe(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
 
             expect(LessonService.deleteLessonById).toHaveBeenCalledWith(
                 mockLessonId

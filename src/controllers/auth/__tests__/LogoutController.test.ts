@@ -10,7 +10,7 @@ import {
     mockUser1,
 } from "../../../tests/mocks/auth";
 import { logoutUser } from "../LogoutController";
-import { mockError } from "../../../tests/mocks/error";
+import { mockErrorDatabase } from "../../../tests/mocks/error";
 
 const request = supertest(app);
 
@@ -20,7 +20,7 @@ describe("LogoutController", () => {
     describe("POST /api/auth/logout", () => {
         it("should return 204 if no JWT cookie exists", async () => {
             const response = await request.post(path);
-            expect(response.status).toBe(204);
+            expect(response.statusCode).toBe(204);
         });
 
         it("should clear JWT cookie and return 200 for successful logout", async () => {
@@ -34,7 +34,7 @@ describe("LogoutController", () => {
                 .post(path)
                 .set("Cookie", [`jwt=${mockToken1}`]);
 
-            expect(response.status).toBe(200);
+            expect(response.statusCode).toBe(200);
             expect(response.headers["set-cookie"][0]).toContain("jwt=;");
 
             const user = await UserModel.findOne({
@@ -47,7 +47,7 @@ describe("LogoutController", () => {
 
         it("should pass errors to next middleware", async () => {
             jest.spyOn(UserModel, "findOne").mockImplementation(() => {
-                throw mockError;
+                throw mockErrorDatabase;
             });
 
             const mockReq = {
@@ -64,7 +64,7 @@ describe("LogoutController", () => {
             await logoutUser(mockReq, mockRes, mockNext);
 
             expect(mockRes.clearCookie).toHaveBeenCalledWith("jwt");
-            expect(mockNext).toHaveBeenCalledWith(mockError);
+            expect(mockNext).toHaveBeenCalledWith(mockErrorDatabase);
 
             expect(mockRes.sendStatus).not.toHaveBeenCalled();
         });

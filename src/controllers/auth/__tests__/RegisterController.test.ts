@@ -12,7 +12,7 @@ describe("RegisterController", () => {
         it("should register a user", async () => {
             const response = await request.post(path).send(mockUserRegister);
 
-            expect(response.status).toBe(201);
+            expect(response.statusCode).toBe(201);
             expect(response.body.message).toBe("Account created successfully");
 
             const user = await UserModel.findOne({
@@ -28,7 +28,7 @@ describe("RegisterController", () => {
 
             const response = await request.post(path).send(mockUserRegister);
 
-            expect(response.status).toBe(409);
+            expect(response.statusCode).toBe(409);
             expect(response.body.message).toBe("Username already in use");
         });
     });

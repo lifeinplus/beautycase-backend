@@ -40,7 +40,7 @@ describe("RefreshController", () => {
                 .get(path)
                 .set("Cookie", [`jwt=${hackerToken}`]);
 
-            expect(response.status).toBe(401);
+            expect(response.statusCode).toBe(401);
 
             const user = await UserModel.findOne({
                 username: mockHacker.username,
@@ -66,7 +66,7 @@ describe("RefreshController", () => {
                 .get(path)
                 .set("Cookie", [`jwt=${refreshToken}`]);
 
-            expect(response.status).toBe(200);
+            expect(response.statusCode).toBe(200);
             expect(response.headers["set-cookie"]).toBeDefined();
             expect(response.headers["set-cookie"][0]).toContain("jwt=");
 
@@ -92,11 +92,11 @@ describe("RefreshController", () => {
                 refreshTokens: [expiredToken],
             });
 
-            const res = await request
+            const response = await request
                 .get(path)
                 .set("Cookie", [`jwt=${expiredToken}`]);
 
-            expect(res.statusCode).toBe(500);
+            expect(response.statusCode).toBe(500);
 
             const user = await UserModel.findOne({
                 username: mockUser1.username,
@@ -107,7 +107,7 @@ describe("RefreshController", () => {
 
         it("should return 401 if no jwt cookie is present", async () => {
             const response = await request.get(path);
-            expect(response.status).toBe(401);
+            expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe("Refresh token not found");
         });
 
@@ -125,12 +125,12 @@ describe("RefreshController", () => {
                 refreshTokens: [refreshToken],
             });
 
-            const res = await request
+            const response = await request
                 .get(path)
                 .set("Cookie", [`jwt=${refreshToken}`]);
 
-            expect(res.statusCode).toBe(401);
-            expect(res.body.message).toBe("Username incorrect");
+            expect(response.statusCode).toBe(401);
+            expect(response.body.message).toBe("Username incorrect");
         });
     });
 });

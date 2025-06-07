@@ -10,7 +10,7 @@ import {
     mockCategory2,
     mockCategoryId,
 } from "../../tests/mocks/category";
-import { mockError } from "../../tests/mocks/error";
+import { mockErrorDatabase } from "../../tests/mocks/error";
 
 jest.mock("../../services/CategoryService");
 
@@ -32,7 +32,7 @@ describe("CategoryController", () => {
                 CategoryService.createCategory as jest.Mock
             ).mockResolvedValue({ _id: mockCategoryId });
 
-            const res = await request
+            const response = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockCategory1);
@@ -41,9 +41,9 @@ describe("CategoryController", () => {
                 mockCategory1
             );
 
-            expect(res.statusCode).toBe(201);
-            expect(res.body.id).toBe(mockCategoryId);
-            expect(res.body.message).toBe("Category created successfully");
+            expect(response.statusCode).toBe(201);
+            expect(response.body.id).toBe(mockCategoryId);
+            expect(response.body.message).toBe("Category created successfully");
         });
 
         it("should return 500 if creating a category fails", async () => {
@@ -52,15 +52,15 @@ describe("CategoryController", () => {
                 "createCategory"
             );
 
-            mockCreateCategory.mockRejectedValue(mockError);
+            mockCreateCategory.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .post("/api/categories")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockCategory1);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body).toHaveProperty("message");
+            expect(response.statusCode).toBe(500);
+            expect(response.body).toHaveProperty("message");
 
             mockCreateCategory.mockRestore();
         });
@@ -74,12 +74,12 @@ describe("CategoryController", () => {
                 CategoryService.getAllCategories as jest.Mock
             ).mockResolvedValue(mockCategories);
 
-            const res = await request
+            const response = await request
                 .get("/api/categories")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockCategories);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockCategories);
         });
 
         it("should return 500 if getting all categories fails", async () => {
@@ -88,14 +88,14 @@ describe("CategoryController", () => {
                 "getAllCategories"
             );
 
-            mockGetAllCategories.mockRejectedValue(mockError);
+            mockGetAllCategories.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get("/api/categories")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body).toHaveProperty("message");
+            expect(response.statusCode).toBe(500);
+            expect(response.body).toHaveProperty("message");
 
             mockGetAllCategories.mockRestore();
         });

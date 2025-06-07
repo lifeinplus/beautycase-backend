@@ -5,7 +5,7 @@ import app from "../../app";
 import config from "../../config";
 import * as ProductService from "../../services/ProductService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockError } from "../../tests/mocks/error";
+import { mockErrorDatabase } from "../../tests/mocks/error";
 import {
     mockProduct1,
     mockProduct2,
@@ -32,14 +32,14 @@ describe("ProductController", () => {
                 ProductService.createProduct as jest.Mock
             ).mockResolvedValue({ _id: mockProductId });
 
-            const res = await request
+            const response = await request
                 .post("/api/products")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockProduct2);
 
-            expect(res.statusCode).toBe(201);
+            expect(response.statusCode).toBe(201);
 
-            expect(res.body).toEqual({
+            expect(response.body).toEqual({
                 id: mockProductId,
                 message: "Product created successfully",
             });
@@ -55,15 +55,15 @@ describe("ProductController", () => {
                 "createProduct"
             );
 
-            mockCreateProduct.mockRejectedValue(mockError);
+            mockCreateProduct.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .post("/api/products")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockProduct2);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toEqual(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
 
             expect(ProductService.createProduct).toHaveBeenCalledWith(
                 mockProduct2
@@ -81,12 +81,12 @@ describe("ProductController", () => {
                 ProductService.getAllProducts as jest.Mock
             ).mockResolvedValue(mockProducts);
 
-            const res = await request
+            const response = await request
                 .get("/api/products")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockProducts);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockProducts);
             expect(ProductService.getAllProducts).toHaveBeenCalledTimes(1);
         });
 
@@ -96,14 +96,14 @@ describe("ProductController", () => {
                 "getAllProducts"
             );
 
-            mockGetAllProducts.mockRejectedValue(mockError);
+            mockGetAllProducts.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get("/api/products")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toEqual(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
             expect(ProductService.getAllProducts).toHaveBeenCalledTimes(1);
 
             mockGetAllProducts.mockRestore();
@@ -118,12 +118,12 @@ describe("ProductController", () => {
                 ProductService.getProductById as jest.Mock
             ).mockResolvedValue(mockResult);
 
-            const res = await request
+            const response = await request
                 .get(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockResult);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResult);
 
             expect(ProductService.getProductById).toHaveBeenCalledTimes(1);
             expect(ProductService.getProductById).toHaveBeenCalledWith(
@@ -137,14 +137,14 @@ describe("ProductController", () => {
                 "getProductById"
             );
 
-            mockGetProductById.mockRejectedValue(mockError);
+            mockGetProductById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toBe(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
 
             expect(ProductService.getProductById).toHaveBeenCalledWith(
                 mockProductId
@@ -160,14 +160,14 @@ describe("ProductController", () => {
                 ProductService.updateProductById as jest.Mock
             ).mockResolvedValue({ _id: mockProductId });
 
-            const res = await request
+            const response = await request
                 .put(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockProduct2);
 
-            expect(res.statusCode).toBe(200);
+            expect(response.statusCode).toBe(200);
 
-            expect(res.body).toEqual({
+            expect(response.body).toEqual({
                 id: mockProductId,
                 message: "Product updated successfully",
             });
@@ -185,15 +185,15 @@ describe("ProductController", () => {
                 "updateProductById"
             );
 
-            mockUpdateProductById.mockRejectedValue(mockError);
+            mockUpdateProductById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .put(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockProduct2);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toBe(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
 
             expect(ProductService.updateProductById).toHaveBeenCalledWith(
                 mockProductId,
@@ -210,13 +210,13 @@ describe("ProductController", () => {
                 ProductService.deleteProductById as jest.Mock
             ).mockResolvedValue({ _id: mockProductId });
 
-            const res = await request
+            const response = await request
                 .delete(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
+            expect(response.statusCode).toBe(200);
 
-            expect(res.body).toEqual({
+            expect(response.body).toEqual({
                 id: mockProductId,
                 message: "Product deleted successfully",
             });
@@ -232,14 +232,14 @@ describe("ProductController", () => {
                 "deleteProductById"
             );
 
-            mockDeleteProductById.mockRejectedValue(mockError);
+            mockDeleteProductById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .delete(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toBe(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
 
             expect(ProductService.deleteProductById).toHaveBeenCalledWith(
                 mockProductId

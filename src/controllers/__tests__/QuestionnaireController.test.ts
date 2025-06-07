@@ -5,7 +5,7 @@ import app from "../../app";
 import config from "../../config";
 import * as QuestionnaireService from "../../services/QuestionnaireService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockError } from "../../tests/mocks/error";
+import { mockErrorDatabase } from "../../tests/mocks/error";
 import {
     mockQuestionnaire1,
     mockQuestionnaire2,
@@ -32,14 +32,14 @@ describe("QuestionnaireController", () => {
                 QuestionnaireService.createQuestionnaire as jest.Mock
             ).mockResolvedValue({ _id: mockQuestionnaireId });
 
-            const res = await request
+            const response = await request
                 .post("/api/questionnaires")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockQuestionnaire2);
 
-            expect(res.statusCode).toBe(201);
+            expect(response.statusCode).toBe(201);
 
-            expect(res.body).toEqual({
+            expect(response.body).toEqual({
                 id: mockQuestionnaireId,
                 message: "Questionnaire created successfully",
             });
@@ -55,15 +55,15 @@ describe("QuestionnaireController", () => {
                 "createQuestionnaire"
             );
 
-            mockCreateQuestionnaire.mockRejectedValue(mockError);
+            mockCreateQuestionnaire.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .post("/api/questionnaires")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockQuestionnaire2);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toEqual(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
 
             expect(
                 QuestionnaireService.createQuestionnaire
@@ -81,12 +81,12 @@ describe("QuestionnaireController", () => {
                 QuestionnaireService.getAllQuestionnaires as jest.Mock
             ).mockResolvedValue(mockQuestionnaires);
 
-            const res = await request
+            const response = await request
                 .get("/api/questionnaires")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockQuestionnaires);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockQuestionnaires);
             expect(
                 QuestionnaireService.getAllQuestionnaires
             ).toHaveBeenCalledTimes(1);
@@ -98,14 +98,14 @@ describe("QuestionnaireController", () => {
                 "getAllQuestionnaires"
             );
 
-            mockGetAllQuestionnaires.mockRejectedValue(mockError);
+            mockGetAllQuestionnaires.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get("/api/questionnaires")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toEqual(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
             expect(
                 QuestionnaireService.getAllQuestionnaires
             ).toHaveBeenCalledTimes(1);
@@ -125,12 +125,12 @@ describe("QuestionnaireController", () => {
                 QuestionnaireService.getQuestionnaireById as jest.Mock
             ).mockResolvedValue(mockResult);
 
-            const res = await request
+            const response = await request
                 .get(`/api/questionnaires/${mockQuestionnaireId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockResult);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResult);
 
             expect(
                 QuestionnaireService.getQuestionnaireById
@@ -146,14 +146,14 @@ describe("QuestionnaireController", () => {
                 "getQuestionnaireById"
             );
 
-            mockGetQuestionnaireById.mockRejectedValue(mockError);
+            mockGetQuestionnaireById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get(`/api/questionnaires/${mockQuestionnaireId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body.message).toBe(mockError.message);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
 
             expect(
                 QuestionnaireService.getQuestionnaireById

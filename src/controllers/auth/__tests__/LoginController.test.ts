@@ -24,7 +24,7 @@ describe("LoginController", () => {
         it("should login and return access token", async () => {
             const response = await request.post(path).send(mockUser1);
 
-            expect(response.status).toBe(200);
+            expect(response.statusCode).toBe(200);
 
             expect(response.body).toHaveProperty("accessToken");
             expect(response.body.username).toBe(mockUser1.username);
@@ -44,7 +44,7 @@ describe("LoginController", () => {
         it("should return 401 when user does not exist", async () => {
             const response = await request.post(path).send(mockUser2);
 
-            expect(response.status).toBe(401);
+            expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe("User not found");
         });
 
@@ -54,7 +54,7 @@ describe("LoginController", () => {
                 password: mockUser2.password,
             });
 
-            expect(response.status).toBe(401);
+            expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe("Password is incorrect");
         });
 

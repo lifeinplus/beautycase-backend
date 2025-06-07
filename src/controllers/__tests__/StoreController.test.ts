@@ -6,7 +6,7 @@ import config from "../../config";
 import * as StoreService from "../../services/StoreService";
 import { mockUserJwt } from "../../tests/mocks/auth";
 import { mockStore1, mockStore2, mockStoreId } from "../../tests/mocks/store";
-import { mockError } from "../../tests/mocks/error";
+import { mockErrorDatabase } from "../../tests/mocks/error";
 
 jest.mock("../../services/StoreService");
 
@@ -28,29 +28,29 @@ describe("StoreController", () => {
                 StoreService.createStore as jest.Mock
             ).mockResolvedValue({ _id: mockStoreId });
 
-            const res = await request
+            const response = await request
                 .post("/api/stores")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockStore1);
 
             expect(StoreService.createStore).toHaveBeenCalledWith(mockStore1);
 
-            expect(res.statusCode).toBe(201);
-            expect(res.body.id).toBe(mockStoreId);
-            expect(res.body.message).toBe("Store created successfully");
+            expect(response.statusCode).toBe(201);
+            expect(response.body.id).toBe(mockStoreId);
+            expect(response.body.message).toBe("Store created successfully");
         });
 
         it("should return 500 if creating a store fails", async () => {
             const mockCreateStore = jest.spyOn(StoreService, "createStore");
-            mockCreateStore.mockRejectedValue(mockError);
+            mockCreateStore.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .post("/api/stores")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockStore1);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body).toHaveProperty("message");
+            expect(response.statusCode).toBe(500);
+            expect(response.body).toHaveProperty("message");
 
             mockCreateStore.mockRestore();
         });
@@ -64,24 +64,24 @@ describe("StoreController", () => {
                 StoreService.getAllStores as jest.Mock
             ).mockResolvedValue(mockStores);
 
-            const res = await request
+            const response = await request
                 .get("/api/stores")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toEqual(mockStores);
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockStores);
         });
 
         it("should return 500 if getting all stores fails", async () => {
             const mockGetAllStores = jest.spyOn(StoreService, "getAllStores");
-            mockGetAllStores.mockRejectedValue(mockError);
+            mockGetAllStores.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .get("/api/stores")
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body).toHaveProperty("message");
+            expect(response.statusCode).toBe(500);
+            expect(response.body).toHaveProperty("message");
 
             mockGetAllStores.mockRestore();
         });
@@ -93,7 +93,7 @@ describe("StoreController", () => {
                 StoreService.updateStoreById as jest.Mock
             ).mockResolvedValue({ _id: mockStoreId });
 
-            const res = await request
+            const response = await request
                 .put(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockStore2);
@@ -103,9 +103,9 @@ describe("StoreController", () => {
                 mockStore2
             );
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body.id).toBe(mockStoreId);
-            expect(res.body.message).toBe("Store updated successfully");
+            expect(response.statusCode).toBe(200);
+            expect(response.body.id).toBe(mockStoreId);
+            expect(response.body.message).toBe("Store updated successfully");
         });
 
         it("should return 500 if updating a store fails", async () => {
@@ -114,15 +114,15 @@ describe("StoreController", () => {
                 "updateStoreById"
             );
 
-            mockUpdateStoreById.mockRejectedValue(mockError);
+            mockUpdateStoreById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .put(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockStore1);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body).toHaveProperty("message");
+            expect(response.statusCode).toBe(500);
+            expect(response.body).toHaveProperty("message");
 
             mockUpdateStoreById.mockRestore();
         });
@@ -134,7 +134,7 @@ describe("StoreController", () => {
                 StoreService.deleteStoreById as jest.Mock
             ).mockResolvedValue({ _id: mockStoreId });
 
-            const res = await request
+            const response = await request
                 .delete(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`);
 
@@ -142,9 +142,9 @@ describe("StoreController", () => {
                 mockStoreId
             );
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body.id).toBe(mockStoreId);
-            expect(res.body.message).toBe("Store deleted successfully");
+            expect(response.statusCode).toBe(200);
+            expect(response.body.id).toBe(mockStoreId);
+            expect(response.body.message).toBe("Store deleted successfully");
         });
 
         it("should return 500 if deleting a store fails", async () => {
@@ -153,14 +153,14 @@ describe("StoreController", () => {
                 "deleteStoreById"
             );
 
-            mockDeleteStoreById.mockRejectedValue(mockError);
+            mockDeleteStoreById.mockRejectedValue(mockErrorDatabase);
 
-            const res = await request
+            const response = await request
                 .delete(`/api/stores/${mockStoreId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.statusCode).toBe(500);
-            expect(res.body).toHaveProperty("message");
+            expect(response.statusCode).toBe(500);
+            expect(response.body).toHaveProperty("message");
 
             mockDeleteStoreById.mockRestore();
         });

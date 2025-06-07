@@ -22,7 +22,7 @@ const mockTempUploadsService = tempUploadsService as jest.Mocked<
 describe("QuestionnaireService", () => {
     const mockPublicId = "test_public_id";
 
-    const renamedResponse = {
+    const mockCloudinaryResponse = {
         public_id: "questionnaires/renamed-id",
         secure_url: "https://cloudinary.com/renamed-image.jpg",
     };
@@ -32,7 +32,7 @@ describe("QuestionnaireService", () => {
 
         mockCloudinary.uploader.rename = jest
             .fn()
-            .mockResolvedValue(renamedResponse);
+            .mockResolvedValue(mockCloudinaryResponse);
 
         mockTempUploadsService.get.mockReturnValue(mockPublicId);
     });
@@ -55,8 +55,12 @@ describe("QuestionnaireService", () => {
 
             expect(result).toHaveProperty("_id");
             expect(result.name).toBe(mockQuestionnaire2.name);
-            expect(result.makeupBagPhotoId).toBe(renamedResponse.public_id);
-            expect(result.makeupBagPhotoUrl).toBe(renamedResponse.secure_url);
+            expect(result.makeupBagPhotoId).toBe(
+                mockCloudinaryResponse.public_id
+            );
+            expect(result.makeupBagPhotoUrl).toBe(
+                mockCloudinaryResponse.secure_url
+            );
 
             expect(mockCloudinary.uploader.explicit).toHaveBeenCalledTimes(1);
             expect(mockCloudinary.uploader.rename).toHaveBeenCalledTimes(1);
