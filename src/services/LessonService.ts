@@ -6,6 +6,18 @@ export const createLesson = async (data: Lesson) => {
     return await LessonModel.create(data);
 };
 
+export const getAllLessons = async () => {
+    const lessons = await LessonModel.find().select(
+        "-fullDescription -productIds"
+    );
+
+    if (!lessons.length) {
+        throw new NotFoundError("Lessons not found");
+    }
+
+    return lessons;
+};
+
 export const getLessonById = async (id: string) => {
     const lesson = await LessonModel.findById(id).populate(
         "productIds",
@@ -17,18 +29,6 @@ export const getLessonById = async (id: string) => {
     }
 
     return lesson;
-};
-
-export const getAllLessons = async () => {
-    const lessons = await LessonModel.find().select(
-        "-fullDescription -productIds"
-    );
-
-    if (!lessons.length) {
-        throw new NotFoundError("Lessons not found");
-    }
-
-    return lessons;
 };
 
 export const updateLessonById = async (id: string, data: Lesson) => {

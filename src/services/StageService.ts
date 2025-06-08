@@ -106,6 +106,18 @@ export const duplicateStageById = async (id: string) => {
     return duplicatedStage;
 };
 
+export const getAllStages = async () => {
+    const stages = await StageModel.find().select(
+        "createdAt imageUrl subtitle title"
+    );
+
+    if (!stages.length) {
+        throw new NotFoundError("Stages not found");
+    }
+
+    return stages;
+};
+
 export const getStageById = async (id: string) => {
     const stage = await StageModel.findById(id).populate(
         "productIds",
@@ -119,33 +131,17 @@ export const getStageById = async (id: string) => {
     return stage;
 };
 
-export const getAllStages = async () => {
-    const stages = await StageModel.find().select(
-        "createdAt imageUrl subtitle title"
-    );
-
-    if (!stages.length) {
-        throw new NotFoundError("Stages not found");
-    }
-
-    return stages;
-};
-
 export const updateStageById = async (id: string, data: Stage) => {
-    const { title, subtitle, imageUrl, comment, steps, productIds } = data;
+    const { imageUrl } = data;
 
-    const stage = await StageModel.findById(id).exec();
+    const stage = await StageModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
 
     if (!stage) {
         throw new NotFoundError("Stage not found");
     }
-
-    stage.title = title;
-    stage.subtitle = subtitle;
-    stage.imageUrl = imageUrl;
-    stage.comment = comment;
-    stage.steps = steps;
-    stage.productIds = productIds;
 
     await handleImageUpdate(stage, imageUrl);
     await stage.save();

@@ -13,7 +13,6 @@ export const createStage = async (
         const stage = await StageService.createStage(body);
 
         res.status(201).json({
-            count: 1,
             id: stage._id,
             message: "Stage created successfully",
         });
@@ -34,10 +33,22 @@ export const duplicateStageById = async (
         const stage = await StageService.duplicateStageById(id);
 
         res.status(201).json({
-            count: 1,
             id: stage._id,
             message: "Stage duplicated successfully",
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllStages = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const stages = await StageService.getAllStages();
+        res.status(200).json(stages);
     } catch (error) {
         next(error);
     }
@@ -53,19 +64,6 @@ export const getStageById = async (
     try {
         const stage = await StageService.getStageById(id);
         res.status(200).json(stage);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getAllStages = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const stages = await StageService.getAllStages();
-        res.status(200).json(stages);
     } catch (error) {
         next(error);
     }

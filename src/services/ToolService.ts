@@ -77,19 +77,10 @@ const handleImageUpload = async (tool: ToolDocument, imageUrl: string) => {
 
 export const createTool = async (data: Tool) => {
     const tool = new ToolModel(data);
+    const { imageUrl } = data;
 
-    await handleImageUpload(tool, data.imageUrl);
+    await handleImageUpload(tool, imageUrl);
     await tool.save();
-
-    return tool;
-};
-
-export const getToolById = async (id: string) => {
-    const tool = await ToolModel.findById(id).populate("brandId");
-
-    if (!tool) {
-        throw new NotFoundError("Tool not found");
-    }
 
     return tool;
 };
@@ -104,21 +95,27 @@ export const getAllTools = async () => {
     return tools;
 };
 
-export const updateToolById = async (id: string, data: Tool) => {
-    const { name, brandId, imageUrl, number, comment, storeLinks } = data;
-
-    const tool = await ToolModel.findById(id).exec();
+export const getToolById = async (id: string) => {
+    const tool = await ToolModel.findById(id).populate("brandId");
 
     if (!tool) {
         throw new NotFoundError("Tool not found");
     }
 
-    tool.brandId = brandId;
-    tool.name = name;
-    tool.imageUrl = imageUrl;
-    tool.number = number;
-    tool.comment = comment;
-    tool.storeLinks = storeLinks;
+    return tool;
+};
+
+export const updateToolById = async (id: string, data: Tool) => {
+    const { imageUrl } = data;
+
+    const tool = await ToolModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!tool) {
+        throw new NotFoundError("Tool not found");
+    }
 
     await handleImageUpdate(tool, imageUrl);
     await tool.save();

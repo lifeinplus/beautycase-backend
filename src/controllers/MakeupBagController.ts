@@ -7,21 +7,28 @@ export const createMakeupBag = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { categoryId, clientId, stageIds, toolIds } = req.body;
+    const { body } = req;
 
     try {
-        const makeupBag = await MakeupBagService.createMakeupBag({
-            categoryId,
-            clientId,
-            stageIds,
-            toolIds,
-        });
+        const makeupBag = await MakeupBagService.createMakeupBag(body);
 
         res.status(201).json({
-            count: 1,
             id: makeupBag._id,
             message: "MakeupBag created successfully",
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllMakeupBags = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const makeupBags = await MakeupBagService.getAllMakeupBags();
+        res.status(200).json(makeupBags);
     } catch (error) {
         next(error);
     }
@@ -37,19 +44,6 @@ export const getMakeupBagById = async (
     try {
         const makeupBag = await MakeupBagService.getMakeupBagById(id);
         res.status(200).json(makeupBag);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getAllMakeupBags = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const makeupBags = await MakeupBagService.getAllMakeupBags();
-        res.status(200).json(makeupBags);
     } catch (error) {
         next(error);
     }

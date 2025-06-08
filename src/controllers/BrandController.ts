@@ -7,11 +7,12 @@ export const createBrand = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { body } = req;
+
     try {
-        const brand = await BrandService.createBrand(req.body);
+        const brand = await BrandService.createBrand(body);
 
         res.status(201).json({
-            count: 1,
             id: brand._id,
             message: "Brand created successfully",
         });

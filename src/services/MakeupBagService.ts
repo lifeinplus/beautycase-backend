@@ -3,8 +3,23 @@ import type { MakeupBag } from "../models/MakeupBagModel";
 import { NotFoundError } from "../utils/AppErrors";
 
 export const createMakeupBag = async (data: MakeupBag) => {
-    const makeupBag = new MakeupBagModel(data);
-    return await makeupBag.save();
+    return await MakeupBagModel.create(data);
+};
+
+export const getAllMakeupBags = async () => {
+    const makeupBags = await MakeupBagModel.find()
+        .select("categoryId clientId createdAt stageIds")
+        .populate([
+            { path: "categoryId", select: "name" },
+            { path: "clientId", select: "username" },
+            { path: "stageIds", select: "_id" },
+        ]);
+
+    if (!makeupBags.length) {
+        throw new NotFoundError("MakeupBags not found");
+    }
+
+    return makeupBags;
 };
 
 export const getMakeupBagById = async (id: string) => {
@@ -31,22 +46,6 @@ export const getMakeupBagById = async (id: string) => {
     }
 
     return makeupBag;
-};
-
-export const getAllMakeupBags = async () => {
-    const makeupBags = await MakeupBagModel.find()
-        .select("categoryId clientId createdAt stageIds")
-        .populate([
-            { path: "categoryId", select: "name" },
-            { path: "clientId", select: "username" },
-            { path: "stageIds", select: "_id" },
-        ]);
-
-    if (!makeupBags.length) {
-        throw new NotFoundError("MakeupBags not found");
-    }
-
-    return makeupBags;
 };
 
 export const getMakeupBagsByClientId = async (clientId: string) => {

@@ -3,12 +3,16 @@ import supertest from "supertest";
 
 import app from "../../app";
 import config from "../../config";
-import LessonModel from "../../models/LessonModel";
-import type { Lesson } from "../../models/LessonModel";
-import ProductModel from "../../models/ProductModel";
-import type { Product } from "../../models/ProductModel";
+import * as LessonService from "../../services/LessonService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockError } from "../../tests/mocks/error";
+import { mockErrorDatabase } from "../../tests/mocks/error";
+import {
+    mockLesson1,
+    mockLesson2,
+    mockLessonId,
+} from "../../tests/mocks/lesson";
+
+jest.mock("../../services/LessonService");
 
 const request = supertest(app);
 let token: string;
@@ -22,163 +26,222 @@ beforeAll(async () => {
 });
 
 describe("LessonController", () => {
-    const mockId = "682a378b09c4df2756fcece5";
+    describe("POST /api/lessons", () => {
+        it("should create a lesson", async () => {
+            jest.mocked(
+                LessonService.createLesson as jest.Mock
+            ).mockResolvedValue({ _id: mockLessonId });
 
-    const mockProduct: Product = {
-        brandId: mockId,
-        name: "Lipstick",
-        imageUrl: "https://image.url/lipstick.png",
-        comment: "Great product",
-        storeLinks: [],
-    };
-
-    const mockLesson1: Lesson = {
-        title: "Test Lesson 1",
-        shortDescription: "Test Short Description 1",
-        videoUrl: "https://example.com/video1",
-        fullDescription: "Test Full Description 1",
-        productIds: [mockId],
-    };
-
-    const mockLesson2: Lesson = {
-        title: "Test Lesson 2",
-        shortDescription: "Test Short Description 2",
-        videoUrl: "https://example.com/video2",
-        fullDescription: "Test Full Description 2",
-        productIds: [mockId],
-    };
-
-    describe("createLesson", () => {
-        it("should create a new lesson", async () => {
-            const res = await request
+            const response = await request
                 .post("/api/lessons")
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockLesson1);
 
-            expect(res.status).toBe(201);
-            expect(res.body.message).toBe("Lesson created successfully");
+            expect(response.statusCode).toBe(201);
 
-            const lesson = await LessonModel.findOne(mockLesson1);
-            expect(lesson).not.toBeNull();
-        });
-
-        it("should return an error if lesson creation fails", async () => {
-            const mockCreate = jest.spyOn(LessonModel, "create");
-            mockCreate.mockRejectedValue(mockError);
-
-            const res = await request
-                .post("/api/lessons")
-                .set("Authorization", `Bearer ${token}`)
-                .send(mockLesson1)
-                .expect(500);
-
-            expect(res.body).toHaveProperty("message");
-            mockCreate.mockRestore();
-        });
-    });
-
-    describe("getLessonById", () => {
-        it("should get a single lesson by id with populated product images", async () => {
-            const product = await ProductModel.create(mockProduct);
-
-            const lesson = await LessonModel.create({
-                ...mockLesson1,
-                productIds: [product._id],
+            expect(response.body).toEqual({
+                id: mockLessonId,
+                message: "Lesson created successfully",
             });
 
-            const res = await request
-                .get(`/api/lessons/${lesson._id}`)
-                .set("Authorization", `Bearer ${token}`);
-
-            expect(res.status).toBe(200);
-            expect(res.body.products[0].imageUrl).toBe(mockProduct.imageUrl);
+            expect(LessonService.createLesson).toHaveBeenCalledWith(
+                mockLesson1
+            );
         });
 
-        it("should return 404 if lesson not found", async () => {
-            const res = await request
-                .get(`/api/lessons/${mockId}`)
-                .set("Authorization", `Bearer ${token}`);
+        it("should return 500 if creating a lesson fails", async () => {
+            const mockCreateLesson = jest.spyOn(LessonService, "createLesson");
+            mockCreateLesson.mockRejectedValue(mockErrorDatabase);
 
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe("Lesson not found");
-        });
-    });
+            const response = await request
+                .post("/api/lessons")
+                .set("Authorization", `Bearer ${token}`)
+                .send(mockLesson1);
 
-    describe("getAllLessons", () => {
-        it("should return all lessons (without fullDescription and productIds)", async () => {
-            await LessonModel.insertMany([mockLesson1, mockLesson2]);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
 
-            const res = await request
-                .get("/api/lessons")
-                .set("Authorization", `Bearer ${token}`);
+            expect(LessonService.createLesson).toHaveBeenCalledWith(
+                mockLesson1
+            );
 
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBe(2);
-            expect(res.body[0].fullDescription).toBeUndefined();
-            expect(res.body[0].productIds).toBeUndefined();
-        });
-
-        it("should return 404 if no lessons found", async () => {
-            const res = await request
-                .get("/api/lessons")
-                .set("Authorization", `Bearer ${token}`);
-
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe("Lessons not found");
+            mockCreateLesson.mockRestore();
         });
     });
 
-    describe("updateLessonById", () => {
+    describe("GET /api/lessons", () => {
+        it("should get all lessons", async () => {
+            const mockLessons = [mockLesson1, mockLesson2];
+
+            jest.mocked(
+                LessonService.getAllLessons as jest.Mock
+            ).mockResolvedValue(mockLessons);
+
+            const response = await request
+                .get("/api/lessons")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockLessons);
+            expect(LessonService.getAllLessons).toHaveBeenCalledTimes(1);
+        });
+
+        it("should return 500 if getting all lessons fails", async () => {
+            const mockGetAllLessons = jest.spyOn(
+                LessonService,
+                "getAllLessons"
+            );
+
+            mockGetAllLessons.mockRejectedValue(mockErrorDatabase);
+
+            const response = await request
+                .get("/api/lessons")
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toEqual(mockErrorDatabase.message);
+
+            expect(LessonService.getAllLessons).toHaveBeenCalledTimes(1);
+
+            mockGetAllLessons.mockRestore();
+        });
+    });
+
+    describe("GET /api/lessons/:id", () => {
+        it("should get a lesson", async () => {
+            const mockResult = { _id: mockLessonId, ...mockLesson1 };
+
+            jest.mocked(
+                LessonService.getLessonById as jest.Mock
+            ).mockResolvedValue(mockResult);
+
+            const response = await request
+                .get(`/api/lessons/${mockLessonId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResult);
+            expect(LessonService.getLessonById).toHaveBeenCalledTimes(1);
+            expect(LessonService.getLessonById).toHaveBeenCalledWith(
+                mockLessonId
+            );
+        });
+
+        it("should return 500 if getting a lesson fails", async () => {
+            const mockGetLessonById = jest.spyOn(
+                LessonService,
+                "getLessonById"
+            );
+
+            mockGetLessonById.mockRejectedValue(mockErrorDatabase);
+
+            const response = await request
+                .get(`/api/lessons/${mockLessonId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
+
+            expect(LessonService.getLessonById).toHaveBeenCalledWith(
+                mockLessonId
+            );
+
+            mockGetLessonById.mockRestore();
+        });
+    });
+
+    describe("PUT /api/lessons/:id", () => {
         it("should update a lesson", async () => {
-            const lesson = await LessonModel.create(mockLesson1);
+            jest.mocked(
+                LessonService.updateLessonById as jest.Mock
+            ).mockResolvedValue({ _id: mockLessonId });
 
-            const res = await request
-                .put(`/api/lessons/${lesson._id}`)
+            const response = await request
+                .put(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockLesson2);
 
-            expect(res.status).toBe(200);
-            expect(res.body.message).toBe("Lesson updated successfully");
+            expect(response.statusCode).toBe(200);
 
-            const updated = await LessonModel.findById(lesson._id);
-            expect(updated?.title).toBe(mockLesson2.title);
+            expect(response.body).toEqual({
+                id: mockLessonId,
+                message: "Lesson updated successfully",
+            });
+
+            expect(LessonService.updateLessonById).toHaveBeenCalledTimes(1);
+            expect(LessonService.updateLessonById).toHaveBeenCalledWith(
+                mockLessonId,
+                mockLesson2
+            );
         });
 
-        it("should return 404 when updating a non-existent lesson", async () => {
-            const res = await request
-                .put(`/api/lessons/${mockId}`)
+        it("should return 500 if updating a lesson fails", async () => {
+            const mockUpdateLessonById = jest.spyOn(
+                LessonService,
+                "updateLessonById"
+            );
+
+            mockUpdateLessonById.mockRejectedValue(mockErrorDatabase);
+
+            const response = await request
+                .put(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`)
                 .send(mockLesson1);
 
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe("Lesson not found");
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
+
+            expect(LessonService.updateLessonById).toHaveBeenCalledWith(
+                mockLessonId,
+                mockLesson1
+            );
+
+            mockUpdateLessonById.mockRestore();
         });
     });
 
-    describe("deleteLessonById", () => {
+    describe("DELETE /api/lessons/:id", () => {
         it("should delete a lesson", async () => {
-            const lesson = await LessonModel.create(mockLesson1);
+            jest.mocked(
+                LessonService.deleteLessonById as jest.Mock
+            ).mockResolvedValue({ _id: mockLessonId });
 
-            const res = await request
-                .delete(`/api/lessons/${lesson._id}`)
+            const response = await request
+                .delete(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`);
 
-            expect(res.status).toBe(200);
-            expect(res.body.message).toBe("Lesson deleted successfully");
+            expect(response.statusCode).toBe(200);
 
-            const deleted = await LessonModel.findById(lesson._id);
-            expect(deleted).toBeNull();
+            expect(response.body).toEqual({
+                id: mockLessonId,
+                message: "Lesson deleted successfully",
+            });
+
+            expect(LessonService.deleteLessonById).toHaveBeenCalledWith(
+                mockLessonId
+            );
         });
 
-        it("should handle errors during lesson deletion", async () => {
-            jest.spyOn(LessonModel, "findByIdAndDelete").mockRejectedValue(
-                mockError
+        it("should return 500 if deleting a lesson fails", async () => {
+            const mockDeleteLessonById = jest.spyOn(
+                LessonService,
+                "deleteLessonById"
             );
 
-            await request
-                .delete(`/api/lessons/${mockId}`)
-                .set("Authorization", `Bearer ${token}`)
-                .expect(500);
+            mockDeleteLessonById.mockRejectedValue(mockErrorDatabase);
+
+            const response = await request
+                .delete(`/api/lessons/${mockLessonId}`)
+                .set("Authorization", `Bearer ${token}`);
+
+            expect(response.statusCode).toBe(500);
+            expect(response.body.message).toBe(mockErrorDatabase.message);
+
+            expect(LessonService.deleteLessonById).toHaveBeenCalledWith(
+                mockLessonId
+            );
+
+            mockDeleteLessonById.mockRestore();
         });
     });
 });
