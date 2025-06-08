@@ -18,6 +18,5 @@ export const logoutUser = async (
     );
 
     await foundUser.save();
-
     return true;
 };
