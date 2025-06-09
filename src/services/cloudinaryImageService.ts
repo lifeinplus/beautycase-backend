@@ -17,14 +17,39 @@ interface ImageOptions {
     secureUrl: string;
 }
 
-export const handleImageDeletion = async (publicId?: string): Promise<void> => {
+export const handleImageUpload = async <T extends ImageDocument>(
+    doc: T,
+    { filename, folder, secureUrl }: ImageOptions
+) => {
+    const publicId = tempUploadsService.get(secureUrl);
+
     if (!publicId) return;
 
     try {
-        await cloudinary.uploader.destroy(publicId);
+        const displayName = filename || doc._id;
+
+        await cloudinary.uploader.explicit(publicId, {
+            asset_folder: folder,
+            display_name: displayName,
+            invalidate: true,
+            type: "upload",
+        });
+
+        const renamed: CloudinaryUploadResponse =
+            await cloudinary.uploader.rename(
+                publicId,
+                `${folder}/${displayName}`,
+                { invalidate: true }
+            );
+
+        doc.imageId = renamed.public_id;
+        doc.imageUrl = renamed.secure_url;
+
+        tempUploadsService.remove(secureUrl);
     } catch (error) {
-        Logging.error("Error deleting image:");
+        Logging.error(`Error handling image upload for "${folder}":`);
         Logging.error(error);
+        throw error;
     }
 };
 
@@ -76,38 +101,13 @@ export const handleImageUpdate = async <T extends ImageDocument>(
     }
 };
 
-export const handleImageUpload = async <T extends ImageDocument>(
-    doc: T,
-    { filename, folder, secureUrl }: ImageOptions
-) => {
-    const publicId = tempUploadsService.get(secureUrl);
-
+export const handleImageDeletion = async (publicId?: string): Promise<void> => {
     if (!publicId) return;
 
     try {
-        const displayName = filename || doc._id;
-
-        await cloudinary.uploader.explicit(publicId, {
-            asset_folder: folder,
-            display_name: displayName,
-            invalidate: true,
-            type: "upload",
-        });
-
-        const renamed: CloudinaryUploadResponse =
-            await cloudinary.uploader.rename(
-                publicId,
-                `${folder}/${displayName}`,
-                { invalidate: true }
-            );
-
-        doc.imageId = renamed.public_id;
-        doc.imageUrl = renamed.secure_url;
-
-        tempUploadsService.remove(secureUrl);
+        await cloudinary.uploader.destroy(publicId);
     } catch (error) {
-        Logging.error(`Error handling image upload for "${folder}":`);
+        Logging.error("Error deleting image:");
         Logging.error(error);
-        throw error;
     }
 };
