@@ -1,7 +1,7 @@
 import StageModel from "../models/StageModel";
 import type { Stage } from "../models/StageModel";
 import { NotFoundError } from "../utils/AppErrors";
-import { handleImageUpdate, handleImageUpload } from "./cloudinaryImageService";
+import { handleImageUpdate, handleImageUpload } from "./ImageService";
 
 export const createStage = async (data: Stage) => {
     const stage = new StageModel(data);

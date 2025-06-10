@@ -7,7 +7,7 @@ import type {
     QuestionnaireDocument,
 } from "../models/QuestionnaireModel";
 import { NotFoundError } from "../utils/AppErrors";
-import { handleImageUpload } from "./cloudinaryImageService";
+import { handleImageUpload } from "./ImageService";
 
 cloudinary.config(config.cloudinary);
 

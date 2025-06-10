@@ -2,20 +2,11 @@ import { v2 as cloudinary } from "cloudinary";
 
 import Logging from "../library/Logging";
 import tempUploadsService from "../services/tempUploadsService";
-import { CloudinaryUploadResponse } from "../types/upload";
-
-interface ImageDocument {
-    _id: unknown;
-    imageId?: string;
-    imageUrl: string;
-}
-
-interface ImageOptions {
-    destroyOnReplace?: boolean;
-    filename?: string;
-    folder: string;
-    secureUrl: string;
-}
+import type {
+    ImageDocument,
+    ImageOptions,
+    ImageUploadResponse,
+} from "../types/upload";
 
 export const handleImageUpload = async <T extends ImageDocument>(
     doc: T,
@@ -35,12 +26,11 @@ export const handleImageUpload = async <T extends ImageDocument>(
             type: "upload",
         });
 
-        const renamed: CloudinaryUploadResponse =
-            await cloudinary.uploader.rename(
-                publicId,
-                `${folder}/${displayName}`,
-                { invalidate: true }
-            );
+        const renamed: ImageUploadResponse = await cloudinary.uploader.rename(
+            publicId,
+            `${folder}/${displayName}`,
+            { invalidate: true }
+        );
 
         doc.imageId = renamed.public_id;
         doc.imageUrl = renamed.secure_url;
@@ -61,14 +51,14 @@ export const handleImageUpdate = async <T extends ImageDocument>(
 
     if (publicId) {
         try {
-            const renamed: CloudinaryUploadResponse =
+            const renamed: ImageUploadResponse =
                 await cloudinary.uploader.rename(
                     publicId,
                     `${folder}/${doc._id}`,
                     { invalidate: true, overwrite: true }
                 );
 
-            const moved: CloudinaryUploadResponse =
+            const moved: ImageUploadResponse =
                 await cloudinary.uploader.explicit(renamed.public_id, {
                     asset_folder: folder,
                     display_name: doc._id,

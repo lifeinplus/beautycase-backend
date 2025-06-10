@@ -6,7 +6,7 @@ import {
     handleImageUpload,
     handleImageUpdate,
     handleImageDeletion,
-} from "../cloudinaryImageService";
+} from "../ImageService";
 import tempUploadsService from "../tempUploadsService";
 
 jest.mock("cloudinary");
@@ -23,7 +23,7 @@ const mockTempUploadsService = tempUploadsService as jest.Mocked<
     typeof tempUploadsService
 >;
 
-describe("cloudinaryImageService", () => {
+describe("ImageService", () => {
     const mockDoc = {
         _id: "product1",
         imageId: undefined,

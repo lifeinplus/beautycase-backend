@@ -5,7 +5,7 @@ import {
     handleImageDeletion,
     handleImageUpdate,
     handleImageUpload,
-} from "./cloudinaryImageService";
+} from "./ImageService";
 
 export const createProduct = async (data: Product) => {
     const product = new ProductModel(data);

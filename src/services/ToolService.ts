@@ -5,7 +5,7 @@ import {
     handleImageDeletion,
     handleImageUpdate,
     handleImageUpload,
-} from "./cloudinaryImageService";
+} from "./ImageService";
 
 export const createTool = async (data: Tool) => {
     const tool = new ToolModel(data);
