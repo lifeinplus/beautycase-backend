@@ -1,17 +1,29 @@
 import express from "express";
 
-import { uploadImageTemp } from "../controllers/UploadController";
+import {
+    uploadTempImageByFile,
+    uploadTempImageByUrl,
+} from "../controllers/UploadController";
 import multerUpload from "../middlewares/multerUpload";
 import requestValidator from "../middlewares/requestValidator";
-import { uploadBodySchema } from "../validations/uploadSchema";
+import {
+    uploadFileBodySchema,
+    uploadUrlBodySchema,
+} from "../validations/uploadSchema";
 
 const router = express.Router();
 
 router.post(
-    "/image-temp",
+    "/temp-image-file",
     multerUpload.single("imageFile"),
-    requestValidator({ body: uploadBodySchema }),
-    uploadImageTemp
+    requestValidator({ body: uploadFileBodySchema }),
+    uploadTempImageByFile
+);
+
+router.post(
+    "/temp-image-url",
+    requestValidator({ body: uploadUrlBodySchema }),
+    uploadTempImageByUrl
 );
 
 export default router;

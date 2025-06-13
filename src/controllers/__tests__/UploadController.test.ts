@@ -15,12 +15,14 @@ describe("UploadController", () => {
     const mockFileName = "test.jpg";
     const mockImageUrl = "https://cdn.com/image.jpg";
 
-    describe("POST /api/uploads/image-temp", () => {
+    describe("POST /api/uploads/temp-image-file", () => {
         it("should upload an image and return imageUrl", async () => {
-            mockUploadService.uploadImageTemp.mockResolvedValue(mockImageUrl);
+            mockUploadService.uploadTempImageByFile.mockResolvedValue(
+                mockImageUrl
+            );
 
             const response = await request
-                .post("/api/uploads/image-temp")
+                .post("/api/uploads/temp-image-file")
                 .field("folder", mockFolder)
                 .attach("imageFile", Buffer.from("test"), {
                     filename: mockFileName,
@@ -29,20 +31,24 @@ describe("UploadController", () => {
             expect(response.statusCode).toBe(200);
             expect(response.body.imageUrl).toBe(mockImageUrl);
 
-            expect(mockUploadService.uploadImageTemp).toHaveBeenCalledTimes(1);
-            expect(mockUploadService.uploadImageTemp).toHaveBeenCalledWith(
+            expect(
+                mockUploadService.uploadTempImageByFile
+            ).toHaveBeenCalledTimes(1);
+            expect(
+                mockUploadService.uploadTempImageByFile
+            ).toHaveBeenCalledWith(
                 mockFolder,
                 expect.objectContaining({ originalname: mockFileName })
             );
         });
 
         it("should handle service errors and call next middleware", async () => {
-            mockUploadService.uploadImageTemp.mockRejectedValue(
+            mockUploadService.uploadTempImageByFile.mockRejectedValue(
                 mockErrorUpload
             );
 
             const response = await request
-                .post("/api/uploads/image-temp")
+                .post("/api/uploads/temp-image-file")
                 .field("folder", mockFolder)
                 .attach("imageFile", Buffer.from("test"), {
                     filename: mockFileName,
@@ -51,7 +57,7 @@ describe("UploadController", () => {
             expect(response.statusCode).toBe(500);
             expect(response.body).toHaveProperty("message");
 
-            mockUploadService.uploadImageTemp.mockRestore();
+            mockUploadService.uploadTempImageByFile.mockRestore();
         });
     });
 });

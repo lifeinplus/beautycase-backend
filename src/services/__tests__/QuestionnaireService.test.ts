@@ -1,42 +1,17 @@
-import { v2 as cloudinary } from "cloudinary";
-
-import { mockErrorCloudinary } from "../../tests/mocks/error";
 import {
     mockQuestionnaireId,
     mockQuestionnaire1,
     mockQuestionnaire2,
 } from "../../tests/mocks/questionnaire";
 import { NotFoundError } from "../../utils/AppErrors";
+import * as ImageService from "../ImageService";
 import * as QuestionnaireService from "../QuestionnaireService";
-import tempUploadsService from "../tempUploadsService";
 
-jest.mock("cloudinary");
-jest.mock("../tempUploadsService");
+jest.mock("../ImageService");
 
-const mockCloudinary = cloudinary as jest.Mocked<typeof cloudinary>;
-
-const mockTempUploadsService = tempUploadsService as jest.Mocked<
-    typeof tempUploadsService
->;
+const mockImageService = ImageService as jest.Mocked<typeof ImageService>;
 
 describe("QuestionnaireService", () => {
-    const mockPublicId = "test_public_id";
-
-    const mockCloudinaryResponse = {
-        public_id: "questionnaires/renamed-id",
-        secure_url: "https://cloudinary.com/renamed-image.jpg",
-    };
-
-    beforeEach(() => {
-        mockCloudinary.uploader.explicit = jest.fn().mockResolvedValue({});
-
-        mockCloudinary.uploader.rename = jest
-            .fn()
-            .mockResolvedValue(mockCloudinaryResponse);
-
-        mockTempUploadsService.get.mockReturnValue(mockPublicId);
-    });
-
     describe("createQuestionnaire", () => {
         it("should create a questionnaire without image", async () => {
             const result = await QuestionnaireService.createQuestionnaire(
@@ -55,50 +30,8 @@ describe("QuestionnaireService", () => {
 
             expect(result).toHaveProperty("_id");
             expect(result.name).toBe(mockQuestionnaire2.name);
-            expect(result.makeupBagPhotoId).toBe(
-                mockCloudinaryResponse.public_id
-            );
-            expect(result.makeupBagPhotoUrl).toBe(
-                mockCloudinaryResponse.secure_url
-            );
 
-            expect(mockCloudinary.uploader.explicit).toHaveBeenCalledTimes(1);
-            expect(mockCloudinary.uploader.rename).toHaveBeenCalledTimes(1);
-
-            expect(mockTempUploadsService.remove).toHaveBeenCalledWith(
-                mockQuestionnaire2.makeupBagPhotoUrl
-            );
-        });
-
-        it("should skip image upload if no publicId found", async () => {
-            mockTempUploadsService.get.mockReturnValue(undefined);
-
-            const result = await QuestionnaireService.createQuestionnaire(
-                mockQuestionnaire2
-            );
-
-            expect(result.makeupBagPhotoId).toBeUndefined();
-            expect(result.makeupBagPhotoUrl).toBe(
-                mockQuestionnaire2.makeupBagPhotoUrl
-            );
-
-            expect(mockCloudinary.uploader.explicit).not.toHaveBeenCalled();
-            expect(mockCloudinary.uploader.rename).not.toHaveBeenCalled();
-
-            expect(mockTempUploadsService.remove).not.toHaveBeenCalled();
-        });
-
-        it("should handle cloudinary upload errors", async () => {
-            mockCloudinary.uploader.explicit = jest
-                .fn()
-                .mockRejectedValue(mockErrorCloudinary);
-
-            const result =
-                QuestionnaireService.createQuestionnaire(mockQuestionnaire2);
-
-            await expect(result).rejects.toThrow(mockErrorCloudinary.message);
-
-            expect(mockTempUploadsService.remove).not.toHaveBeenCalled();
+            expect(mockImageService.handleImageUpload).toHaveBeenCalled();
         });
     });
 

@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 
 import { BadRequestError } from "../../utils/AppErrors";
-import { uploadImageTemp } from "../UploadService";
+import { uploadTempImageByFile } from "../UploadService";
 import tempUploadsService from "../tempUploadsService";
 
 jest.mock("cloudinary");
@@ -39,7 +39,7 @@ describe("uploadImageTemp", () => {
             .fn()
             .mockResolvedValue(mockCloudinaryResponse);
 
-        const result = await uploadImageTemp(mockFolder, mockFile);
+        const result = await uploadTempImageByFile(mockFolder, mockFile);
 
         expect(result).toBe(mockCloudinaryResponse.secure_url);
         expect(mockCloudinary.uploader.upload).toHaveBeenCalled();
@@ -50,7 +50,7 @@ describe("uploadImageTemp", () => {
     });
 
     it("should throw BadRequestError if no file is provided", async () => {
-        const result = uploadImageTemp(mockFolder);
+        const result = uploadTempImageByFile(mockFolder);
         await expect(result).rejects.toThrow(BadRequestError);
         expect(mockCloudinary.uploader.upload).not.toHaveBeenCalled();
         expect(mockTempUploadsService.store).not.toHaveBeenCalled();

@@ -1,64 +1,40 @@
 import { v2 as cloudinary } from "cloudinary";
 
 import config from "../config";
-import Logging from "../library/Logging";
 import QuestionnaireModel from "../models/QuestionnaireModel";
 import type {
     Questionnaire,
     QuestionnaireDocument,
 } from "../models/QuestionnaireModel";
-import type { CloudinaryUploadResponse } from "../types/upload";
 import { NotFoundError } from "../utils/AppErrors";
-import tempUploadsService from "./tempUploadsService";
+import { handleImageUpload } from "./ImageService";
 
 cloudinary.config(config.cloudinary);
 
-const handleImageUpload = async (
-    questionnaire: QuestionnaireDocument,
-    imageUrl: string
-) => {
-    const publicId = tempUploadsService.get(imageUrl);
-
-    if (!publicId) {
-        return;
-    }
-
-    try {
-        await cloudinary.uploader.explicit(publicId, {
-            asset_folder: `questionnaires/${questionnaire._id}`,
-            display_name: "makeup-bag",
-            invalidate: true,
-            type: "upload",
-        });
-
-        const renamed: CloudinaryUploadResponse =
-            await cloudinary.uploader.rename(
-                publicId,
-                `questionnaires/${questionnaire._id}/makeup-bag`,
-                { invalidate: true }
-            );
-
-        questionnaire.makeupBagPhotoId = renamed?.public_id;
-        questionnaire.makeupBagPhotoUrl = renamed?.secure_url;
-
-        tempUploadsService.remove(imageUrl);
-    } catch (error) {
-        Logging.error("Error handling image upload:");
-        Logging.error(error);
-        throw error;
-    }
-};
+const createImageAdapter = (questionnaire: QuestionnaireDocument) => ({
+    ...questionnaire,
+    imageId: questionnaire.makeupBagPhotoId,
+    imageUrl: questionnaire.makeupBagPhotoUrl || "",
+});
 
 export const createQuestionnaire = async (data: Questionnaire) => {
     const questionnaire = new QuestionnaireModel(data);
     const { makeupBagPhotoUrl } = data;
 
     if (makeupBagPhotoUrl) {
-        await handleImageUpload(questionnaire, makeupBagPhotoUrl);
+        const adapter = createImageAdapter(questionnaire);
+
+        await handleImageUpload(adapter, {
+            filename: "makeup-bag",
+            folder: `questionnaires/${questionnaire._id}`,
+            secureUrl: makeupBagPhotoUrl,
+        });
+
+        questionnaire.makeupBagPhotoId = adapter.imageId;
+        questionnaire.makeupBagPhotoUrl = adapter.imageUrl;
     }
 
     await questionnaire.save();
-
     return questionnaire;
 };
 
