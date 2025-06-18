@@ -22,3 +22,5 @@ export const mockTool2: Tool = {
     comment: "Perfect",
     storeLinks: [],
 };
+
+export const mockTools: Tool[] = [mockTool1, mockTool2];

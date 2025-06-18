@@ -2,7 +2,13 @@ import supertest from "supertest";
 
 import app from "../../app";
 import * as UploadService from "../../services/UploadService";
-import { mockErrorUpload } from "../../tests/mocks/error";
+import { mockUploadError } from "../../tests/mocks/error";
+import {
+    mockFilename,
+    mockFolder,
+    mockImageUrl1,
+    mockImageUrl2,
+} from "../../tests/mocks/upload";
 
 jest.mock("../../services/UploadService");
 
@@ -11,11 +17,6 @@ const request = supertest(app);
 const mockUploadService = UploadService as jest.Mocked<typeof UploadService>;
 
 describe("UploadController", () => {
-    const mockFolder = "products";
-    const mockFilename = "test.jpg";
-    const mockImageUrl1 = "https://cdn.com/image1.jpg";
-    const mockImageUrl2 = "https://cdn.com/image2.jpg";
-
     describe("POST /api/uploads/temp-image-file", () => {
         it("should upload an image file and return imageUrl", async () => {
             mockUploadService.uploadTempImageByFile.mockResolvedValue(
@@ -46,7 +47,7 @@ describe("UploadController", () => {
 
         it("should handle service errors and call next middleware", async () => {
             mockUploadService.uploadTempImageByFile.mockRejectedValue(
-                mockErrorUpload
+                mockUploadError
             );
 
             const response = await request
@@ -91,7 +92,7 @@ describe("UploadController", () => {
 
         it("should handle service errors and call next middleware", async () => {
             mockUploadService.uploadTempImageByUrl.mockRejectedValue(
-                mockErrorUpload
+                mockUploadError
             );
 
             const response = await request

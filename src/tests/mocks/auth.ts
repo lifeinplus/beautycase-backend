@@ -2,8 +2,10 @@ import type { UserJwtPayload } from "../../types/auth";
 
 export const mockRole = "client";
 
-export const mockToken1 = "token1";
-export const mockToken2 = "token2";
+export const mockToken1: string = "token1";
+export const mockToken2: string = "token2";
+
+export const mockTokens: string[] = [mockToken1, mockToken2];
 
 export const mockHacker = {
     username: "hacker",
@@ -22,8 +24,8 @@ export const mockUser2 = {
 
 export const mockUserJwt: UserJwtPayload = {
     role: "admin",
-    username: "admin",
     userId: "adminId",
+    username: "admin",
 };
 
 export const mockUserRegister = {

@@ -1,24 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as ToolService from "../../services/ToolService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockErrorDatabase } from "../../tests/mocks/error";
-import { mockTool1, mockTool2, mockToolId } from "../../tests/mocks/tool";
+import { mockDatabaseError } from "../../tests/mocks/error";
+import {
+    mockTool1,
+    mockTool2,
+    mockToolId,
+    mockTools,
+} from "../../tests/mocks/tool";
 
 jest.mock("../../services/ToolService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("ToolController", () => {
@@ -46,7 +47,7 @@ describe("ToolController", () => {
         it("should return 500 if creating a tool fails", async () => {
             const mockCreateTool = jest.spyOn(ToolService, "createTool");
 
-            mockCreateTool.mockRejectedValue(mockErrorDatabase);
+            mockCreateTool.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/tools")
@@ -54,7 +55,7 @@ describe("ToolController", () => {
                 .send(mockTool2);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(ToolService.createTool).toHaveBeenCalledWith(mockTool2);
 
@@ -64,8 +65,6 @@ describe("ToolController", () => {
 
     describe("GET /api/tools", () => {
         it("should get all tools (imageUrl only)", async () => {
-            const mockTools = [mockTool1, mockTool2];
-
             jest.mocked(ToolService.getAllTools as jest.Mock).mockResolvedValue(
                 mockTools
             );
@@ -82,14 +81,14 @@ describe("ToolController", () => {
         it("should return 500 if getting all tools fails", async () => {
             const mockGetAllTools = jest.spyOn(ToolService, "getAllTools");
 
-            mockGetAllTools.mockRejectedValue(mockErrorDatabase);
+            mockGetAllTools.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/tools")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
             expect(ToolService.getAllTools).toHaveBeenCalledTimes(1);
 
             mockGetAllTools.mockRestore();
@@ -118,14 +117,14 @@ describe("ToolController", () => {
         it("should return 500 if getting a tool fails", async () => {
             const mockGetToolById = jest.spyOn(ToolService, "getToolById");
 
-            mockGetToolById.mockRejectedValue(mockErrorDatabase);
+            mockGetToolById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get(`/api/tools/${mockToolId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(ToolService.getToolById).toHaveBeenCalledWith(mockToolId);
 
@@ -164,7 +163,7 @@ describe("ToolController", () => {
                 "updateToolById"
             );
 
-            mockUpdateToolById.mockRejectedValue(mockErrorDatabase);
+            mockUpdateToolById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .put(`/api/tools/${mockToolId}`)
@@ -172,7 +171,7 @@ describe("ToolController", () => {
                 .send(mockTool2);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(ToolService.updateToolById).toHaveBeenCalledWith(
                 mockToolId,
@@ -209,14 +208,14 @@ describe("ToolController", () => {
                 "deleteToolById"
             );
 
-            mockDeleteToolById.mockRejectedValue(mockErrorDatabase);
+            mockDeleteToolById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .delete(`/api/tools/${mockToolId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(ToolService.deleteToolById).toHaveBeenCalledWith(mockToolId);
 

@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 
 import Logging from "../../library/Logging";
-import { mockErrorCloudinary } from "../../tests/mocks/error";
+import { mockCloudinaryError } from "../../tests/mocks/error";
 import {
     handleImageUpload,
     handleImageUpdate,
@@ -91,7 +91,7 @@ describe("ImageService", () => {
 
         it("should handle error during image upload and rethrow", async () => {
             mockTempUploadsService.get.mockReturnValue(mockPublicId);
-            mockCloudinary.explicit.mockRejectedValue(mockErrorCloudinary);
+            mockCloudinary.explicit.mockRejectedValue(mockCloudinaryError);
 
             const mockSecureUrl = "https://cloudinary.com/image.jpg";
             const doc = { ...mockDoc, imageUrl: mockSecureUrl };
@@ -101,9 +101,9 @@ describe("ImageService", () => {
                 secureUrl: mockSecureUrl,
             });
 
-            await expect(result).rejects.toThrow(mockErrorCloudinary);
+            await expect(result).rejects.toThrow(mockCloudinaryError);
 
-            expect(mockLogging.error).toHaveBeenCalledWith(mockErrorCloudinary);
+            expect(mockLogging.error).toHaveBeenCalledWith(mockCloudinaryError);
 
             expect(mockCloudinary.rename).not.toHaveBeenCalled();
             expect(mockTempUploadsService.remove).not.toHaveBeenCalledWith();
@@ -184,7 +184,7 @@ describe("ImageService", () => {
 
         it("should handle error during image update and rethrow", async () => {
             mockTempUploadsService.get.mockReturnValue(mockPublicId);
-            mockCloudinary.rename.mockRejectedValue(mockErrorCloudinary);
+            mockCloudinary.rename.mockRejectedValue(mockCloudinaryError);
 
             const mockSecureUrl = "https://cloudinary.com/image.jpg";
             const doc = { ...mockDoc, imageUrl: mockSecureUrl };
@@ -194,9 +194,9 @@ describe("ImageService", () => {
                 secureUrl: mockSecureUrl,
             });
 
-            await expect(result).rejects.toThrow(mockErrorCloudinary);
+            await expect(result).rejects.toThrow(mockCloudinaryError);
 
-            expect(mockLogging.error).toHaveBeenCalledWith(mockErrorCloudinary);
+            expect(mockLogging.error).toHaveBeenCalledWith(mockCloudinaryError);
 
             expect(mockCloudinary.explicit).not.toHaveBeenCalled();
             expect(mockTempUploadsService.remove).not.toHaveBeenCalledWith();
@@ -205,7 +205,7 @@ describe("ImageService", () => {
 
         it("should handle error during image destroy but not rethrow", async () => {
             mockTempUploadsService.get.mockReturnValue(undefined);
-            mockCloudinary.destroy.mockRejectedValue(mockErrorCloudinary);
+            mockCloudinary.destroy.mockRejectedValue(mockCloudinaryError);
 
             const mockPublicId = "old_public_id";
             const mockSecureUrl = "https://cdn.com/image.jpg";
@@ -226,7 +226,7 @@ describe("ImageService", () => {
             expect(mockTempUploadsService.remove).not.toHaveBeenCalledWith();
 
             expect(mockCloudinary.destroy).toHaveBeenCalledWith(mockPublicId);
-            expect(mockLogging.error).toHaveBeenCalledWith(mockErrorCloudinary);
+            expect(mockLogging.error).toHaveBeenCalledWith(mockCloudinaryError);
         });
     });
 
@@ -243,13 +243,13 @@ describe("ImageService", () => {
         });
 
         it("should log error when deletion fails", async () => {
-            mockCloudinary.destroy.mockRejectedValue(mockErrorCloudinary);
+            mockCloudinary.destroy.mockRejectedValue(mockCloudinaryError);
 
             const mockPublicId = "old_public_id";
             await handleImageDeletion(mockPublicId);
 
             expect(mockCloudinary.destroy).toHaveBeenCalledWith(mockPublicId);
-            expect(mockLogging.error).toHaveBeenCalledWith(mockErrorCloudinary);
+            expect(mockLogging.error).toHaveBeenCalledWith(mockCloudinaryError);
         });
     });
 });

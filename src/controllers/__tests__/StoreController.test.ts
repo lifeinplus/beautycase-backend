@@ -1,24 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as StoreService from "../../services/StoreService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockStore1, mockStore2, mockStoreId } from "../../tests/mocks/store";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import {
+    mockStore1,
+    mockStore2,
+    mockStoreId,
+    mockStores,
+} from "../../tests/mocks/store";
+import { mockDatabaseError } from "../../tests/mocks/error";
 
 jest.mock("../../services/StoreService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("StoreController", () => {
@@ -42,7 +43,7 @@ describe("StoreController", () => {
 
         it("should return 500 if creating a store fails", async () => {
             const mockCreateStore = jest.spyOn(StoreService, "createStore");
-            mockCreateStore.mockRejectedValue(mockErrorDatabase);
+            mockCreateStore.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/stores")
@@ -58,8 +59,6 @@ describe("StoreController", () => {
 
     describe("GET /api/stores", () => {
         it("should get all stores", async () => {
-            const mockStores = [mockStore1, mockStore2];
-
             jest.mocked(
                 StoreService.getAllStores as jest.Mock
             ).mockResolvedValue(mockStores);
@@ -74,7 +73,7 @@ describe("StoreController", () => {
 
         it("should return 500 if getting all stores fails", async () => {
             const mockGetAllStores = jest.spyOn(StoreService, "getAllStores");
-            mockGetAllStores.mockRejectedValue(mockErrorDatabase);
+            mockGetAllStores.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/stores")
@@ -114,7 +113,7 @@ describe("StoreController", () => {
                 "updateStoreById"
             );
 
-            mockUpdateStoreById.mockRejectedValue(mockErrorDatabase);
+            mockUpdateStoreById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .put(`/api/stores/${mockStoreId}`)
@@ -153,7 +152,7 @@ describe("StoreController", () => {
                 "deleteStoreById"
             );
 
-            mockDeleteStoreById.mockRejectedValue(mockErrorDatabase);
+            mockDeleteStoreById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .delete(`/api/stores/${mockStoreId}`)

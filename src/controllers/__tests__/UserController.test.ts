@@ -1,32 +1,26 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as UserService from "../../services/UserService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import { mockDatabaseError } from "../../tests/mocks/error";
 import { mockMakeupBag1 } from "../../tests/mocks/makeupBag";
-import { mockUser1, mockUser2, mockUserId } from "../../tests/mocks/user";
+import { mockUser1, mockUserId, mockUsers } from "../../tests/mocks/user";
 
 jest.mock("../../services/UserService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("UserController", () => {
     describe("GET /api/users", () => {
         it("should get all users (imageUrl only)", async () => {
-            const mockUsers = [mockUser1, mockUser2];
-
             jest.mocked(UserService.getAllUsers as jest.Mock).mockResolvedValue(
                 mockUsers
             );
@@ -43,14 +37,14 @@ describe("UserController", () => {
         it("should return 500 if getting all users fails", async () => {
             const mockGetAllUsers = jest.spyOn(UserService, "getAllUsers");
 
-            mockGetAllUsers.mockRejectedValue(mockErrorDatabase);
+            mockGetAllUsers.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/users")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
             expect(UserService.getAllUsers).toHaveBeenCalledTimes(1);
 
             mockGetAllUsers.mockRestore();
@@ -82,14 +76,14 @@ describe("UserController", () => {
         it("should return 500 if getting a user fails", async () => {
             const mockGetUserById = jest.spyOn(UserService, "getUserById");
 
-            mockGetUserById.mockRejectedValue(mockErrorDatabase);
+            mockGetUserById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get(`/api/users/${mockUserId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(UserService.getUserById).toHaveBeenCalledWith(mockUserId);
 

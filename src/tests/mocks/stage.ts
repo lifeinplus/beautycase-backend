@@ -19,3 +19,5 @@ export const mockStage2: Stage = {
     steps: ["Step 2.1", "Step 2.2", "Step 2.3"],
     productIds: ["682a378b09c4df2756fcece5"],
 };
+
+export const mockStages: Stage[] = [mockStage1, mockStage2];

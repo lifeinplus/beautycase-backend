@@ -22,3 +22,5 @@ export const mockProduct2: Product = {
     comment: "Comment 2",
     storeLinks: [],
 };
+
+export const mockProducts: Product[] = [mockProduct1, mockProduct2];
