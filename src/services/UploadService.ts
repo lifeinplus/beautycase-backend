@@ -23,14 +23,15 @@ export const uploadTempImageByFile = async (
         use_filename: false,
     };
 
-    const uploadResult: ImageUploadResponse = await cloudinary.uploader.upload(
-        dataUri,
-        options
+    const uploadResponse: ImageUploadResponse =
+        await cloudinary.uploader.upload(dataUri, options);
+
+    tempUploadsService.store(
+        uploadResponse.secure_url,
+        uploadResponse.public_id
     );
 
-    tempUploadsService.store(uploadResult.secure_url, uploadResult.public_id);
-
-    return uploadResult.secure_url;
+    return uploadResponse.secure_url;
 };
 
 export const uploadTempImageByUrl = async (

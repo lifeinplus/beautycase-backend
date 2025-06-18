@@ -12,33 +12,35 @@ const mockUploadService = UploadService as jest.Mocked<typeof UploadService>;
 
 describe("UploadController", () => {
     const mockFolder = "products";
-    const mockFileName = "test.jpg";
-    const mockImageUrl = "https://cdn.com/image.jpg";
+    const mockFilename = "test.jpg";
+    const mockImageUrl1 = "https://cdn.com/image1.jpg";
+    const mockImageUrl2 = "https://cdn.com/image2.jpg";
 
     describe("POST /api/uploads/temp-image-file", () => {
-        it("should upload an image and return imageUrl", async () => {
+        it("should upload an image file and return imageUrl", async () => {
             mockUploadService.uploadTempImageByFile.mockResolvedValue(
-                mockImageUrl
+                mockImageUrl1
             );
 
             const response = await request
                 .post("/api/uploads/temp-image-file")
                 .field("folder", mockFolder)
                 .attach("imageFile", Buffer.from("test"), {
-                    filename: mockFileName,
+                    filename: mockFilename,
                 });
 
             expect(response.statusCode).toBe(200);
-            expect(response.body.imageUrl).toBe(mockImageUrl);
+            expect(response.body.imageUrl).toBe(mockImageUrl1);
 
             expect(
                 mockUploadService.uploadTempImageByFile
             ).toHaveBeenCalledTimes(1);
+
             expect(
                 mockUploadService.uploadTempImageByFile
             ).toHaveBeenCalledWith(
                 mockFolder,
-                expect.objectContaining({ originalname: mockFileName })
+                expect.objectContaining({ originalname: mockFilename })
             );
         });
 
@@ -51,13 +53,58 @@ describe("UploadController", () => {
                 .post("/api/uploads/temp-image-file")
                 .field("folder", mockFolder)
                 .attach("imageFile", Buffer.from("test"), {
-                    filename: mockFileName,
+                    filename: mockFilename,
                 });
 
             expect(response.statusCode).toBe(500);
             expect(response.body).toHaveProperty("message");
 
             mockUploadService.uploadTempImageByFile.mockRestore();
+        });
+    });
+
+    describe("POST /api/uploads/temp-image-url", () => {
+        it("should upload an image from URL and return imageUrl", async () => {
+            mockUploadService.uploadTempImageByUrl.mockResolvedValue(
+                mockImageUrl1
+            );
+
+            const response = await request
+                .post("/api/uploads/temp-image-url")
+                .send({
+                    folder: mockFolder,
+                    imageUrl: mockImageUrl2,
+                });
+
+            expect(response.statusCode).toBe(200);
+            expect(response.body.imageUrl).toBe(mockImageUrl1);
+
+            expect(
+                mockUploadService.uploadTempImageByUrl
+            ).toHaveBeenCalledTimes(1);
+
+            expect(mockUploadService.uploadTempImageByUrl).toHaveBeenCalledWith(
+                mockFolder,
+                mockImageUrl2
+            );
+        });
+
+        it("should handle service errors and call next middleware", async () => {
+            mockUploadService.uploadTempImageByUrl.mockRejectedValue(
+                mockErrorUpload
+            );
+
+            const response = await request
+                .post("/api/uploads/temp-image-url")
+                .send({
+                    folder: mockFolder,
+                    imageUrl: mockImageUrl2,
+                });
+
+            expect(response.statusCode).toBe(500);
+            expect(response.body).toHaveProperty("message");
+
+            mockUploadService.uploadTempImageByUrl.mockRestore();
         });
     });
 });
