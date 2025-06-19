@@ -18,3 +18,8 @@ export const mockQuestionnaire2: Questionnaire = {
     makeupBag: "Foundation, mascara, lipstick, blush",
     makeupBagPhotoUrl: "https://example.com/makeup-bag.jpg",
 };
+
+export const mockQuestionnaires: Questionnaire[] = [
+    mockQuestionnaire1,
+    mockQuestionnaire2,
+];

@@ -6,11 +6,11 @@ import UserModel from "../../../models/UserModel";
 import {
     mockRole,
     mockToken1,
-    mockToken2,
+    mockTokens,
     mockUser1,
 } from "../../../tests/mocks/auth";
 import { logoutUser } from "../LogoutController";
-import { mockErrorDatabase } from "../../../tests/mocks/error";
+import { mockDatabaseError } from "../../../tests/mocks/error";
 
 const request = supertest(app);
 
@@ -27,7 +27,7 @@ describe("LogoutController", () => {
             await UserModel.create({
                 ...mockUser1,
                 role: mockRole,
-                refreshTokens: [mockToken1, mockToken2],
+                refreshTokens: mockTokens,
             });
 
             const response = await request
@@ -47,7 +47,7 @@ describe("LogoutController", () => {
 
         it("should pass errors to next middleware", async () => {
             jest.spyOn(UserModel, "findOne").mockImplementation(() => {
-                throw mockErrorDatabase;
+                throw mockDatabaseError;
             });
 
             const mockReq = {
@@ -64,7 +64,7 @@ describe("LogoutController", () => {
             await logoutUser(mockReq, mockRes, mockNext);
 
             expect(mockRes.clearCookie).toHaveBeenCalledWith("jwt");
-            expect(mockNext).toHaveBeenCalledWith(mockErrorDatabase);
+            expect(mockNext).toHaveBeenCalledWith(mockDatabaseError);
 
             expect(mockRes.sendStatus).not.toHaveBeenCalled();
         });

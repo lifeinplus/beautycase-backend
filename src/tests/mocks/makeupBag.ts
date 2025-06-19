@@ -15,3 +15,5 @@ export const mockMakeupBag2: MakeupBag = {
     stageIds: ["683cbe0796c7f5d3d62101e0"],
     toolIds: ["682a378b09c4df2756fcece5"],
 };
+
+export const mockMakeupBags: MakeupBag[] = [mockMakeupBag1, mockMakeupBag2];

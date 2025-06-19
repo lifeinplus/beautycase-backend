@@ -1,58 +1,76 @@
 import { v2 as cloudinary } from "cloudinary";
 
+import { mockCloudinaryError } from "../../tests/mocks/error";
+import {
+    mockCloudinaryResponse,
+    mockFile,
+    mockFolder,
+    mockImageUrl1,
+} from "../../tests/mocks/upload";
 import { BadRequestError } from "../../utils/AppErrors";
-import { uploadTempImageByFile } from "../UploadService";
+import { uploadTempImageByFile, uploadTempImageByUrl } from "../UploadService";
 import tempUploadsService from "../tempUploadsService";
 
 jest.mock("cloudinary");
 jest.mock("../tempUploadsService");
 
-const mockCloudinary = cloudinary as jest.Mocked<typeof cloudinary>;
+const mockCloudinary = cloudinary.uploader as jest.Mocked<
+    typeof cloudinary.uploader
+>;
 
 const mockTempUploadsService = tempUploadsService as jest.Mocked<
     typeof tempUploadsService
 >;
 
-describe("uploadImageTemp", () => {
-    const mockFolder = "test-folder";
+describe("UploadService", () => {
+    const mockCloudinaryUpload = (mockCloudinary.upload = jest.fn());
 
-    const mockCloudinaryResponse = {
-        public_id: "test-folder/temp/abc123",
-        secure_url: "https://cdn.com/testfile.png",
-    };
-
-    const mockFile: Express.Multer.File = {
-        buffer: Buffer.from("test-image-data"),
-        mimetype: "image/jpeg",
-        fieldname: "image",
-        originalname: "test-image.jpg",
-        encoding: "7bit",
-        size: 1024,
-        destination: "",
-        filename: "",
-        path: "",
-        stream: {} as any,
-    };
-
-    it("should successfully upload an image and return secure URL", async () => {
-        mockCloudinary.uploader.upload = jest
-            .fn()
-            .mockResolvedValue(mockCloudinaryResponse);
-
-        const result = await uploadTempImageByFile(mockFolder, mockFile);
-
-        expect(result).toBe(mockCloudinaryResponse.secure_url);
-        expect(mockCloudinary.uploader.upload).toHaveBeenCalled();
-        expect(mockTempUploadsService.store).toHaveBeenCalledWith(
-            mockCloudinaryResponse.secure_url,
-            mockCloudinaryResponse.public_id
-        );
+    beforeEach(() => {
+        mockCloudinaryUpload.mockResolvedValue(mockCloudinaryResponse);
     });
 
-    it("should throw BadRequestError if no file is provided", async () => {
-        const result = uploadTempImageByFile(mockFolder);
-        await expect(result).rejects.toThrow(BadRequestError);
-        expect(mockCloudinary.uploader.upload).not.toHaveBeenCalled();
-        expect(mockTempUploadsService.store).not.toHaveBeenCalled();
+    describe("uploadTempImageByFile", () => {
+        it("should upload an image file and return secure URL", async () => {
+            const response = await uploadTempImageByFile(mockFolder, mockFile);
+
+            expect(response).toBe(mockCloudinaryResponse.secure_url);
+            expect(mockCloudinaryUpload).toHaveBeenCalled();
+            expect(mockTempUploadsService.store).toHaveBeenCalledWith(
+                mockCloudinaryResponse.secure_url,
+                mockCloudinaryResponse.public_id
+            );
+        });
+
+        it("should throw BadRequestError if no file is provided", async () => {
+            const result = uploadTempImageByFile(mockFolder);
+            await expect(result).rejects.toThrow(BadRequestError);
+            expect(mockCloudinaryUpload).not.toHaveBeenCalled();
+            expect(mockTempUploadsService.store).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("uploadTempImageByUrl", () => {
+        it("should upload an image from URL and return the secure URL", async () => {
+            const response = await uploadTempImageByUrl(
+                mockFolder,
+                mockImageUrl1
+            );
+
+            expect(response).toBe(mockCloudinaryResponse.secure_url);
+            expect(mockCloudinaryUpload).toHaveBeenCalled();
+            expect(mockTempUploadsService.store).toHaveBeenCalledWith(
+                mockCloudinaryResponse.secure_url,
+                mockCloudinaryResponse.public_id
+            );
+        });
+
+        it("should throw if Cloudinary upload fails", async () => {
+            mockCloudinaryUpload.mockRejectedValue(mockCloudinaryError);
+
+            const result = uploadTempImageByUrl(mockFolder, mockImageUrl1);
+            await expect(result).rejects.toThrow(mockCloudinaryError);
+
+            expect(mockTempUploadsService.store).not.toHaveBeenCalled();
+        });
     });
 });

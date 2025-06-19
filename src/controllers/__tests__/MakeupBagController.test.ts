@@ -1,28 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as MakeupBagService from "../../services/MakeupBagService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import { mockDatabaseError } from "../../tests/mocks/error";
 import {
     mockMakeupBag1,
     mockMakeupBag2,
     mockMakeupBagId,
+    mockMakeupBags,
 } from "../../tests/mocks/makeupBag";
 
 jest.mock("../../services/MakeupBagService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("MakeupBagController", () => {
@@ -55,7 +52,7 @@ describe("MakeupBagController", () => {
                 "createMakeupBag"
             );
 
-            mockCreateMakeupBag.mockRejectedValue(mockErrorDatabase);
+            mockCreateMakeupBag.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/makeup-bags")
@@ -63,7 +60,7 @@ describe("MakeupBagController", () => {
                 .send(mockMakeupBag1);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(MakeupBagService.createMakeupBag).toHaveBeenCalledWith(
                 mockMakeupBag1
@@ -75,8 +72,6 @@ describe("MakeupBagController", () => {
 
     describe("GET /api/makeup-bags", () => {
         it("should get all makeup bags", async () => {
-            const mockMakeupBags = [mockMakeupBag1, mockMakeupBag2];
-
             jest.mocked(
                 MakeupBagService.getAllMakeupBags as jest.Mock
             ).mockResolvedValue(mockMakeupBags);
@@ -96,14 +91,14 @@ describe("MakeupBagController", () => {
                 "getAllMakeupBags"
             );
 
-            mockGetAllMakeupBags.mockRejectedValue(mockErrorDatabase);
+            mockGetAllMakeupBags.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/makeup-bags")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(MakeupBagService.getAllMakeupBags).toHaveBeenCalledTimes(1);
 
@@ -138,14 +133,14 @@ describe("MakeupBagController", () => {
                 "getMakeupBagById"
             );
 
-            mockGetMakeupBagById.mockRejectedValue(mockErrorDatabase);
+            mockGetMakeupBagById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get(`/api/makeup-bags/${mockMakeupBagId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(MakeupBagService.getMakeupBagById).toHaveBeenCalledWith(
                 mockMakeupBagId
@@ -188,7 +183,7 @@ describe("MakeupBagController", () => {
                 "updateMakeupBagById"
             );
 
-            mockUpdateMakeupBagById.mockRejectedValue(mockErrorDatabase);
+            mockUpdateMakeupBagById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .put(`/api/makeup-bags/${mockMakeupBagId}`)
@@ -196,7 +191,7 @@ describe("MakeupBagController", () => {
                 .send(mockMakeupBag1);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(MakeupBagService.updateMakeupBagById).toHaveBeenCalledWith(
                 mockMakeupBagId,
@@ -235,14 +230,14 @@ describe("MakeupBagController", () => {
                 "deleteMakeupBagById"
             );
 
-            mockDeleteMakeupBagById.mockRejectedValue(mockErrorDatabase);
+            mockDeleteMakeupBagById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .delete(`/api/makeup-bags/${mockMakeupBagId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(MakeupBagService.deleteMakeupBagById).toHaveBeenCalledWith(
                 mockMakeupBagId

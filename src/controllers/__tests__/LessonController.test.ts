@@ -1,28 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as LessonService from "../../services/LessonService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import { mockDatabaseError } from "../../tests/mocks/error";
 import {
     mockLesson1,
     mockLesson2,
     mockLessonId,
+    mockLessons,
 } from "../../tests/mocks/lesson";
 
 jest.mock("../../services/LessonService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("LessonController", () => {
@@ -51,7 +48,7 @@ describe("LessonController", () => {
 
         it("should return 500 if creating a lesson fails", async () => {
             const mockCreateLesson = jest.spyOn(LessonService, "createLesson");
-            mockCreateLesson.mockRejectedValue(mockErrorDatabase);
+            mockCreateLesson.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/lessons")
@@ -59,7 +56,7 @@ describe("LessonController", () => {
                 .send(mockLesson1);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(LessonService.createLesson).toHaveBeenCalledWith(
                 mockLesson1
@@ -71,8 +68,6 @@ describe("LessonController", () => {
 
     describe("GET /api/lessons", () => {
         it("should get all lessons", async () => {
-            const mockLessons = [mockLesson1, mockLesson2];
-
             jest.mocked(
                 LessonService.getAllLessons as jest.Mock
             ).mockResolvedValue(mockLessons);
@@ -92,14 +87,14 @@ describe("LessonController", () => {
                 "getAllLessons"
             );
 
-            mockGetAllLessons.mockRejectedValue(mockErrorDatabase);
+            mockGetAllLessons.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/lessons")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(LessonService.getAllLessons).toHaveBeenCalledTimes(1);
 
@@ -133,14 +128,14 @@ describe("LessonController", () => {
                 "getLessonById"
             );
 
-            mockGetLessonById.mockRejectedValue(mockErrorDatabase);
+            mockGetLessonById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(LessonService.getLessonById).toHaveBeenCalledWith(
                 mockLessonId
@@ -181,7 +176,7 @@ describe("LessonController", () => {
                 "updateLessonById"
             );
 
-            mockUpdateLessonById.mockRejectedValue(mockErrorDatabase);
+            mockUpdateLessonById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .put(`/api/lessons/${mockLessonId}`)
@@ -189,7 +184,7 @@ describe("LessonController", () => {
                 .send(mockLesson1);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(LessonService.updateLessonById).toHaveBeenCalledWith(
                 mockLessonId,
@@ -228,14 +223,14 @@ describe("LessonController", () => {
                 "deleteLessonById"
             );
 
-            mockDeleteLessonById.mockRejectedValue(mockErrorDatabase);
+            mockDeleteLessonById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .delete(`/api/lessons/${mockLessonId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(LessonService.deleteLessonById).toHaveBeenCalledWith(
                 mockLessonId

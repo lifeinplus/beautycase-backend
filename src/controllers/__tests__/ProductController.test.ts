@@ -1,28 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as ProductService from "../../services/ProductService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import { mockDatabaseError } from "../../tests/mocks/error";
 import {
     mockProduct1,
     mockProduct2,
     mockProductId,
+    mockProducts,
 } from "../../tests/mocks/product";
 
 jest.mock("../../services/ProductService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("ProductController", () => {
@@ -55,7 +52,7 @@ describe("ProductController", () => {
                 "createProduct"
             );
 
-            mockCreateProduct.mockRejectedValue(mockErrorDatabase);
+            mockCreateProduct.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/products")
@@ -63,7 +60,7 @@ describe("ProductController", () => {
                 .send(mockProduct2);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(ProductService.createProduct).toHaveBeenCalledWith(
                 mockProduct2
@@ -75,8 +72,6 @@ describe("ProductController", () => {
 
     describe("GET /api/products", () => {
         it("should get all products (imageUrl only)", async () => {
-            const mockProducts = [mockProduct1, mockProduct2];
-
             jest.mocked(
                 ProductService.getAllProducts as jest.Mock
             ).mockResolvedValue(mockProducts);
@@ -96,14 +91,14 @@ describe("ProductController", () => {
                 "getAllProducts"
             );
 
-            mockGetAllProducts.mockRejectedValue(mockErrorDatabase);
+            mockGetAllProducts.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/products")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
             expect(ProductService.getAllProducts).toHaveBeenCalledTimes(1);
 
             mockGetAllProducts.mockRestore();
@@ -137,14 +132,14 @@ describe("ProductController", () => {
                 "getProductById"
             );
 
-            mockGetProductById.mockRejectedValue(mockErrorDatabase);
+            mockGetProductById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(ProductService.getProductById).toHaveBeenCalledWith(
                 mockProductId
@@ -185,7 +180,7 @@ describe("ProductController", () => {
                 "updateProductById"
             );
 
-            mockUpdateProductById.mockRejectedValue(mockErrorDatabase);
+            mockUpdateProductById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .put(`/api/products/${mockProductId}`)
@@ -193,7 +188,7 @@ describe("ProductController", () => {
                 .send(mockProduct2);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(ProductService.updateProductById).toHaveBeenCalledWith(
                 mockProductId,
@@ -232,14 +227,14 @@ describe("ProductController", () => {
                 "deleteProductById"
             );
 
-            mockDeleteProductById.mockRejectedValue(mockErrorDatabase);
+            mockDeleteProductById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .delete(`/api/products/${mockProductId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(ProductService.deleteProductById).toHaveBeenCalledWith(
                 mockProductId

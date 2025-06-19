@@ -15,3 +15,5 @@ export const mockUser2: User = {
     role: "mua",
     username: "user2",
 };
+
+export const mockUsers: User[] = [mockUser1, mockUser2];

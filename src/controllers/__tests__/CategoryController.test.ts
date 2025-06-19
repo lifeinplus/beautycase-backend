@@ -1,28 +1,24 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as CategoryService from "../../services/CategoryService";
 import { mockUserJwt } from "../../tests/mocks/auth";
 import {
+    mockCategories,
     mockCategory1,
-    mockCategory2,
     mockCategoryId,
 } from "../../tests/mocks/category";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import { mockDatabaseError } from "../../tests/mocks/error";
 
 jest.mock("../../services/CategoryService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("CategoryController", () => {
@@ -52,7 +48,7 @@ describe("CategoryController", () => {
                 "createCategory"
             );
 
-            mockCreateCategory.mockRejectedValue(mockErrorDatabase);
+            mockCreateCategory.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/categories")
@@ -68,8 +64,6 @@ describe("CategoryController", () => {
 
     describe("GET /api/categories", () => {
         it("should get all categories", async () => {
-            const mockCategories = [mockCategory1, mockCategory2];
-
             jest.mocked(
                 CategoryService.getAllCategories as jest.Mock
             ).mockResolvedValue(mockCategories);
@@ -88,7 +82,7 @@ describe("CategoryController", () => {
                 "getAllCategories"
             );
 
-            mockGetAllCategories.mockRejectedValue(mockErrorDatabase);
+            mockGetAllCategories.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/categories")

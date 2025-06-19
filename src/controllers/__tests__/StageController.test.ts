@@ -1,24 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as StageService from "../../services/StageService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockErrorDatabase } from "../../tests/mocks/error";
-import { mockStage1, mockStage2, mockStageId } from "../../tests/mocks/stage";
+import { mockDatabaseError } from "../../tests/mocks/error";
+import {
+    mockStage1,
+    mockStage2,
+    mockStageId,
+    mockStages,
+} from "../../tests/mocks/stage";
 
 jest.mock("../../services/StageService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("StageController", () => {
@@ -46,7 +47,7 @@ describe("StageController", () => {
         it("should return 500 if creating a stage fails", async () => {
             const mockCreateStage = jest.spyOn(StageService, "createStage");
 
-            mockCreateStage.mockRejectedValue(mockErrorDatabase);
+            mockCreateStage.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/stages")
@@ -54,7 +55,7 @@ describe("StageController", () => {
                 .send(mockStage1);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(StageService.createStage).toHaveBeenCalledWith(mockStage1);
 
@@ -90,14 +91,14 @@ describe("StageController", () => {
                 "duplicateStageById"
             );
 
-            mockDuplicateStageById.mockRejectedValue(mockErrorDatabase);
+            mockDuplicateStageById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post(`/api/stages/duplicate/${mockStageId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(StageService.duplicateStageById).toHaveBeenCalledWith(
                 mockStageId
@@ -109,8 +110,6 @@ describe("StageController", () => {
 
     describe("GET /api/stages", () => {
         it("should get all stages (imageUrl only)", async () => {
-            const mockStages = [mockStage1, mockStage2];
-
             jest.mocked(
                 StageService.getAllStages as jest.Mock
             ).mockResolvedValue(mockStages);
@@ -127,14 +126,14 @@ describe("StageController", () => {
         it("should return 500 if getting all stages fails", async () => {
             const mockGetAllStages = jest.spyOn(StageService, "getAllStages");
 
-            mockGetAllStages.mockRejectedValue(mockErrorDatabase);
+            mockGetAllStages.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/stages")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
             expect(StageService.getAllStages).toHaveBeenCalledTimes(1);
 
             mockGetAllStages.mockRestore();
@@ -163,14 +162,14 @@ describe("StageController", () => {
         it("should return 500 if getting a stage fails", async () => {
             const mockGetStageById = jest.spyOn(StageService, "getStageById");
 
-            mockGetStageById.mockRejectedValue(mockErrorDatabase);
+            mockGetStageById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get(`/api/stages/${mockStageId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(StageService.getStageById).toHaveBeenCalledWith(mockStageId);
 
@@ -209,7 +208,7 @@ describe("StageController", () => {
                 "updateStageById"
             );
 
-            mockUpdateStageById.mockRejectedValue(mockErrorDatabase);
+            mockUpdateStageById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .put(`/api/stages/${mockStageId}`)
@@ -217,7 +216,7 @@ describe("StageController", () => {
                 .send(mockStage2);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(StageService.updateStageById).toHaveBeenCalledWith(
                 mockStageId,
@@ -256,14 +255,14 @@ describe("StageController", () => {
                 "deleteStageById"
             );
 
-            mockDeleteStageById.mockRejectedValue(mockErrorDatabase);
+            mockDeleteStageById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .delete(`/api/stages/${mockStageId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(StageService.deleteStageById).toHaveBeenCalledWith(
                 mockStageId

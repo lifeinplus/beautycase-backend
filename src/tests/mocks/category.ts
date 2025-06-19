@@ -11,3 +11,5 @@ export const mockCategory2: Category = {
     name: "Category 2",
     type: "makeup_bag",
 };
+
+export const mockCategories: Category[] = [mockCategory1, mockCategory2];

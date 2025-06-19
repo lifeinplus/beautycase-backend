@@ -17,3 +17,5 @@ export const mockLesson2: Lesson = {
     fullDescription: "Test Full Description 2",
     productIds: ["683cbe0796c7f5d3d62101e2"],
 };
+
+export const mockLessons: Lesson[] = [mockLesson1, mockLesson2];

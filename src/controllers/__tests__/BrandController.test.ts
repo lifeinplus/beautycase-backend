@@ -1,24 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as BrandService from "../../services/BrandService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockBrand1, mockBrand2, mockBrandId } from "../../tests/mocks/brand";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import {
+    mockBrand1,
+    mockBrand2,
+    mockBrandId,
+    mockBrands,
+} from "../../tests/mocks/brand";
+import { mockDatabaseError } from "../../tests/mocks/error";
 
 jest.mock("../../services/BrandService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("BrandController", () => {
@@ -42,7 +43,7 @@ describe("BrandController", () => {
 
         it("should return 500 if creating a brand fails", async () => {
             const mockCreateBrand = jest.spyOn(BrandService, "createBrand");
-            mockCreateBrand.mockRejectedValue(mockErrorDatabase);
+            mockCreateBrand.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/brands")
@@ -58,8 +59,6 @@ describe("BrandController", () => {
 
     describe("GET /api/brands", () => {
         it("should get all brands", async () => {
-            const mockBrands = [mockBrand1, mockBrand2];
-
             jest.mocked(
                 BrandService.getAllBrands as jest.Mock
             ).mockResolvedValue(mockBrands);
@@ -74,7 +73,7 @@ describe("BrandController", () => {
 
         it("should return 500 if getting all brands fails", async () => {
             const mockGetAllBrands = jest.spyOn(BrandService, "getAllBrands");
-            mockGetAllBrands.mockRejectedValue(mockErrorDatabase);
+            mockGetAllBrands.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/brands")
@@ -114,7 +113,7 @@ describe("BrandController", () => {
                 "updateBrandById"
             );
 
-            mockUpdateBrandById.mockRejectedValue(mockErrorDatabase);
+            mockUpdateBrandById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .put(`/api/brands/${mockBrandId}`)
@@ -153,7 +152,7 @@ describe("BrandController", () => {
                 "deleteBrandById"
             );
 
-            mockDeleteBrandById.mockRejectedValue(mockErrorDatabase);
+            mockDeleteBrandById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .delete(`/api/brands/${mockBrandId}`)

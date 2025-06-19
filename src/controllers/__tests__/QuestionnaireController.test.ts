@@ -1,28 +1,25 @@
-import jwt from "jsonwebtoken";
 import supertest from "supertest";
 
 import app from "../../app";
-import config from "../../config";
+import { signAccessToken } from "../../services/auth/TokenService";
 import * as QuestionnaireService from "../../services/QuestionnaireService";
 import { mockUserJwt } from "../../tests/mocks/auth";
-import { mockErrorDatabase } from "../../tests/mocks/error";
+import { mockDatabaseError } from "../../tests/mocks/error";
 import {
     mockQuestionnaire1,
     mockQuestionnaire2,
     mockQuestionnaireId,
+    mockQuestionnaires,
 } from "../../tests/mocks/questionnaire";
 
 jest.mock("../../services/QuestionnaireService");
 
 const request = supertest(app);
+
 let token: string;
 
 beforeAll(async () => {
-    token = jwt.sign(
-        { ...mockUserJwt },
-        config.auth.accessToken.secret,
-        config.auth.accessToken.options
-    );
+    token = signAccessToken(mockUserJwt);
 });
 
 describe("QuestionnaireController", () => {
@@ -55,7 +52,7 @@ describe("QuestionnaireController", () => {
                 "createQuestionnaire"
             );
 
-            mockCreateQuestionnaire.mockRejectedValue(mockErrorDatabase);
+            mockCreateQuestionnaire.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .post("/api/questionnaires")
@@ -63,7 +60,7 @@ describe("QuestionnaireController", () => {
                 .send(mockQuestionnaire2);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
 
             expect(
                 QuestionnaireService.createQuestionnaire
@@ -75,8 +72,6 @@ describe("QuestionnaireController", () => {
 
     describe("GET /api/questionnaires", () => {
         it("should get all questionnaires (imageUrl only)", async () => {
-            const mockQuestionnaires = [mockQuestionnaire1, mockQuestionnaire2];
-
             jest.mocked(
                 QuestionnaireService.getAllQuestionnaires as jest.Mock
             ).mockResolvedValue(mockQuestionnaires);
@@ -98,14 +93,14 @@ describe("QuestionnaireController", () => {
                 "getAllQuestionnaires"
             );
 
-            mockGetAllQuestionnaires.mockRejectedValue(mockErrorDatabase);
+            mockGetAllQuestionnaires.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get("/api/questionnaires")
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toEqual(mockErrorDatabase.message);
+            expect(response.body.message).toEqual(mockDatabaseError.message);
             expect(
                 QuestionnaireService.getAllQuestionnaires
             ).toHaveBeenCalledTimes(1);
@@ -146,14 +141,14 @@ describe("QuestionnaireController", () => {
                 "getQuestionnaireById"
             );
 
-            mockGetQuestionnaireById.mockRejectedValue(mockErrorDatabase);
+            mockGetQuestionnaireById.mockRejectedValue(mockDatabaseError);
 
             const response = await request
                 .get(`/api/questionnaires/${mockQuestionnaireId}`)
                 .set("Authorization", `Bearer ${token}`);
 
             expect(response.statusCode).toBe(500);
-            expect(response.body.message).toBe(mockErrorDatabase.message);
+            expect(response.body.message).toBe(mockDatabaseError.message);
 
             expect(
                 QuestionnaireService.getQuestionnaireById
