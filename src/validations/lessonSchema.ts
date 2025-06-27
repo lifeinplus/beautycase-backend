@@ -8,6 +8,7 @@ export const lessonBodySchema = Joi.object({
     videoUrl: Joi.string().uri().required(),
     fullDescription: Joi.string().min(20).max(2000).required(),
     productIds: Joi.array().items(objectIdSchema.required()).required(),
+    clientIds: Joi.array().items(objectIdSchema),
 });
 
 export const lessonParamsSchema = Joi.object({
