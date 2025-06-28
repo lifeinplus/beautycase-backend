@@ -7,6 +7,7 @@ import {
     updateMakeupBagById,
     deleteMakeupBagById,
 } from "../controllers/MakeupBagController";
+import { checkMakeupBagAccess } from "../middlewares/checkMakeupBagAccess";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
 import {
@@ -26,6 +27,7 @@ router.post(
 router.get(
     "/:id",
     requestValidator({ params: makeupBagParamsSchema }),
+    checkMakeupBagAccess,
     getMakeupBagById
 );
 

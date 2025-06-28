@@ -22,9 +22,11 @@ const jwtVerifier = (req: UserRequest, res: Response, next: NextFunction) => {
             config.auth.accessToken.secret
         ) as UserJwtPayload;
 
-        req.role = decoded.role;
-        req.userId = decoded.userId;
-        req.username = decoded.username;
+        req.user = {
+            role: decoded.role,
+            userId: decoded.userId,
+            username: decoded.username,
+        };
 
         next();
     } catch (error) {

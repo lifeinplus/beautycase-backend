@@ -5,13 +5,15 @@ import { UnauthorizedError } from "../utils/AppErrors";
 
 const rolesVerifier = (allowedRoles: string[]) => {
     return (req: UserRequest, res: Response, next: NextFunction) => {
-        if (!req?.role) {
+        const { role } = req.user || {};
+
+        if (!role) {
             throw new UnauthorizedError();
         }
 
         const roles = [...allowedRoles];
 
-        if (!roles.includes(req.role)) {
+        if (!roles.includes(role)) {
             throw new UnauthorizedError();
         }
 
