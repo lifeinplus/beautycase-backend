@@ -1,9 +1,11 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+export type Role = "admin" | "mua" | "client";
+
 export interface User {
     password: string;
     refreshTokens: string[];
-    role: "admin" | "client" | "mua";
+    role: Role;
     username: string;
 }
 

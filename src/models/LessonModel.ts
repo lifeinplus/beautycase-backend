@@ -6,6 +6,7 @@ export interface Lesson {
     videoUrl: string;
     fullDescription: string;
     productIds: string[];
+    clientIds?: string[];
 }
 
 export interface LessonDocument extends Lesson, Document {}
@@ -20,6 +21,10 @@ const LessonSchema: Schema = new Schema(
             type: [Schema.Types.ObjectId],
             ref: "Product",
             required: true,
+        },
+        clientIds: {
+            type: [Schema.Types.ObjectId],
+            ref: "User",
         },
     },
     {

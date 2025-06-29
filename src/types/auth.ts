@@ -1,8 +1,10 @@
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
+import type { Role } from "../models/UserModel";
+
 export interface AuthUser {
-    role: string;
+    role: Role;
     userId: string;
     username: string;
 }
@@ -27,17 +29,15 @@ export interface RefreshResult {
 export interface RegisterCredentials {
     username: string;
     password: string;
-    role?: string;
+    role?: Role;
 }
 
 export interface UserJwtPayload extends JwtPayload {
-    role: string;
+    role: Role;
     userId: string;
     username: string;
 }
 
 export interface UserRequest extends Request {
-    role?: string;
-    userId?: string;
-    username?: string;
+    user?: AuthUser;
 }

@@ -23,8 +23,8 @@ export const getUserById = async (
     const { id } = req.params;
 
     try {
-        const { user, makeupBags } = await UserService.getUserById(id);
-        res.status(200).json({ user, makeupBags });
+        const { user, makeupBags, lessons } = await UserService.getUserById(id);
+        res.status(200).json({ user, makeupBags, lessons });
     } catch (error) {
         next(error);
     }

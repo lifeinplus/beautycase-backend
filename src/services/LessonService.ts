@@ -31,6 +31,10 @@ export const getLessonById = async (id: string) => {
     return lesson;
 };
 
+export const getLessonsByClientId = async (clientId: string) => {
+    return await LessonModel.find({ clientIds: clientId }).select("title");
+};
+
 export const updateLessonById = async (id: string, data: Lesson) => {
     const lesson = await LessonModel.findByIdAndUpdate(id, data, {
         new: true,

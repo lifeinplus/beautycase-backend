@@ -2,6 +2,7 @@ import {
     mockLessonId,
     mockLesson1,
     mockLesson2,
+    mockLessonUserId,
 } from "../../tests/mocks/lesson";
 import { mockProduct1 } from "../../tests/mocks/product";
 import { NotFoundError } from "../../utils/AppErrors";
@@ -54,6 +55,28 @@ describe("LessonService", () => {
         it("should throw NotFoundError if lesson not found", async () => {
             const result = LessonService.getLessonById(mockLessonId);
             await expect(result).rejects.toThrow(NotFoundError);
+        });
+    });
+
+    describe("getLessonsByClientId", () => {
+        it("should return lessons for a given clientId", async () => {
+            await LessonService.createLesson(mockLesson1);
+            await LessonService.createLesson(mockLesson2);
+
+            const result = await LessonService.getLessonsByClientId(
+                mockLessonUserId
+            );
+
+            expect(result).toHaveLength(2);
+            expect(result[0]).toHaveProperty("title");
+        });
+
+        it("should return empty array if no lessons for clientId", async () => {
+            const result = await LessonService.getLessonsByClientId(
+                mockLessonUserId
+            );
+
+            expect(result).toEqual([]);
         });
     });
 

@@ -7,6 +7,7 @@ import {
     updateLessonById,
     deleteLessonById,
 } from "../controllers/LessonController";
+import { checkLessonAccess } from "../middlewares/checkLessonAccess";
 import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
 import {
@@ -26,6 +27,7 @@ router.post(
 router.get(
     "/:id",
     requestValidator({ params: lessonParamsSchema }),
+    checkLessonAccess,
     getLessonById
 );
 

@@ -1,5 +1,6 @@
 import UserModel from "../models/UserModel";
 import { NotFoundError } from "../utils/AppErrors";
+import { getLessonsByClientId } from "./LessonService";
 import { getMakeupBagsByClientId } from "./MakeupBagService";
 
 export const getAllUsers = async () => {
@@ -20,6 +21,7 @@ export const getUserById = async (id: string) => {
     }
 
     const makeupBags = await getMakeupBagsByClientId(id);
+    const lessons = await getLessonsByClientId(id);
 
-    return { user, makeupBags };
+    return { user, makeupBags, lessons };
 };
