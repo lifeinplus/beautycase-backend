@@ -3,11 +3,11 @@ import Joi from "joi";
 import config from "../config";
 
 export const registerSchema = Joi.object({
-    username: Joi.string().min(3).max(30).required().messages({
+    username: Joi.string().min(3).max(20).required().messages({
         "string.base": "Username must be a string",
         "string.empty": "Username is required",
         "string.min": "Username must be at least 3 characters long",
-        "string.max": "Username must not exceed 30 characters",
+        "string.max": "Username must not exceed 20 characters",
         "any.required": "Username is required",
     }),
     password: Joi.string()

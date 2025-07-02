@@ -19,7 +19,7 @@ export const loginUser = async (
     }).exec();
 
     if (!foundUser) {
-        throw new UnauthorizedError("User not found");
+        throw new UnauthorizedError("Username or password is incorrect");
     }
 
     const isMatch = await bcrypt.compare(
@@ -28,7 +28,7 @@ export const loginUser = async (
     );
 
     if (!isMatch) {
-        throw new UnauthorizedError("Password is incorrect");
+        throw new UnauthorizedError("Username or password is incorrect");
     }
 
     const accessToken = signAccessToken({
