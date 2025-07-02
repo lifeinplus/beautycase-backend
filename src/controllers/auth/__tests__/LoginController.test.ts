@@ -45,7 +45,9 @@ describe("LoginController", () => {
             const response = await request.post(path).send(mockUser2);
 
             expect(response.statusCode).toBe(401);
-            expect(response.body.message).toBe("User not found");
+            expect(response.body.message).toBe(
+                "Username or password is incorrect"
+            );
         });
 
         it("should return 401 when password is incorrect", async () => {
@@ -55,7 +57,9 @@ describe("LoginController", () => {
             });
 
             expect(response.statusCode).toBe(401);
-            expect(response.body.message).toBe("Password is incorrect");
+            expect(response.body.message).toBe(
+                "Username or password is incorrect"
+            );
         });
 
         it("should handle existing refresh token and create a new one", async () => {
