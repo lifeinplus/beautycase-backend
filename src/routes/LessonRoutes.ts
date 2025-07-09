@@ -2,17 +2,19 @@ import express from "express";
 
 import {
     createLesson,
-    getLessonById,
-    getAllLessons,
-    updateLessonById,
     deleteLessonById,
+    getAllLessons,
+    getLessonById,
+    updateLessonById,
+    updateLessonProducts,
 } from "../controllers/LessonController";
 import { checkLessonAccess } from "../middlewares/checkLessonAccess";
-import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
+import rolesVerifier from "../middlewares/rolesVerifier";
 import {
     lessonBodySchema,
     lessonParamsSchema,
+    lessonProductsBodySchema,
 } from "../validations/lessonSchema";
 
 const router = express.Router();
@@ -38,6 +40,16 @@ router.put(
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: lessonBodySchema, params: lessonParamsSchema }),
     updateLessonById
+);
+
+router.patch(
+    "/:id/products",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({
+        body: lessonProductsBodySchema,
+        params: lessonParamsSchema,
+    }),
+    updateLessonProducts
 );
 
 router.delete(

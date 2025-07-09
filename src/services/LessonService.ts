@@ -1,5 +1,5 @@
-import LessonModel from "../models/LessonModel";
 import type { Lesson } from "../models/LessonModel";
+import LessonModel from "../models/LessonModel";
 import { NotFoundError } from "../utils/AppErrors";
 
 export const createLesson = async (data: Lesson) => {
@@ -36,6 +36,19 @@ export const getLessonsByClientId = async (clientId: string) => {
 };
 
 export const updateLessonById = async (id: string, data: Lesson) => {
+    const lesson = await LessonModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!lesson) {
+        throw new NotFoundError("Lesson not found");
+    }
+
+    return lesson;
+};
+
+export const updateLessonProducts = async (id: string, data: Lesson) => {
     const lesson = await LessonModel.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,

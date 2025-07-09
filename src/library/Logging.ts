@@ -6,6 +6,7 @@ enum Method {
     Get = "GET",
     Post = "POST",
     Put = "PUT",
+    Patch = "PATCH",
     Delete = "DELETE",
 }
 
@@ -32,6 +33,8 @@ const chalkMethod = (method: string) => {
             return chalk.yellow(method);
         case Method.Put:
             return chalk.blue(method);
+        case Method.Patch:
+            return chalk.magenta(method);
         case Method.Delete:
             return chalk.red(method);
         default:
