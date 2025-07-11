@@ -69,6 +69,26 @@ export const updateLessonById = async (
     }
 };
 
+export const updateLessonProducts = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { body, params } = req;
+    const { id } = params;
+
+    try {
+        const lesson = await LessonService.updateLessonProducts(id, body);
+
+        res.status(200).json({
+            id: lesson._id,
+            message: "Lesson products updated successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const deleteLessonById = async (
     req: Request,
     res: Response,

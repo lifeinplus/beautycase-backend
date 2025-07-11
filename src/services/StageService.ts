@@ -1,5 +1,5 @@
-import StageModel from "../models/StageModel";
 import type { Stage } from "../models/StageModel";
+import StageModel from "../models/StageModel";
 import { NotFoundError } from "../utils/AppErrors";
 import { handleImageUpdate, handleImageUpload } from "./ImageService";
 
@@ -79,6 +79,19 @@ export const updateStageById = async (id: string, data: Stage) => {
     });
 
     await stage.save();
+    return stage;
+};
+
+export const updateStageProducts = async (id: string, data: Stage) => {
+    const stage = await StageModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!stage) {
+        throw new NotFoundError("Stage not found");
+    }
+
     return stage;
 };
 

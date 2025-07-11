@@ -8,7 +8,11 @@ export const stageBodySchema = Joi.object({
     imageUrl: Joi.string().uri().required(),
     comment: Joi.string().optional().max(500),
     steps: Joi.array().items(Joi.string()).optional(),
-    productIds: Joi.array().items(objectIdSchema.required()).required(),
+    productIds: Joi.array().items(objectIdSchema),
+});
+
+export const stageProductsBodySchema = Joi.object({
+    productIds: Joi.array().items(objectIdSchema),
 });
 
 export const stageParamsSchema = Joi.object({
