@@ -69,6 +69,26 @@ export const updateProductById = async (
     }
 };
 
+export const updateProductStoreLinks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { body, params } = req;
+    const { id } = params;
+
+    try {
+        const product = await ProductService.updateProductStoreLinks(id, body);
+
+        res.status(200).json({
+            id: product._id,
+            message: "Product store links updated successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const deleteProductById = async (
     req: Request,
     res: Response,

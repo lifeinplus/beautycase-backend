@@ -2,16 +2,18 @@ import express from "express";
 
 import {
     createProduct,
-    getProductById,
-    getAllProducts,
-    updateProductById,
     deleteProductById,
+    getAllProducts,
+    getProductById,
+    updateProductById,
+    updateProductStoreLinks,
 } from "../controllers/ProductController";
-import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
+import rolesVerifier from "../middlewares/rolesVerifier";
 import {
     productBodySchema,
     productParamsSchema,
+    productStoreLinksBodySchema,
 } from "../validations/productSchema";
 
 const router = express.Router();
@@ -36,6 +38,16 @@ router.put(
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: productBodySchema, params: productParamsSchema }),
     updateProductById
+);
+
+router.patch(
+    "/:id/store-links",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({
+        body: productStoreLinksBodySchema,
+        params: productParamsSchema,
+    }),
+    updateProductStoreLinks
 );
 
 router.delete(

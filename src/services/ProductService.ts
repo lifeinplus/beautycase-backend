@@ -1,5 +1,5 @@
-import ProductModel from "../models/ProductModel";
 import type { Product } from "../models/ProductModel";
+import ProductModel from "../models/ProductModel";
 import { NotFoundError } from "../utils/AppErrors";
 import {
     handleImageDeletion,
@@ -58,6 +58,19 @@ export const updateProductById = async (id: string, data: Product) => {
     });
 
     await product.save();
+    return product;
+};
+
+export const updateProductStoreLinks = async (id: string, data: Product) => {
+    const product = await ProductModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!product) {
+        throw new NotFoundError("Product not found");
+    }
+
     return product;
 };
 

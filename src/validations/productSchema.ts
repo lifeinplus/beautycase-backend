@@ -9,7 +9,11 @@ export const productBodySchema = Joi.object({
     imageUrl: Joi.string().required().uri(),
     shade: Joi.string().optional().allow(""),
     comment: Joi.string().required().max(500),
-    storeLinks: Joi.array().items(storeLinkSchema).required(),
+    storeLinks: Joi.array().items(storeLinkSchema),
+});
+
+export const productStoreLinksBodySchema = Joi.object({
+    storeLinks: Joi.array().items(storeLinkSchema),
 });
 
 export const productParamsSchema = Joi.object({
