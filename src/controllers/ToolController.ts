@@ -69,6 +69,26 @@ export const updateToolById = async (
     }
 };
 
+export const updateToolStoreLinks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { body, params } = req;
+    const { id } = params;
+
+    try {
+        const tool = await ToolService.updateToolStoreLinks(id, body);
+
+        res.status(200).json({
+            id: tool._id,
+            message: "Tool store links updated successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const deleteToolById = async (
     req: Request,
     res: Response,

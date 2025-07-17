@@ -2,14 +2,19 @@ import express from "express";
 
 import {
     createTool,
-    getToolById,
-    getAllTools,
-    updateToolById,
     deleteToolById,
+    getAllTools,
+    getToolById,
+    updateToolById,
+    updateToolStoreLinks,
 } from "../controllers/ToolController";
-import rolesVerifier from "../middlewares/rolesVerifier";
 import requestValidator from "../middlewares/requestValidator";
-import { toolBodySchema, toolParamsSchema } from "../validations/toolSchema";
+import rolesVerifier from "../middlewares/rolesVerifier";
+import {
+    toolBodySchema,
+    toolParamsSchema,
+    toolStoreLinksBodySchema,
+} from "../validations/toolSchema";
 
 const router = express.Router();
 
@@ -29,6 +34,16 @@ router.put(
     rolesVerifier(["admin", "mua"]),
     requestValidator({ body: toolBodySchema, params: toolParamsSchema }),
     updateToolById
+);
+
+router.patch(
+    "/:id/store-links",
+    rolesVerifier(["admin", "mua"]),
+    requestValidator({
+        body: toolStoreLinksBodySchema,
+        params: toolParamsSchema,
+    }),
+    updateToolStoreLinks
 );
 
 router.delete(

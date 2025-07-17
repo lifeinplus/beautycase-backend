@@ -9,7 +9,11 @@ export const toolBodySchema = Joi.object({
     imageUrl: Joi.string().required().uri(),
     number: Joi.string().optional().allow(""),
     comment: Joi.string().required().max(500),
-    storeLinks: Joi.array().items(storeLinkSchema).required(),
+    storeLinks: Joi.array().items(storeLinkSchema),
+});
+
+export const toolStoreLinksBodySchema = Joi.object({
+    storeLinks: Joi.array().items(storeLinkSchema),
 });
 
 export const toolParamsSchema = Joi.object({

@@ -1,5 +1,5 @@
-import ToolModel from "../models/ToolModel";
 import type { Tool } from "../models/ToolModel";
+import ToolModel from "../models/ToolModel";
 import { NotFoundError } from "../utils/AppErrors";
 import {
     handleImageDeletion,
@@ -58,6 +58,19 @@ export const updateToolById = async (id: string, data: Tool) => {
     });
 
     await tool.save();
+    return tool;
+};
+
+export const updateToolStoreLinks = async (id: string, data: Tool) => {
+    const tool = await ToolModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!tool) {
+        throw new NotFoundError("Tool not found");
+    }
+
     return tool;
 };
 
